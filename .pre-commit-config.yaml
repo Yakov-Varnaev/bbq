@@ -12,4 +12,5 @@ repos:
         name: Run tests
         entry: "bash ./.git/hooks/tests.sh"
         language: system
-        # verbose: true
+        verbose: true
+        require_serial: true
