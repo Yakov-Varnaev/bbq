@@ -6,7 +6,7 @@ repos:
         entry: 'black .'
         language: system
         types: [python]
-        args: [--line-length=200, --all-files]
+        args: [--line-length=100, --all-files]
 
       - id: tests
         name: Run tests
