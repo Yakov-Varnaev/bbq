@@ -1,0 +1,15 @@
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [python]
+        args: [--line-length=200]
+
+      - id: tests
+        name: Run tests
+        entry: "bash ./.git/hooks/tests.sh"
+        language: system
+        verbose: true
