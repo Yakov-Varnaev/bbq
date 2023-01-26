@@ -2,7 +2,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = ('django-insecure-ka)be6_4bgsy$lazo_0hllwa&s+xqj1=q7(fi2$u-o*@=wrq6@')
+SECRET_KEY = 'django-insecure-ka)be6_4bgsy$lazo_0hllwa&s+xqj1=q7(fi2$u-o*@=wrq6@'
 
 DEBUG = True
 
@@ -15,12 +15,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'djoser',
     'drf_spectacular',
-
-    'users'
+    'users',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -50,7 +48,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 ROOT_URLCONF = 'bbq_manager.urls'
@@ -73,26 +71,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bbq_manager.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': BASE_DIR / 'db.sqlite3',}}
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
 LANGUAGE_CODE = 'en-us'

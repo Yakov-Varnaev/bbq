@@ -9,7 +9,6 @@ User = get_user_model()
 
 @pytest.mark.django_db
 class TestUserAuth:
-
     def test_user_can_register(self, client: APIClient):
         data = {
             'username': 'epicker',
@@ -29,4 +28,3 @@ class TestUserAuth:
         response = auth_client.get(reverse('user-me'))
 
         assert response.status_code == status.HTTP_200_OK, response.data
-

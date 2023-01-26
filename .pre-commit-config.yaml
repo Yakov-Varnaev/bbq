@@ -3,10 +3,10 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: "bash ./.git/hooks/black.sh"
+        entry: black
         language: system
         types: [python]
-        args: [--line-length=100, --all-files]
+        args: [--line-length=100, --exclude=./venv]
 
       - id: tests
         name: Run tests
