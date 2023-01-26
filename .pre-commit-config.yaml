@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: 'black .'
+        entry: "bash ./.git/hooks/blask.sh"
         language: system
         types: [python]
         args: [--line-length=100, --all-files]
