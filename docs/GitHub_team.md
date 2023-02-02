@@ -16,6 +16,10 @@ fork это такая штука, которая позволяет тебе в
 
 После того, как разработка на твой взгляд закончена нужно открыть Pull Request.
 
+<img<img width="531" alt="Pasted image 20230202141511" src="https://user-images.githubusercontent.com/73383566/216311945-1f0b8ecf-b52d-459b-a225-9a47eb2278a8.png">
+ width="1247" alt="Pasted image 20230202141455 1" src="https://user-images.githubusercontent.com/73383566/216311822-f5ac7b67-be6c-4ff9-bc33-90885fd4075b.png">
+![Uploading Pasted image 20230202141511.png…]()
+
 
 Если изменения в твоей ветке были сделаны недавно, то тебе выползет сообщение, что можно открыть pr автоматически. Можно будет клацнуть туда.
 
