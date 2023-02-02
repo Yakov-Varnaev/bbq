@@ -1,2 +1,2 @@
 # bbq
-Beauty Bard management system
+Beauty Bar management system
