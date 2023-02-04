@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
-
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
+                                   SpectacularSwaggerView)
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='docs')),
@@ -11,5 +11,5 @@ urlpatterns = [
     path('api/auth/jwt', include('djoser.urls.jwt')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
-    path('api/companies', include('companies.urls')),
+    path('api/companies/', include('companies.urls')),
 ]
