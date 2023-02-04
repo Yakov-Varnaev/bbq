@@ -3,7 +3,7 @@ from .models import CompaniesModel
 
 
 class CompaniesAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'name', 'owner', 'time_created', 'time_updated']
 
 
 admin.site.register(CompaniesModel, CompaniesAdmin)
