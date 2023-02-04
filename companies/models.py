@@ -11,6 +11,6 @@ class CompaniesModel(models.Model):
         verbose_name_plural = 'Companies'
 
     name = models.CharField(max_length=255)
-    owner = models.ForeignKey(User, related_name='owner', on_delete=models.PROTECT)
+    owner = models.ForeignKey(User, related_name='companies', on_delete=models.PROTECT)
     time_created = models.DateTimeField(auto_now_add=True)
     time_updated = models.DateTimeField(auto_now=True)
