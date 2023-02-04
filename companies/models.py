@@ -6,4 +6,4 @@ User = get_user_model()
 
 class CompaniesModel(models.Model):
     name = models.CharField(max_length=255)
-    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+    owner = models.ForeignKey(User, related_name='owner', on_delete=models.PROTECT)
