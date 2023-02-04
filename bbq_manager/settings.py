@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     'djoser',
     'drf_spectacular',
     'users',
-    'company.apps.CompanyConfig',
+    'companies.apps.CompaniesConfig',
 ]
 
 AUTH_USER_MODEL = 'users.User'

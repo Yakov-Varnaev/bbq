@@ -11,5 +11,5 @@ urlpatterns = [
     path('api/auth/jwt', include('djoser.urls.jwt')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
-    path('api/company', include('company.urls')),
+    path('api/companies', include('companies.urls')),
 ]
