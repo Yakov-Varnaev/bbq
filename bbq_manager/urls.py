@@ -6,6 +6,7 @@ from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='docs')),
+    path('api/', RedirectView.as_view(pattern_name='docs')),
     path('admin/', admin.site.urls),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/jwt', include('djoser.urls.jwt')),
