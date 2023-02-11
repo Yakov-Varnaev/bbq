@@ -26,5 +26,5 @@ def user_token(user):
 @pytest.fixture
 def auth_client(user_token):
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Bearer {user_token["access"]}')
+    client.credentials(HTTP_AUTHORIZATION=f'JWT {user_token["access"]}')
     return client
