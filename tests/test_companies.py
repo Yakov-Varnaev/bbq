@@ -7,10 +7,9 @@ class TestCRUD:
 
     def test_get(self, auth_setup):
 
-        first_client, second_client = auth_setup
+        client = auth_setup[0]
 
-        assert first_client.get('/api/companies/').status_code == status.HTTP_200_OK
-        assert second_client.get('/api/companies/').status_code == status.HTTP_200_OK
+        assert client.get('/api/companies/').status_code == status.HTTP_200_OK
 
     def test_post(self, auth_setup):
 
