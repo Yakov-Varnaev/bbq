@@ -23,11 +23,6 @@ def client():
 
 
 @pytest.fixture
-def unauthorized_client():
-    return APIClient()
-
-
-@pytest.fixture
 def user():
     return mixer.blend(User)
 
@@ -48,10 +43,12 @@ def unauthorized_user_token(unauthorized_user):
 
 
 @pytest.fixture
-def auth_client(client, user_token):
+def auth_client(user_token):
+    client = APIClient()
     return authenticate_by_token(client, user_token)
 
 
 @pytest.fixture
-def auth_unauthorized_client(unauthorized_client, unauthorized_user_token):
+def auth_unauthorized_client(unauthorized_user_token):
+    unauthorized_client = APIClient()
     return authenticate_by_token(unauthorized_client, unauthorized_user_token)
