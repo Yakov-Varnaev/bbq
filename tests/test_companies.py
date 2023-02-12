@@ -63,7 +63,13 @@ class TestCRUD:
         assert db_data == response_data
 
     def test_delete(self, company, auth_client, auth_unauthorized_client):
-        company_uri = reverse('companies-detail', args=[company.id])
 
+        company_uri = reverse('companies-detail', args=[company.id])
         assert auth_unauthorized_client.delete(company_uri).status_code != status.HTTP_204_NO_CONTENT
-        assert auth_client.delete(company_uri).status_code == status.HTTP_204_NO_CONTENT
+
+        response = auth_client.delete(company_uri)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.content == b''
+
+        with pytest.raises(Company.DoesNotExist):
+            CompanySerializer(Company.objects.get(id=company.id))
