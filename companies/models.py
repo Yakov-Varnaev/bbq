@@ -4,7 +4,7 @@ from django.db import models
 User = get_user_model()
 
 
-class CompanyModel(models.Model):
+class Company(models.Model):
 
     # class Meta:
     #     verbose_name = 'Company'
