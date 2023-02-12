@@ -7,3 +7,5 @@ class CompaniesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompaniesModel
         fields = '__all__'
+
+    owner = serializers.ReadOnlyField(source='owner.id')

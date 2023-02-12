@@ -6,7 +6,13 @@ from .serializers import CompaniesSerializer
 
 
 class CompaniesViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = CompaniesSerializer
     queryset = CompaniesModel.objects.all()
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
 
