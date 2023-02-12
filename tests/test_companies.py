@@ -37,10 +37,18 @@ class TestCRUD:
         assert db_data == response_data
 
     def test_post(self, auth_client):
+
         post_data = {'name': 'TestCompany'}
         response = auth_client.post(reverse('companies-list'), data=post_data)
 
         assert response.status_code == status.HTTP_201_CREATED
+
+        response_data = json.loads(response.content)
+        company_id = response_data['id']
+
+        db_data = CompanySerializer(Company.objects.get(id=company_id)).data
+
+        assert db_data == response_data
 
     def test_put(self, company, auth_client, auth_unauthorized_client):
         put_data = {'name': 'TestCompany2'}
