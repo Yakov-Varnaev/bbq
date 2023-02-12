@@ -1,7 +1,9 @@
-import pytest
 import json
-from rest_framework import status
+
+import pytest
 from django.urls import reverse
+from rest_framework import status
+
 from companies.models import Company
 from companies.serializers import CompanySerializer
 
