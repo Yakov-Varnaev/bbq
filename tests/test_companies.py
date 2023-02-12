@@ -14,7 +14,7 @@ class TestCRUD:
     def test_post(self, auth_setup):
 
         client = auth_setup[0]
-        post_data = {'name': 'TestCompany', 'owner': 1}
+        post_data = {'name': 'TestCompany'}
 
         response = client.post('/api/companies/', data=post_data)
 
@@ -24,21 +24,27 @@ class TestCRUD:
 
         first_client, second_client = auth_setup
 
-        post_data = {'name': 'TestCompany', 'owner': 1}
-        put_data = {'name': 'TestCompany2', 'owner': 1}
+        post_data = {'name': 'TestCompany'}
+        put_data = {'name': 'TestCompany2'}
 
-        first_client.post('/api/companies/', data=post_data)
+        response = first_client.post('/api/companies/', data=post_data)
+        company_id = response.data['id']
 
-        assert first_client.put('/api/companies/1/', data=put_data).status_code == status.HTTP_200_OK
-        assert second_client.put('/api/companies/1/', data=put_data).status_code != status.HTTP_200_OK
+        company_uri = f'/api/companies/{company_id}/'
+
+        assert first_client.put(company_uri, data=put_data).status_code == status.HTTP_200_OK
+        assert second_client.put(company_uri, data=put_data).status_code != status.HTTP_200_OK
 
     def test_delete(self, auth_setup):
 
         first_client, second_client = auth_setup
 
-        post_data = {'name': 'TestCompany', 'owner': 1}
+        post_data = {'name': 'TestCompany'}
 
-        first_client.post('/api/companies/', data=post_data)
+        response = first_client.post('/api/companies/', data=post_data)
+        company_id = response.data['id']
 
-        assert second_client.delete('/api/companies/1/').status_code != status.HTTP_204_NO_CONTENT
-        assert first_client.delete('/api/companies/1/').status_code == status.HTTP_204_NO_CONTENT
+        company_uri = f'/api/companies/{company_id}/'
+
+        assert second_client.delete(company_uri).status_code != status.HTTP_204_NO_CONTENT
+        assert first_client.delete(company_uri).status_code == status.HTTP_204_NO_CONTENT
