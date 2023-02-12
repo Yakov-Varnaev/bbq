@@ -46,11 +46,21 @@ class TestCRUD:
         assert db_data == response_data
 
     def test_put(self, company, auth_client, auth_unauthorized_client):
-        put_data = {'name': 'TestCompany2'}
+
+        put_data = {'name': 'TestCompany'}
         company_uri = reverse('companies-detail', args=[company.id])
 
-        assert auth_client.put(company_uri, data=put_data).status_code == status.HTTP_200_OK
+        response = auth_client.put(company_uri, data=put_data)
+
+        assert response.status_code == status.HTTP_200_OK
         assert auth_unauthorized_client.put(company_uri, data=put_data).status_code != status.HTTP_200_OK
+
+        response_data = json.loads(response.content)
+        company_id = response_data['id']
+
+        db_data = CompanySerializer(Company.objects.get(id=company_id)).data
+
+        assert db_data == response_data
 
     def test_delete(self, company, auth_client, auth_unauthorized_client):
         company_uri = reverse('companies-detail', args=[company.id])
