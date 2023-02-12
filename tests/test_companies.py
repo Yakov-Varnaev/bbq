@@ -48,12 +48,14 @@ class TestCRUD:
     def test_put(self, company, auth_client, auth_unauthorized_client):
 
         put_data = {'name': 'TestCompany'}
+        wrong_put_data = {'name': 'WrongTestCompany'}
+
         company_uri = reverse('companies-detail', args=[company.id])
 
         response = auth_client.put(company_uri, data=put_data)
 
         assert response.status_code == status.HTTP_200_OK
-        assert auth_unauthorized_client.put(company_uri, data=put_data).status_code != status.HTTP_200_OK
+        assert auth_unauthorized_client.put(company_uri, data=wrong_put_data).status_code != status.HTTP_200_OK
 
         response_data = json.loads(response.content)
         company_id = response_data['id']
@@ -64,12 +66,18 @@ class TestCRUD:
 
     def test_delete(self, company, auth_client, auth_unauthorized_client):
 
+        NO_CONTENT = b''
         company_uri = reverse('companies-detail', args=[company.id])
-        assert auth_unauthorized_client.delete(company_uri).status_code != status.HTTP_204_NO_CONTENT
+
+        response = auth_unauthorized_client.delete(company_uri)
+
+        assert response.status_code != status.HTTP_204_NO_CONTENT
+        assert response.content != NO_CONTENT
 
         response = auth_client.delete(company_uri)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert response.content == b''
+        assert response.content == NO_CONTENT
 
         with pytest.raises(Company.DoesNotExist):
             CompanySerializer(Company.objects.get(id=company.id))
