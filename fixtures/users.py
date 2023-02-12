@@ -7,12 +7,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 User = get_user_model()
 
 
-def token_creator(user_to_auth):
+def create_token(user_to_auth):
     token = RefreshToken.for_user(user_to_auth)
     return {'refresh': str(token), 'access': str(token.access_token)}
 
 
-def token_authentication(client_to_auth, auth_token):
+def authenticate_by_token(client_to_auth, auth_token):
     client_to_auth.credentials(HTTP_AUTHORIZATION=f'JWT {auth_token["access"]}')
     return client_to_auth
 
@@ -39,19 +39,19 @@ def unauthorized_user():
 
 @pytest.fixture
 def user_token(user):
-    return token_creator(user)
+    return create_token(user)
 
 
 @pytest.fixture
 def unauthorized_user_token(unauthorized_user):
-    return token_creator(unauthorized_user)
+    return create_token(unauthorized_user)
 
 
 @pytest.fixture
 def auth_client(client, user_token):
-    return token_authentication(client, user_token)
+    return authenticate_by_token(client, user_token)
 
 
 @pytest.fixture
 def auth_unauthorized_client(unauthorized_client, unauthorized_user_token):
-    return token_authentication(unauthorized_client, unauthorized_user_token)
+    return authenticate_by_token(unauthorized_client, unauthorized_user_token)
