@@ -4,11 +4,11 @@ from django.db import models
 User = get_user_model()
 
 
-class CompaniesModel(models.Model):
+class CompanyModel(models.Model):
 
-    class Meta:
-        verbose_name = 'Company'
-        verbose_name_plural = 'Companies'
+    # class Meta:
+    #     verbose_name = 'Company'
+    #     verbose_name_plural = 'Companies'
 
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(User, related_name='companies', on_delete=models.PROTECT)
