@@ -11,8 +11,6 @@ class TestCRUD:
 
     def test_retrieve(self, company, auth_client):
 
-        company.save()
-
         response = auth_client.get(reverse('companies-detail', args=[company.id]))
 
         assert response.status_code == status.HTTP_200_OK
@@ -23,9 +21,6 @@ class TestCRUD:
         assert db_data == response_data
 
     def test_get_list(self, multiple_companies, auth_client):
-
-        for company in multiple_companies:
-            company.save()
 
         response = auth_client.get(reverse('companies-list'))
 
