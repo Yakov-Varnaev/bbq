@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 @pytest.fixture
-def auth_setup(db, auth_client):
+def auth_setup(auth_client):
 
     authorized_user = mixer.blend(User)
     authorized_user_token = RefreshToken.for_user(authorized_user).access_token
