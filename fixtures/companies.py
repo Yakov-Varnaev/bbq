@@ -13,5 +13,5 @@ def company(user):
 
 
 @pytest.fixture
-def multiple_companies(user):
+def companies(user):
     return mixer.cycle(5).blend(Company, owner=user)
