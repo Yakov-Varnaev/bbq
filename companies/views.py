@@ -16,4 +16,3 @@ class CompaniesViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(time_updated=timezone.now())
-

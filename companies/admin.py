@@ -4,6 +4,5 @@ from .models import Company
 
 
 @admin.register(Company)
-class CompaniesAdmin(admin.ModelAdmin):
+class CompanyAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'owner', 'time_created', 'time_updated']
-
