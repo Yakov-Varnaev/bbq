@@ -511,6 +511,320 @@ paths:
               schema:
                 $ref: '#/components/schemas/SetUsername'
           description: ''
+  /api/companies/:
+    get:
+      operationId: companies_list
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
+          description: ''
+    post:
+      operationId: companies_create
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Company'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+  /api/companies/{company_pk}/points/:
+    get:
+      operationId: companies_points_list
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyPoint'
+          description: ''
+    post:
+      operationId: companies_points_create
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyPoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyPoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyPoint'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyPoint'
+          description: ''
+  /api/companies/{company_pk}/points/{id}/:
+    get:
+      operationId: companies_points_retrieve
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company point.
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyPointDetail'
+          description: ''
+    put:
+      operationId: companies_points_update
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company point.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyPoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyPoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyPoint'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyPoint'
+          description: ''
+    patch:
+      operationId: companies_points_partial_update
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company point.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyPoint'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyPoint'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyPoint'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyPoint'
+          description: ''
+    delete:
+      operationId: companies_points_destroy
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company point.
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/companies/{id}/:
+    get:
+      operationId: companies_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    put:
+      operationId: companies_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Company'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    patch:
+      operationId: companies_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    delete:
+      operationId: companies_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
 components:
   schemas:
     Activation:
@@ -523,6 +837,62 @@ components:
       required:
       - token
       - uid
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        time_created:
+          type: string
+          format: date-time
+          readOnly: true
+        time_updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - name
+      - owner
+      - time_created
+      - time_updated
+    CompanyPoint:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          maxLength: 255
+        company:
+          type: integer
+      required:
+      - address
+      - company
+      - id
+    CompanyPointDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          $ref: '#/components/schemas/Company'
+        address:
+          type: string
+          maxLength: 255
+      required:
+      - address
+      - company
+      - id
     PasswordResetConfirm:
       type: object
       properties:
@@ -536,6 +906,37 @@ components:
       - new_password
       - token
       - uid
+    PatchedCompany:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        time_created:
+          type: string
+          format: date-time
+          readOnly: true
+        time_updated:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedCompanyPoint:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          maxLength: 255
+        company:
+          type: integer
     PatchedUser:
       type: object
       properties:

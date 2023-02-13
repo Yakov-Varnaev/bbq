@@ -1,4 +1,4 @@
-from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class IsOwnerOrReadOnly(BasePermission):
@@ -8,3 +8,8 @@ class IsOwnerOrReadOnly(BasePermission):
             return True
 
         return obj.owner == request.user
+
+
+class IsCompanyPointOwnerOrReadOnly(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.method in permissions.SAFE_METHODS or obj.company.owner == request.user
