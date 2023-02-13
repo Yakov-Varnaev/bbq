@@ -1,6 +1,7 @@
 from rest_framework import serializers
+from djoser.serializers import UserSerializer
 
-from .models import Company, CompanyPoint
+from .models import Company, CompanyPoint, Employee
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -19,3 +20,14 @@ class CompanyPointSerializer(serializers.ModelSerializer):
 
 class CompanyPointDetailSerializer(CompanyPointSerializer):
     company = CompanySerializer()
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = '__all__'
+
+
+class EmployeeDetailSerializer(EmployeeSerializer):
+    user = UserSerializer()
+    point = CompanyPointDetailSerializer()

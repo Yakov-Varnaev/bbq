@@ -562,7 +562,7 @@ paths:
           type: integer
         required: true
       tags:
-      - companies
+      - company point
       security:
       - jwtAuth: []
       responses:
@@ -583,7 +583,7 @@ paths:
           type: integer
         required: true
       tags:
-      - companies
+      - company point
       requestBody:
         content:
           application/json:
@@ -621,7 +621,7 @@ paths:
         description: A unique integer value identifying this company point.
         required: true
       tags:
-      - companies
+      - company point
       security:
       - jwtAuth: []
       responses:
@@ -646,7 +646,7 @@ paths:
         description: A unique integer value identifying this company point.
         required: true
       tags:
-      - companies
+      - company point
       requestBody:
         content:
           application/json:
@@ -683,7 +683,7 @@ paths:
         description: A unique integer value identifying this company point.
         required: true
       tags:
-      - companies
+      - company point
       requestBody:
         content:
           application/json:
@@ -719,6 +719,152 @@ paths:
         description: A unique integer value identifying this company point.
         required: true
       tags:
+      - company point
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/companies/{company_pk}/points/{point_pk}/employees/:
+    get:
+      operationId: companies_points_employees_retrieve
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: point_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: companies_points_employees_create
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: point_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/companies/{company_pk}/points/{point_pk}/employees/{id}/:
+    get:
+      operationId: companies_points_employees_retrieve_2
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      - in: path
+        name: point_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: companies_points_employees_update
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      - in: path
+        name: point_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: companies_points_employees_partial_update
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      - in: path
+        name: point_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - companies
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: companies_points_employees_destroy
+      parameters:
+      - in: path
+        name: company_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      - in: path
+        name: point_pk
+        schema:
+          type: integer
+        required: true
+      tags:
       - companies
       security:
       - jwtAuth: []
@@ -733,7 +879,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this company.
+        description: A unique integer value identifying this Company.
         required: true
       tags:
       - companies
@@ -753,7 +899,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this company.
+        description: A unique integer value identifying this Company.
         required: true
       tags:
       - companies
@@ -785,7 +931,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this company.
+        description: A unique integer value identifying this Company.
         required: true
       tags:
       - companies
@@ -816,7 +962,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this company.
+        description: A unique integer value identifying this Company.
         required: true
       tags:
       - companies

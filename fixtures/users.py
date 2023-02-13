@@ -28,6 +28,14 @@ def user():
 
 
 @pytest.fixture
+def user_factory():
+    def factory():
+        return mixer.blend(User)
+
+    return factory
+
+
+@pytest.fixture
 def another_user():
     return mixer.blend(User)
 

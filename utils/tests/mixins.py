@@ -14,6 +14,9 @@ class TestUtils:
             filter['id'] = id
         return self.model_class.objects.get(**filter)
 
+    def filter(self, **filters):
+        return self.model_class.objects.filter(**filters)
+
     def detail_url(self, *args, **kwargs) -> str:
         return reverse(f'{self.base_url_name}-detail', args=args, kwargs=kwargs)
 
