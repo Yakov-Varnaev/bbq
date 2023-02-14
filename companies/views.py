@@ -3,12 +3,14 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Company, CompanyPoint, Employee
-from .permissions import AllowedToEmploy, IsCompanyPointOwnerOrReadOnly, IsOwnerOrReadOnly
+from .models import Company, CompanyPoint, Department, Employee
+from .permissions import HasOwnerPermissionOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (
     CompanyPointDetailSerializer,
     CompanyPointSerializer,
     CompanySerializer,
+    DepartmentDetailSerializer,
+    DepartmentSerializer,
     EmployeeDetailSerializer,
     EmployeeSerializer,
 )
@@ -26,9 +28,9 @@ class CompaniesViewSet(viewsets.ModelViewSet):
         serializer.save(time_updated=timezone.now())
 
 
-@extend_schema(tags=['company point'])
+@extend_schema(tags=['company points'])
 class CompanyPointViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsCompanyPointOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, HasOwnerPermissionOrReadOnly]
     queryset = CompanyPoint.objects.select_related('company')
 
     def get_serializer_class(self):
@@ -37,9 +39,20 @@ class CompanyPointViewSet(viewsets.ModelViewSet):
         return CompanyPointSerializer
 
 
+@extend_schema(tags=['departments'])
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all()
+    permission_classes = [HasOwnerPermissionOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return DepartmentDetailSerializer
+        return DepartmentSerializer
+
+
 @extend_schema(tags=['employees'])
 class EmployeeViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowedToEmploy]
+    permission_classes = [HasOwnerPermissionOrReadOnly]
 
     def get_queryset(self):
         if self.action == 'retrieve':

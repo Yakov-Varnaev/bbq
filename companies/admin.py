@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Company, CompanyPoint, Employee
+from .models import Company, CompanyPoint, Department, Employee
 
 
 @admin.register(Company)
@@ -28,3 +28,16 @@ class EmployeeAdmin(admin.ModelAdmin):
     @admin.display(ordering='object__address', description='Address')
     def get_address(self, obj):
         return obj.point.address
+
+
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'point', 'company']
+
+    @admin.display(ordering='point__address', description='Address')
+    def point(self, obj):
+        return obj.point.address
+
+    @admin.display(ordering='point__company')
+    def company(self, obj):
+        return obj.point.company.name
