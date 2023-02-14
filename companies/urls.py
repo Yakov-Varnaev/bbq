@@ -2,7 +2,12 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework_nested.routers import NestedSimpleRouter
 
-from .views import CompaniesViewSet, CompanyPointViewSet, DepartmentViewSet, EmployeeViewSet
+from .views import (
+    CompaniesViewSet,
+    CompanyPointViewSet,
+    DepartmentViewSet,
+    EmployeeViewSet,
+)
 
 router = routers.SimpleRouter()
 router.register('companies', CompaniesViewSet, basename='companies')

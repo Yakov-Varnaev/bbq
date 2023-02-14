@@ -55,7 +55,7 @@ class TestEmployees(TestUtils):
         data['position'] = 'CTO'
         data.pop('fired')
         response = auth_client.put(
-            self.detail_url(employee.point.company.id, employee.point.id, employee.id), data=data
+            self.detail_url(employee.point.company.id, employee.point.id, employee.id), data=data,
         )
         empl = self.retrieve()
 
@@ -70,7 +70,7 @@ class TestEmployees(TestUtils):
         data['position'] = 'CTO'
         data.pop('fired')
         response = auth_another_client.put(
-            self.detail_url(employee.point.company.id, employee.point.id, employee.id), data=data
+            self.detail_url(employee.point.company.id, employee.point.id, employee.id), data=data,
         )
         empl = self.retrieve()
 
