@@ -29,7 +29,7 @@ class CompaniesViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=['company point'])
 class CompanyPointViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsCompanyPointOwnerOrReadOnly]
-    queryset = CompanyPoint.objects.select_related('comapny')
+    queryset = CompanyPoint.objects.select_related('company')
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
