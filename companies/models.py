@@ -25,6 +25,12 @@ class CompanyPoint(models.Model):
     company = models.ForeignKey(Company, related_name='points', on_delete=models.CASCADE,)
 
 
+class Department(models.Model):
+
+    point = models.ForeignKey(CompanyPoint, related_name='departments', on_delete=models.CASCADE,)
+    name = models.CharField(max_length=255)
+
+
 class Employee(models.Model):
 
     user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='employments',)

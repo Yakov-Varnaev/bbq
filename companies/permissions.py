@@ -17,7 +17,7 @@ class IsCompanyPointOwnerOrReadOnly(BasePermission):
         return obj.company.owner == request.user
 
 
-class AllowedToEmploy(BasePermission):
+class HasOwnerPermissionOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
