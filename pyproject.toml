@@ -35,6 +35,7 @@ dev = [
     "pytest-freezegun",
     "pytest-mock",
     "pytest-randomly",
+    "pytest-lazy-fixture",
 
     "black",
 

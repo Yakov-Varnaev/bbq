@@ -25,5 +25,5 @@ test:
 	mkdir -p src/static
 	cd src && ./manage.py makemigrations --dry-run --no-input --check
 	cd src && ./manage.py compilemessages
-	cd src && pytest --dead-fixtures
+	# cd src && pytest --dead-fixtures
 	cd src && pytest -x

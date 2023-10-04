@@ -8,7 +8,7 @@ from companies.api import viewsets
 app_name = "companies"
 router = SimpleRouter()
 
-router.register("", viewsets.CompanyViewSet, basename="companies")
+router.register("", viewsets.CompanyViewSet, basename="company")
 
 urlpatterns = [
     path("", include(router.urls)),
