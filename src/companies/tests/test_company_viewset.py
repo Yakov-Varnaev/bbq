@@ -151,8 +151,6 @@ def test_owner_can_delete_company(as_company_owner: ApiClient, company: Company,
         (lf("as_user"), status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_non_owner_cannot_delete_company(
-    client: ApiClient, expected_status: int, company: Company, assert_company_exists: Callable
-):
+def test_non_owner_cannot_delete_company(client: ApiClient, expected_status: int, company: Company):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
     client.delete(url, expected_status=expected_status)
