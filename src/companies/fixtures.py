@@ -1,15 +1,14 @@
 import pytest
 
-from mixer.backend.django import mixer as _mixer
-
 from app.testing import ApiClient
+from app.testing.factory import FixtureFactory
 from companies.models import Company
 from users.models import User
 
 
 @pytest.fixture
-def company() -> Company:
-    return _mixer.blend("companies.Company")
+def company(factory: FixtureFactory) -> Company:
+    return factory.company()
 
 
 @pytest.fixture
@@ -18,9 +17,10 @@ def company_owner(company: Company) -> User:
 
 
 @pytest.fixture
-def owner_client(company_owner: User) -> ApiClient:
+def as_company_owner(company_owner: User) -> ApiClient:
     return ApiClient(company_owner)
 
 
-# Register your project-wide fixtures here.
-# Add this file to root conftest pytest_plugins.
+@pytest.fixture
+def company_data(factory: FixtureFactory) -> dict:
+    return factory.company_data()

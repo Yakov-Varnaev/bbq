@@ -44,11 +44,9 @@ class DefaultModel(models.Model):
         return cls._meta.label_lower.split(".")[-1]
 
 
-class TimestampedModel(DefaultModel, Timestamped):
-    """
-    Default app model that has `created` and `updated` attributes.
-    Currently based on https://github.com/audiolion/django-behaviors
-    """
+class TimestampedModel(DefaultModel):
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    modified = models.DateTimeField(auto_now=True, db_index=True)
 
     class Meta:
         abstract = True

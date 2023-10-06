@@ -1,19 +1,21 @@
-import uuid
-
+import mimesis
+from mimesis import Field, Fieldset, Generic, Schema
+from mimesis.locales import Locale
 from mixer.backend.django import mixer
 
-__all__ = [
-    "mixer",
-]
+__all__ = ["mixer", "mimesis", "generic", "field", "fieldset", "Schema"]
+
+generic = Generic(locale=Locale.EN)
+field = Field(locale=Locale.EN)
+fieldset = Fieldset(locale=Locale.EN)
 
 
 def _random_user_name() -> str:
-    return str(uuid.uuid4())
+    return generic.person.username()
 
 
 def _random_email() -> str:
-    uuid_as_str = str(uuid.uuid4()).replace("-", "_")
-    return f"{uuid_as_str}@mail.com"
+    return generic.person.email()
 
 
 mixer.register("users.User", username=_random_user_name, email=_random_email)

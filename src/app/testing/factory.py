@@ -1,7 +1,7 @@
 from functools import partial
 from typing import Callable
 
-from app.testing.mixer import mixer
+from app.testing.mixer import Schema, field, fieldset, generic, mixer
 
 
 def register(method: Callable) -> Callable:
@@ -32,6 +32,10 @@ class CycleFixtureFactory:
 class FixtureFactory:
     def __init__(self) -> None:
         self.mixer = mixer
+        self.schema = Schema
+        self.fieldset = fieldset
+        self.field = field
+        self.generic = generic
         self.registry = FixtureRegistry()
 
     def __getattr__(self, name: str) -> Callable:

@@ -45,6 +45,7 @@ dev = [
 
     "freezegun",
     "mixer",
+    "mimesis",
 
     "jedi",
     "flake8-absolute-import",
@@ -73,11 +74,12 @@ dev = [
     "djangorestframework-stubs",
     "types-freezegun",
     "types-Pillow",
+    "types-pytest-lazy-fixture",
 ]
 
 
 [tool.flake8]
-max-line-length = 160
+max-line-length = 120
 inline-quotes = "\""
 ignore = [
     "DJ05",  # URLs include() should set a namespace
@@ -99,8 +101,8 @@ exclude = [
 
 
 [tool.isort]
-profile = "google"
-line_length = 160
+profile = "black"
+line_length = 120
 extra_standard_library = ["pytest"]
 known_django = ["django", "restframework"]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "DJANGO", "FIRSTPARTY", "LOCALFOLDER"]
@@ -115,7 +117,7 @@ exclude = '''
   | migrations
 )/
 '''
-line_length = 160
+line_length = 120
 
 
 [tool.pytest.ini_options]
