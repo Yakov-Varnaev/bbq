@@ -13,6 +13,7 @@ dependencies = [
     "whitenoise",
     "django-storages",
     "djangorestframework",
+    "djangorestframework_simplejwt",
     "djangorestframework-camel-case",
     "drf-jwt",
     "drf-spectacular[sidecar]",

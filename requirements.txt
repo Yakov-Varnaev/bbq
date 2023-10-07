@@ -70,7 +70,9 @@ djangorestframework==3.14.0
 djangorestframework-camel-case==1.4.2
     # via bbq (pyproject.toml)
 djangorestframework-simplejwt==5.3.0
-    # via djoser
+    # via
+    #   bbq (pyproject.toml)
+    #   djoser
 djoser==2.2.0
     # via bbq (pyproject.toml)
 drf-jwt==1.19.2
