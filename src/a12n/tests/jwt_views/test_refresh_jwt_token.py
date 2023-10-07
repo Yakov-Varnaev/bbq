@@ -1,7 +1,7 @@
 import pytest
 
 from freezegun import freeze_time
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken  # type: ignore
 
 pytestmark = [
     pytest.mark.django_db,

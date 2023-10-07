@@ -20,7 +20,7 @@ pytestmark = [
 
 def test_anonymous_user_cannot_create_company(as_anon: ApiClient, company_data: dict):
     url = reverse("api_v1:companies:company-list")
-    as_anon.post(url, data=company_data, expected_status=status.HTTP_401_UNAUTHORIZED)
+    as_anon.post(url, data=company_data, expected_status=status.HTTP_401_UNAUTHORIZED)  # type: ignore
 
     assert not Company.objects.exists()
 
@@ -29,7 +29,7 @@ def test_anonymous_user_cannot_create_company(as_anon: ApiClient, company_data: 
 def test_authenticated_user_can_create_company(as_user: ApiClient, company_data: dict, assert_company: Callable):
     now = timezone.now()
     url = reverse("api_v1:companies:company-list")
-    as_user.post(url, data=company_data)
+    as_user.post(url, data=company_data)  # type: ignore
 
     assert_company(company_data, created=now, modified=now)
 
@@ -67,7 +67,7 @@ def test_company_cannot_be_created_with_owner(as_user: ApiClient, factory: Fixtu
 )
 def test_company_retrieve(client: ApiClient, company: Company):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
-    company_data = client.get(url)
+    company_data = client.get(url)  # type: ignore
 
     assert CompanySerializer(company).data == company_data
 
@@ -82,7 +82,7 @@ def test_company_retrieve(client: ApiClient, company: Company):
 )
 def test_company_list(client: ApiClient, company: Company):
     url = reverse("api_v1:companies:company-list")
-    companies_data = client.get(url)
+    companies_data = client.get(url)  # type: ignore
 
     assert companies_data["count"] == 1
     assert CompanySerializer([company], many=True).data == companies_data["results"]
@@ -152,4 +152,4 @@ def test_owner_can_delete_company(as_company_owner: ApiClient, company: Company,
 )
 def test_non_owner_cannot_delete_company(client: ApiClient, expected_status: int, company: Company):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
-    client.delete(url, expected_status=expected_status)
+    client.delete(url, expected_status=expected_status)  # type: ignore

@@ -1,5 +1,5 @@
-from djoser import urls
-from djoser.urls import jwt
+from djoser import urls  # type: ignore
+from djoser.urls import jwt  # type: ignore
 
 from django.urls import include, path
 

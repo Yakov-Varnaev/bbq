@@ -6,7 +6,7 @@ from mixer.backend.django import mixer
 
 class FactoryProtocol(Protocol):
     mixer: mixer
-    schema: Schema
+    schema: type[Schema]
     generic: Generic
     field: Field
     fieldset: Fieldset
