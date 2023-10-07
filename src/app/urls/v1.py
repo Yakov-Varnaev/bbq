@@ -1,8 +1,6 @@
-from drf_spectacular.views import SpectacularAPIView
-from drf_spectacular.views import SpectacularSwaggerView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from django.urls import include
-from django.urls import path
+from django.urls import include, path
 
 app_name = "api_v1"
 urlpatterns = [

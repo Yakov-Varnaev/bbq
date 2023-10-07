@@ -11,6 +11,8 @@ class Command(BaseCommand):
 
     def handle(self, *app_labels, **options):
         if options["name"] is None and not any([options["dry_run"], options["check_changes"]]):
-            raise MakemigrationsError("Migration name is required. Run again with `-n/--name` argument and specify name explicitly.")
+            raise MakemigrationsError(
+                "Migration name is required. Run again with `-n/--name` argument and specify name explicitly."
+            )
 
         super().handle(*app_labels, **options)

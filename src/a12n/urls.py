@@ -1,9 +1,10 @@
-from django.urls import path
+from djoser import urls
+from djoser.urls import jwt
 
-from a12n.api import views
+from django.urls import include, path
 
 app_name = "a12n"
+
 urlpatterns = [
-    path("token/", views.ObtainJSONWebTokenView.as_view()),
-    path("token/refresh/", views.RefreshJSONWebTokenView.as_view()),
+    path("", include(urls.urlpatterns + jwt.urlpatterns)),
 ]
