@@ -4,6 +4,7 @@ version = "0.0.0-dev"
 requires-python = ">=3.11"
 dependencies = [
     "Django",
+    "djoser",
     "bcrypt",
     "django-behaviors",
     "django-environ",
