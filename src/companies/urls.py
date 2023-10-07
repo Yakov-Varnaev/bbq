@@ -1,7 +1,6 @@
 from rest_framework.routers import SimpleRouter
 
-from django.urls import include
-from django.urls import path
+from django.urls import include, path
 
 from companies.api import viewsets
 

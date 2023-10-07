@@ -3,8 +3,6 @@ import pytest
 from freezegun import freeze_time
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from a12n.utils import get_jwt
-
 pytestmark = [
     pytest.mark.django_db,
     pytest.mark.freeze_time("2049-01-05"),

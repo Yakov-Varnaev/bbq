@@ -10,7 +10,6 @@ from django.utils import timezone
 
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.testing.types import FactoryProtocol
 from companies.api.serializers.company import CompanySerializer
 from companies.models.company import Company
 
@@ -119,7 +118,7 @@ def test_update_company_invalid_data(
 
 
 @pytest.mark.parametrize(
-    "client,expected_status",
+    ("client", "expected_status"),
     [
         (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
         (lf("as_user"), status.HTTP_403_FORBIDDEN),
@@ -145,7 +144,7 @@ def test_owner_can_delete_company(as_company_owner: ApiClient, company: Company,
 
 
 @pytest.mark.parametrize(
-    "client,expected_status",
+    ("client", "expected_status"),
     [
         (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
         (lf("as_user"), status.HTTP_403_FORBIDDEN),

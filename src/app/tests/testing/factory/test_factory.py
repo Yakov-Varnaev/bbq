@@ -1,7 +1,6 @@
 import pytest
 
-from app.testing import FixtureFactory
-from app.testing import register
+from app.testing import FixtureFactory, register
 
 
 @pytest.fixture
