@@ -7,7 +7,9 @@ from a12n.factory import RegistrationData, UserData
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
 
-pytestmark = [pytest.mark.django_db, pytest.mark.skip("Not Implemented")]
+pytestmark = [
+    pytest.mark.django_db,
+]
 
 
 def test_registration(
