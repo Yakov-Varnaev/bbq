@@ -17,6 +17,7 @@ dependencies = [
     "djangorestframework-camel-case",
     "drf-jwt",
     "drf-spectacular[sidecar]",
+    "drf-nested-routers",
     "django-filter",
     "django-split-settings",
     "django-healthchecks",
