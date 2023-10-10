@@ -19,5 +19,6 @@ class Point(TimestampedModel):
         return f"{self.company.name} - {self.address}"
 
     class Meta:
+        ordering = ("id",)
         verbose_name = _("point")
         verbose_name_plural = _("points")
