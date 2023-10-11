@@ -3,8 +3,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from app.api.permissions import IsCompanyOwnerOrReadOnly
-from companies.api.serializers import PointSerializer
-from companies.api.serializers.point import PointCreateSerializer
+from companies.api.serializers import PointCreateSerializer, PointSerializer
 from companies.models import Point
 
 

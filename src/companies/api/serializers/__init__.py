@@ -1,5 +1,5 @@
-from companies.api.serializers.company import CompanyCreateSerializer, CompanySerializer
-from companies.api.serializers.point import PointSerializer
+from companies.api.serializers.companies import CompanyCreateSerializer, CompanySerializer
+from companies.api.serializers.points import PointSerializer
 
 __all__ = [
     "CompanySerializer",
