@@ -10,8 +10,8 @@ from django.utils import timezone
 
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from companies.api.serializers.company import CompanySerializer
-from companies.models.company import Company
+from companies.api.serializers import CompanySerializer
+from companies.models import Company
 
 pytestmark = [
     pytest.mark.django_db,

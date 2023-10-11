@@ -5,14 +5,14 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
-from companies.models.company import Company
+from companies.models import Company
 
 
 class IsCompanyOwnerOrReadOnly(permissions.BasePermission):
     message = _("Only company owner can perform this action.")
 
     def has_permission(self, request: Request, view: APIView) -> bool:
-        from companies.api.viewsets.company import CompanyViewSet
+        from companies.api.viewsets import CompanyViewSet
 
         if request.method in permissions.SAFE_METHODS:
             return True
