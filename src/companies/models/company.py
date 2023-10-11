@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from app.models import TimestampedModel
 
@@ -22,3 +23,5 @@ class Company(TimestampedModel):
 
     class Meta:
         ordering = ("name",)
+        verbose_name = _("company")
+        verbose_name_plural = _("companies")
