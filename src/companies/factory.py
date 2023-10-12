@@ -35,7 +35,7 @@ def company_point(self: FactoryProtocol, **kwargs: dict) -> Point:
 
 
 @register
-def department_data(self: FactoryProtocol, **kwargs: dict) -> Department:
+def department_data(self: FactoryProtocol, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {"name": self.field("text.word")},
         iterations=1,

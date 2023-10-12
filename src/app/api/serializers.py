@@ -1,4 +1,3 @@
-from rest_framework import serializers
 from rest_framework.serializers import Field
 
 from companies.models import Company
