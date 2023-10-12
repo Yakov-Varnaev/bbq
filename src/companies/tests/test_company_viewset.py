@@ -1,5 +1,5 @@
 import pytest
-from typing import Any, Callable
+from typing import Any
 
 from freezegun import freeze_time
 from pytest_lazyfixture import lazy_fixture as lf
@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
+from app.typing import ExistCheckAssertion, ModelAssertion, RestPageAssertion
 from companies.api.serializers import CompanySerializer
 from companies.models import Company
 
@@ -26,7 +27,7 @@ def test_anonymous_user_cannot_create_company(as_anon: ApiClient, company_data: 
 
 
 @freeze_time()
-def test_authenticated_user_can_create_company(as_user: ApiClient, company_data: dict, assert_company: Callable):
+def test_authenticated_user_can_create_company(as_user: ApiClient, company_data: dict, assert_company: ModelAssertion):
     now = timezone.now()
     url = reverse("api_v1:companies:company-list")
     as_user.post(url, data=company_data)  # type: ignore
@@ -36,16 +37,21 @@ def test_authenticated_user_can_create_company(as_user: ApiClient, company_data:
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])
 def test_company_create_invalid_data(
-    as_user: ApiClient, factory: FixtureFactory, invalid_fields: dict[str, Any], assert_company_doesnt_exist: Callable
+    as_user: ApiClient,
+    factory: FixtureFactory,
+    invalid_fields: dict[str, Any],
+    assert_doesnt_exist: ExistCheckAssertion,
 ):
     url = reverse("api_v1:companies:company-list")
     as_user.post(url, data=factory.company_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
 
-    assert_company_doesnt_exist()
+    assert_doesnt_exist(Company)
 
 
 @freeze_time()
-def test_company_cannot_be_created_with_owner(as_user: ApiClient, factory: FixtureFactory, assert_company: Callable):
+def test_company_cannot_be_created_with_owner(
+    as_user: ApiClient, factory: FixtureFactory, assert_company: ModelAssertion
+):
     """
     As DRF doesn't really give any api to disallow extra fields, we have to at least ensure
     that company owner is always set to the current user.
@@ -57,39 +63,24 @@ def test_company_cannot_be_created_with_owner(as_user: ApiClient, factory: Fixtu
     assert_company(company_data, owner=as_user.user)
 
 
-@pytest.mark.parametrize(
-    "client",
-    [
-        lf("as_anon"),
-        lf("as_user"),
-        lf("as_company_owner"),
-    ],
-)
-def test_company_retrieve(client: ApiClient, company: Company):
+def test_company_retrieve(reader_client: ApiClient, company: Company):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
-    company_data = client.get(url)  # type: ignore
+    company_data = reader_client.get(url)  # type: ignore
 
     assert CompanySerializer(company).data == company_data
 
 
-@pytest.mark.parametrize(
-    "client",
-    [
-        lf("as_anon"),
-        lf("as_user"),
-        lf("as_company_owner"),
-    ],
-)
-def test_company_list(client: ApiClient, company: Company):
+def test_company_list(reader_client: ApiClient, factory: FixtureFactory, assert_rest_page: RestPageAssertion):
+    factory.cycle(5).company()
     url = reverse("api_v1:companies:company-list")
-    companies_data = client.get(url)  # type: ignore
+    companies_data = reader_client.get(url)  # type: ignore
 
-    assert companies_data["count"] == 1
-    assert CompanySerializer([company], many=True).data == companies_data["results"]
+    # TODO: mypy bug?  # noqa:  T101
+    assert_rest_page(companies_data, Company.objects.all(), CompanySerializer)  # type: ignore[call-arg]
 
 
 def test_udpate_company(
-    as_company_owner: ApiClient, company: Company, assert_company: Callable, factory: FixtureFactory
+    as_company_owner: ApiClient, company: Company, assert_company: ModelAssertion, factory: FixtureFactory
 ):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
     company_data = factory.company_data()
@@ -136,11 +127,13 @@ def test_non_owner_cannot_update_company(
     assert company.modified == old_modified_ts
 
 
-def test_owner_can_delete_company(as_company_owner: ApiClient, company: Company, assert_company_doesnt_exist: Callable):
+def test_owner_can_delete_company(
+    as_company_owner: ApiClient, company: Company, assert_doesnt_exist: ExistCheckAssertion
+):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
     as_company_owner.delete(url)  # type: ignore
 
-    assert_company_doesnt_exist()
+    assert_doesnt_exist(Company)
 
 
 @pytest.mark.parametrize(

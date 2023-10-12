@@ -1,5 +1,4 @@
 import pytest
-from typing import Callable
 
 from pytest_lazyfixture import lazy_fixture as lf
 from rest_framework import status
@@ -10,9 +9,9 @@ from django.urls import reverse
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
+from app.typing import ExistCheckAssertion, ModelAssertion, RestPageAssertion
 from companies.api.serializers import DepartmentSerializer
 from companies.models import Department, Point
-from companies.tests.conftest import ModelAssertion
 
 pytestmark = [pytest.mark.django_db]
 
@@ -27,7 +26,10 @@ non_point_managing_users_parametrization = (
 
 
 def test_point_managing_staff_can_create_departments(
-    as_point_managing_staff: ApiClient, department_data: dict, company_point: Point, assert_department: ModelAssertion
+    as_point_managing_staff: ApiClient,
+    department_data: dict,
+    company_point: Point,
+    assert_department: ModelAssertion,
 ):
     response = as_point_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -48,7 +50,7 @@ def test_non_point_managing_staff_cannot_create_departments(
     message: str,
     department_data: dict,
     company_point: Point,
-    assert_doesnt_exist: Callable,
+    assert_doesnt_exist: ExistCheckAssertion,
 ):
     response = client.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -76,7 +78,7 @@ def test_create_department_with_non_existing_company_or_point(
     company_id: int,
     point_id: int,
     department_data: dict,
-    assert_doesnt_exist: Callable,
+    assert_doesnt_exist: ExistCheckAssertion,
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -101,7 +103,7 @@ def test_create_department_invalid_data(
     company_point: Point,
     invalid_data: dict,
     factory: FixtureFactory,
-    assert_doesnt_exist: Callable,
+    assert_doesnt_exist: ExistCheckAssertion,
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -138,7 +140,7 @@ def test_department_list(
     reader_client: ApiClient,
     company_point: Point,
     factory: FixtureFactory,
-    assert_rest_page: Callable,
+    assert_rest_page: RestPageAssertion,
 ):
     departments = sorted(factory.cycle(5).department(point=company_point), key=lambda d: d.name)
     response = reader_client.get(  # type: ignore[no-untyped-call]
@@ -148,7 +150,7 @@ def test_department_list(
         )
     )
 
-    assert_rest_page(response, departments, DepartmentSerializer)
+    assert_rest_page(response, departments, DepartmentSerializer, None, None)
 
 
 def test_department_retrieve(
@@ -251,7 +253,7 @@ def test_non_point_managing_staff_cannot_update_department(
 def test_point_managing_staff_can_delete_department(
     as_point_managing_staff: ApiClient,
     department: Department,
-    assert_doesnt_exist: Callable,
+    assert_doesnt_exist: ExistCheckAssertion,
 ):
     as_point_managing_staff.delete(  # type: ignore[no-untyped-call]
         reverse(

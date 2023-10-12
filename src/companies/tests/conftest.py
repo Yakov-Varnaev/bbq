@@ -1,14 +1,12 @@
 import pytest
-from typing import Any, Callable
+from typing import Any
 
-from mypy_extensions import Arg, KwArg
 from pytest_lazyfixture import lazy_fixture as lf
 
 from app.testing.api import ApiClient
+from app.typing import ModelAssertion
 from companies.models import Company, Point
 from companies.models.department import Department
-
-ModelAssertion = Callable[[Arg(dict, "data"), KwArg()], None]  # noqa: F821
 
 
 @pytest.fixture
@@ -19,14 +17,6 @@ def assert_company() -> ModelAssertion:
             assert getattr(company, key) == value
 
     return _assert_company
-
-
-@pytest.fixture
-def assert_company_doesnt_exist() -> Callable[[KwArg()], None]:
-    def _assert(**filter: Any):
-        assert not Company.objects.filter(**filter).exists()
-
-    return _assert
 
 
 @pytest.fixture
