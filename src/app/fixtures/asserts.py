@@ -5,7 +5,7 @@ from rest_framework.serializers import BaseSerializer
 
 from django.db.models import Model, QuerySet
 
-from app.typing import ExistCheckAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, RestPageAssertion
 
 
 @pytest.fixture

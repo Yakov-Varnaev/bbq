@@ -4,7 +4,7 @@ from typing import Any
 from pytest_lazyfixture import lazy_fixture as lf
 
 from app.testing.api import ApiClient
-from app.typing import ModelAssertion
+from app.types import ModelAssertion
 from companies.models import Company, Point
 from companies.models.department import Department
 

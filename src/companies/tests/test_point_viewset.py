@@ -11,7 +11,7 @@ from django.utils import timezone
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.typing import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
 from companies.api.serializers import PointSerializer
 from companies.models import Company, Point
 
