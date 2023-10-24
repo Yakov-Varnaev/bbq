@@ -1,7 +1,13 @@
+from typing import TypedDict
+
+from typing_extensions import Unpack
+
 from app.testing import register
+from app.testing.factory import FixtureFactory
 from app.testing.types import FactoryProtocol
 from companies.models import Company, Point
 from companies.models.department import Department
+from users.models import User
 
 
 @register
@@ -46,3 +52,22 @@ def department_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 @register
 def department(self: FactoryProtocol, **kwargs: dict) -> Department:
     return self.mixer.blend(Department, **kwargs)
+
+
+class EmployeeData(TypedDict, total=False):
+    departments: list[int | Department]
+    user: int | User
+
+
+@register
+def employee_data(self: FixtureFactory, **kwargs: Unpack[EmployeeData]) -> dict:
+    departments = kwargs.pop("departments", None)
+    user = kwargs.pop("user", None)
+    if departments is None:
+        departments = [self.department()]
+    if user is None:
+        user = self.user()
+    return {
+        "user": user if isinstance(user, int) else user.pk,
+        "departments": [department if isinstance(department, int) else department.pk for department in departments],
+    }

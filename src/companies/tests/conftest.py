@@ -3,10 +3,13 @@ from typing import Any
 
 from pytest_lazyfixture import lazy_fixture as lf
 
+from django.contrib.auth import get_user_model
+
 from app.testing.api import ApiClient
 from app.types import ModelAssertion
-from companies.models import Company, Point
-from companies.models.department import Department
+from companies.models import Company, Department, Employee, Point
+
+User = get_user_model()
 
 
 @pytest.fixture
@@ -37,6 +40,19 @@ def assert_department() -> ModelAssertion:
             assert getattr(department, field_name) == expected_value
 
     return _assert_department
+
+
+@pytest.fixture
+def assert_employee() -> ModelAssertion:
+    def _assert_employee(data: dict, **extra: Any) -> None:
+        employee = Employee.objects.get(user_id=data["user"])
+        assert sorted([d.id for d in employee.departments.all()]) == sorted(data.pop("departments"))
+        assert employee.user.id == data.pop("user")
+
+        for field_name, expected_value in (data | extra).items():
+            assert getattr(employee, field_name) == expected_value
+
+    return _assert_employee
 
 
 @pytest.fixture(

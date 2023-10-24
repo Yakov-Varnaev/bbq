@@ -123,6 +123,9 @@ exclude = '''
 '''
 line_length = 120
 
+[tool.mypy]
+enable_incomplete_feature = ["Unpack"]
+
 
 [tool.pytest.ini_options]
  DJANGO_SETTINGS_MODULE = "app.settings"
