@@ -120,3 +120,13 @@ def employee_with_non_existing_department(factory: FixtureFactory) -> dict:
 )
 def employee_invalid_data(request: pytest.FixtureRequest) -> dict:
     return request.param
+
+
+@pytest.fixture
+def stock_data(factory: FixtureFactory) -> dict:
+    return factory.stock_data()
+
+
+@pytest.fixture
+def stock(factory: FixtureFactory, company_point: Point) -> dict:
+    return factory.stock(point=company_point)

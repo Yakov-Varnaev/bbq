@@ -70,4 +70,4 @@ def test_received_token_works(as_user, get_token, as_anon, extract_token, status
     token = extract_token(get_token(as_user.user.email, as_user.password))
     as_anon.credentials(HTTP_AUTHORIZATION=f"JWT {token}")
 
-    as_anon.get("/api/v1/users/me/", expected_status=status_code)  # act
+    as_anon.get("/api/v1/auth/users/me/", expected_status=status_code)  # act

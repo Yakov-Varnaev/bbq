@@ -21,6 +21,7 @@ dependencies = [
     "django-filter",
     "django-split-settings",
     "django-healthchecks",
+    "django-cors-headers",
     "redis",
     "sentry-sdk",
     "Pillow",
@@ -122,9 +123,6 @@ exclude = '''
 )/
 '''
 line_length = 120
-
-[tool.mypy]
-enable_incomplete_feature = ["Unpack"]
 
 
 [tool.pytest.ini_options]

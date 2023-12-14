@@ -14,6 +14,7 @@ THIRD_PARTY_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "rest_framework",

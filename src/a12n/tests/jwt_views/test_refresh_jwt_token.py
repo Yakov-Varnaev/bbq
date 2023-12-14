@@ -64,6 +64,6 @@ def test_received_token_works(as_anon, refresh_token, initial_token):
     token = refresh_token(initial_token)["access"]
     as_anon.credentials(HTTP_AUTHORIZATION=f"JWT {token}")
 
-    result = as_anon.get("/api/v1/users/me/")
+    result = as_anon.get("/api/v1/auth/users/me/")
 
     assert result is not None

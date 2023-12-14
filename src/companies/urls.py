@@ -10,14 +10,19 @@ app_name = "companies"
 router = SimpleRouter()
 router.register("", viewsets.CompanyViewSet, basename="company")
 
-point_router = NestedSimpleRouter(router, r"", lookup="company")
-point_router.register("points", viewsets.PointViewSet, basename="point")
+company_router = NestedSimpleRouter(router, r"", lookup="company")
+company_router.register("points", viewsets.PointViewSet, basename="point")
 
-department_router = NestedSimpleRouter(point_router, "points", lookup="point")
-department_router.register("departments", viewsets.DepartmentViewSet, basename="department")
+point_router = NestedSimpleRouter(company_router, "points", lookup="point")
+point_router.register("departments", viewsets.DepartmentViewSet, basename="department")
+point_router.register("stocks", viewsets.StockViewSet, basename="stock")
+
+employee_router = NestedSimpleRouter(company_router, "points", lookup="point")
+point_router.register("employees", viewsets.EmployeeViewSet, basename="employee")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("", include(company_router.urls)),
     path("", include(point_router.urls)),
-    path("", include(department_router.urls)),
+    path("", include(employee_router.urls)),
 ]

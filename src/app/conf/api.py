@@ -14,14 +14,6 @@ REST_FRAMEWORK = {
         # "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "DEFAULT_RENDERER_CLASSES": [
-        "app.api.renderers.AppJSONRenderer",
-    ],
-    "DEFAULT_PARSER_CLASSES": [
-        "djangorestframework_camel_case.parser.CamelCaseJSONParser",
-        "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
-        "djangorestframework_camel_case.parser.CamelCaseFormParser",
-    ],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "DEFAULT_PAGINATION_CLASS": "app.api.pagination.AppPagination",
     "PAGE_SIZE": env("PAGE_SIZE", cast=int, default=20),
@@ -34,9 +26,6 @@ REST_FRAMEWORK = {
 # Adding session auth and browsable API at the developer machine
 if env("DEBUG", cast=bool, default=False):
     REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"].append("rest_framework.authentication.SessionAuthentication")
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
-        "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer"
-    )
 
 
 # Set up drf_spectacular, https://drf-spectacular.readthedocs.io/en/latest/settings.html

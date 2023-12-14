@@ -7,6 +7,7 @@ from app.testing.factory import FixtureFactory
 from app.testing.types import FactoryProtocol
 from companies.models import Company, Point
 from companies.models.department import Department
+from companies.models.stock import Stock
 from users.models import User
 
 
@@ -70,4 +71,21 @@ def employee_data(self: FixtureFactory, **kwargs: Unpack[EmployeeData]) -> dict:
     return {
         "user": user if isinstance(user, int) else user.pk,
         "departments": [department if isinstance(department, int) else department.pk for department in departments],
+        "position": self.field("text.word"),
     }
+
+
+@register
+def stock_data(self: FixtureFactory, **kwargs: dict) -> dict:
+    schema = self.schema(
+        schema=lambda: {
+            "date": self.field("date"),
+        },
+        iterations=1,
+    )
+    return {**schema.create()[0], **kwargs}
+
+
+@register
+def stock(self: FixtureFactory, **kwargs: dict) -> dict:
+    return self.mixer.blend(Stock, **kwargs)

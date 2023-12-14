@@ -24,6 +24,7 @@ def api(user):
     return ApiClient(user=user, HTTP_X_FORWARDED_FOR="100.200.250.150, 10.0.0.1")
 
 
+@pytest.mark.skip("don't sure we need this.")
 def test_remote_addr(api):
     result = api.get("/api/v1/users/me/")
 

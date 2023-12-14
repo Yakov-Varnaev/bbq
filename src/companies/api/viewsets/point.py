@@ -29,7 +29,7 @@ class PointViewSet(ModelViewSet):
 
     @extend_schema(request=EmployeeSerializer, responses={200: EmployeeSerializer})
     @action(detail=True, methods=["post"])
-    def employees(self, *args: Any, **kwargs: Any) -> Response:
+    def add_employees(self, *args: Any, **kwargs: Any) -> Response:
         serializer = EmployeeSerializer(data=self.request.data, context=self.get_serializer_context(*args, **kwargs))
         employee = EmployeeCreator(serializer)()
         return Response(EmployeeSerializer(employee).data)

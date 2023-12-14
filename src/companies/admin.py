@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from companies.models import Company, Department, Point
+from companies.models import Company, Department, Employee, Point
 
 
 @admin.register(Company)
@@ -19,3 +19,11 @@ class DepartmentAdmin(admin.ModelAdmin):
 
     def company(self, department: Department) -> Company:
         return department.point.company
+
+
+@admin.register(Employee)
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "position", "fire_date")
+
+    def user(self, employee: Employee) -> str:
+        return str(employee.user)

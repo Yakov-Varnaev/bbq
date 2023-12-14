@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from app.conf.environ import env
 
 AUTH_USER_MODEL = "users.User"
@@ -8,9 +10,18 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+DJOSER = {
+    "SERIALIZERS": {
+        "user": "users.api.serializers.UserSerializer",
+    }
+}
+
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
 }
 
 

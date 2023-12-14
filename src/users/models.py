@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 class UserManager(BaseDjangoUserManager):
     def __perform_create(self, email: str, password: str, **extra_fields: dict) -> "User":
         if not email:
-            raise ValueError(_("The given email must be set"))
+            raise ValueError(_("Email cannot be empty"))
         extra_fields.pop("username", None)
 
         email = self.normalize_email(email)
@@ -29,6 +29,7 @@ class User(AbstractUser):
     objects = UserManager()  # type: ignore
 
     email = models.EmailField(_("email"), unique=True)
+    bio = models.TextField(_("bio"), max_length=250)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]

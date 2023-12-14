@@ -14,6 +14,15 @@ class Employee(TimestampedModel):
         on_delete=models.PROTECT,
         related_name="employees",
     )
+    position = models.CharField(
+        _("employee position"),
+        max_length=255,
+    )
+    fire_date = models.DateField(
+        _("employee fire date"),
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = _("employee")
