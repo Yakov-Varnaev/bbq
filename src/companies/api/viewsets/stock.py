@@ -32,7 +32,7 @@ class StockViewSet(ModelViewSet):
     queryset = Stock.objects.all()
 
     def get_queryset(self) -> QuerySet[Stock]:
-        return Stock.objects.detailed()
+        return Stock.objects.detailed().order_by("-date")
 
     def get_serializer_class(self) -> type[BaseSerializer[Stock]]:
         serializers = {

@@ -178,7 +178,7 @@ def test_authorized_users_can_list_stocks(
     client: ApiClient, company_point: Point, assert_rest_page: RestPageAssertion, factory: FixtureFactory
 ):
     factory.cycle(5).stock(point=company_point)
-    stocks = Stock.objects.detailed()
+    stocks = Stock.objects.detailed().order_by("-date")
     stocks_data = client.get(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-list",
