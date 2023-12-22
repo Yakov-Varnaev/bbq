@@ -2,6 +2,14 @@ from companies.api.viewsets.company import CompanyViewSet
 from companies.api.viewsets.department import DepartmentViewSet
 from companies.api.viewsets.employee import EmployeeViewSet
 from companies.api.viewsets.point import PointViewSet
-from companies.api.viewsets.stock import StockViewSet
+from companies.api.viewsets.stock import MaterialViewSet, StockMaterialViewSet, StockViewSet
 
-__all__ = ["CompanyViewSet", "PointViewSet", "DepartmentViewSet", "EmployeeViewSet", "StockViewSet"]
+__all__ = [
+    "CompanyViewSet",
+    "PointViewSet",
+    "DepartmentViewSet",
+    "EmployeeViewSet",
+    "StockViewSet",
+    "StockMaterialViewSet",
+    "MaterialViewSet",
+]

@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from app.testing.api import ApiClient
 from app.types import ModelAssertion
 from companies.models import Company, Department, Employee, Point
+from companies.models.stock import StockMaterial
 
 User = get_user_model()
 
@@ -53,6 +54,18 @@ def assert_employee() -> ModelAssertion:
             assert getattr(employee, field_name) == expected_value
 
     return _assert_employee
+
+
+@pytest.fixture
+def assert_stock_material() -> ModelAssertion:
+    def _assert_stock_material(data: dict, **extra: Any) -> None:
+        stock_material = StockMaterial.objects.get(material_id=data["material"])
+        assert stock_material.material.id == data.pop("material")
+
+        for field_name, expected_value in (data | extra).items():
+            assert getattr(stock_material, field_name) == expected_value
+
+    return _assert_stock_material
 
 
 @pytest.fixture(

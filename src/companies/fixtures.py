@@ -130,3 +130,8 @@ def stock_data(factory: FixtureFactory) -> dict:
 @pytest.fixture
 def stock(factory: FixtureFactory, company_point: Point) -> dict:
     return factory.stock(point=company_point)
+
+
+@pytest.fixture
+def material(factory: FixtureFactory) -> dict:
+    return factory.material()
