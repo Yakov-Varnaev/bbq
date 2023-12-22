@@ -92,6 +92,7 @@ class Stock(DefaultModel):
     class Meta:
         verbose_name = _("stock")
         verbose_name_plural = _("stocks")
+        ordering = ["-date"]
 
     class Status(models.TextChoices):
         DRAFT = "draft", _("draft")
