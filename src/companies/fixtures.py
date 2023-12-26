@@ -8,6 +8,7 @@ from app.testing.factory import FixtureFactory
 from companies.models import Company
 from companies.models.department import Department
 from companies.models.point import Point
+from companies.models.stock import Stock, StockMaterial
 from users.models import User
 
 
@@ -135,3 +136,8 @@ def stock(factory: FixtureFactory, company_point: Point) -> dict:
 @pytest.fixture
 def material(factory: FixtureFactory) -> dict:
     return factory.material()
+
+
+@pytest.fixture
+def stock_material(factory: FixtureFactory, stock: Stock) -> StockMaterial:
+    return factory.stock_material(stock=stock)

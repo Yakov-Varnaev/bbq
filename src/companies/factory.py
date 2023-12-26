@@ -109,7 +109,7 @@ def stock_material_data(self: FixtureFactory, **kwargs: Unpack[StockMaterialData
         material = self.stock_material()
     schema = self.schema(
         schema=lambda: {
-            "material": material.id,  # type: ignore[union-attr]
+            "material": material.id,
             "quantity": self.field("random.randint", a=1, b=100),
             "price": self.field("random.randint", a=1, b=100),
         },

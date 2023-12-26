@@ -8,14 +8,11 @@ from django.utils.translation import gettext_lazy as _
 from companies.models import Company
 
 
-class IsCompanyOwnerOrReadOnly(permissions.BasePermission):
+class IsCompanyOwner(permissions.BasePermission):
     message = _("Only company owner can perform this action.")
 
     def has_permission(self, request: Request, view: APIView) -> bool:
         from companies.api.viewsets import CompanyViewSet
-
-        if request.method in permissions.SAFE_METHODS:
-            return True
 
         if request.user.is_anonymous:
             return False
@@ -25,3 +22,13 @@ class IsCompanyOwnerOrReadOnly(permissions.BasePermission):
         assert company_id is not None
         company = get_object_or_404(Company, id=company_id)
         return company.owner == request.user
+
+
+class IsCompanyOwnerOrReadOnly(IsCompanyOwner):
+    message = _("Only company owner can perform this action.")
+
+    def has_permission(self, request: Request, view: APIView) -> bool:
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return super().has_permission(request, view)
