@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.db.models import QuerySet
 
-from app.api.permissions import IsCompanyOwner, IsCompanyOwnerOrReadOnly
+from app.api.permissions import IsCompanyOwner
 from companies.api.serializers import StockCreateSerializer, StockListSerializer, StockSerializer
 from companies.api.serializers.stock import (
     MaterialSerializer,
@@ -28,7 +28,7 @@ class MaterialViewSet(ReadOnlyModelViewSet):
 
 @extend_schema(tags=["stocks"])
 class StockViewSet(ModelViewSet):
-    permission_classes = [IsCompanyOwnerOrReadOnly]
+    permission_classes = [IsCompanyOwner]
     queryset = Stock.objects.all()
 
     def get_queryset(self) -> QuerySet[Stock]:
