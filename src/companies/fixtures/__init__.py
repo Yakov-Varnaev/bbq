@@ -7,9 +7,6 @@ from companies.fixtures.company import (
     company_data,
     company_owner,
     company_pk,
-    company_point,
-    company_point_data,
-    company_point_pk,
 )
 from companies.fixtures.department import department, department_data, department_pk
 from companies.fixtures.employee import (
@@ -21,6 +18,7 @@ from companies.fixtures.employee import (
     employee_with_non_existing_department,
     employee_with_non_existing_user,
 )
+from companies.fixtures.point import company_point, company_point_data, company_point_pk
 from companies.fixtures.stock import material, stock, stock_data, stock_material
 
 __all__ = [

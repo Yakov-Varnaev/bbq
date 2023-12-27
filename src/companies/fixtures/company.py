@@ -3,7 +3,6 @@ import pytest
 from app.testing import ApiClient
 from app.testing.factory import FixtureFactory
 from companies.models import Company
-from companies.models.point import Point
 from users.models import User
 
 
@@ -45,18 +44,3 @@ def as_another_company_owner(another_company_owner: User) -> ApiClient:
 @pytest.fixture
 def company_data(factory: FixtureFactory) -> dict:
     return factory.company_data()
-
-
-@pytest.fixture
-def company_point(factory: FixtureFactory, company: Company) -> dict:
-    return factory.company_point(company=company)
-
-
-@pytest.fixture
-def company_point_pk(company_point: Point) -> int:
-    return company_point.pk
-
-
-@pytest.fixture
-def company_point_data(factory: FixtureFactory) -> dict:
-    return factory.company_point_data()
