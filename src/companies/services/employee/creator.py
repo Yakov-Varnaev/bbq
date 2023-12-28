@@ -1,7 +1,7 @@
 from typing import Callable
 
 from app.services import BaseService
-from companies.api.serializers.employee import EmployeeSerializer
+from companies.api.serializers import EmployeeSerializer
 from companies.models import Employee
 
 

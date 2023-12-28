@@ -8,7 +8,7 @@ from django.urls import reverse
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
 from app.types import ModelAssertion, RestPageAssertion
-from companies.api.serializers.stock import StockMaterialDetailedSerializer
+from companies.api.serializers import StockMaterialDetailedSerializer
 from companies.models.stock import Material, Stock, StockMaterial
 
 pytestmark = pytest.mark.django_db
