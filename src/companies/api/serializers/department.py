@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from companies.api.serializers.defaults import CurrentPointDefault
+from companies.api.serializers import CurrentPointDefault
 from companies.models import Department
 
 

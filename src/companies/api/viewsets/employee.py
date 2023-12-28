@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
 
 from app.api.permissions import IsCompanyOwnerOrReadOnly
-from companies.api.serializers.employee import EmployeeSerializer
+from companies.api.serializers import EmployeeSerializer
 from companies.models.employee import Employee
 
 

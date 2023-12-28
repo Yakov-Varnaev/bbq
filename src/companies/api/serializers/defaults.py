@@ -2,8 +2,16 @@ from rest_framework.serializers import Field
 
 from django.shortcuts import get_object_or_404
 
-from companies.models import Department, Point
+from companies.models import Company, Department, Point
 from companies.models.stock import Stock
+
+
+class CurrentCompanyDefault:
+    requires_context = True
+
+    def __call__(self, serializer_field: Field) -> Company:
+        company_id = serializer_field.context["view"].kwargs["company_pk"]
+        return Company.objects.get(id=company_id)
 
 
 class CurrentPointDefault:

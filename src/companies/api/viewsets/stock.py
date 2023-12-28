@@ -6,11 +6,13 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from django.db.models import QuerySet
 
 from app.api.permissions import IsCompanyOwner
-from companies.api.serializers import StockCreateSerializer, StockListSerializer, StockSerializer
-from companies.api.serializers.stock import (
+from companies.api.serializers import (
     MaterialSerializer,
+    StockCreateSerializer,
+    StockListSerializer,
     StockMaterialDetailedSerializer,
     StockMaterialSerializer,
+    StockSerializer,
     StockUpdateSerializer,
 )
 from companies.models import Stock

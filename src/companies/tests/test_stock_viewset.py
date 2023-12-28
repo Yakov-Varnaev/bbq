@@ -8,8 +8,7 @@ from django.urls import reverse
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
 from app.types import RestPageAssertion
-from companies.api.serializers import StockSerializer
-from companies.api.serializers.stock import StockListSerializer
+from companies.api.serializers import StockListSerializer, StockSerializer
 from companies.models import Stock
 from companies.models.point import Point
 
