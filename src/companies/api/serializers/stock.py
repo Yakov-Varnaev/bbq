@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from companies.api.serializers.defaults import CurrentPointDefault, CurrentStockDefault
+from companies.api.serializers import CurrentPointDefault, CurrentStockDefault
 from companies.models import Stock
 from companies.models.stock import Material, StockMaterial
 
