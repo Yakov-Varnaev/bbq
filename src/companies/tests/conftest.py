@@ -1,7 +1,8 @@
 import pytest
-from typing import Any
+from typing import Any, Callable
 
 from pytest_lazyfixture import lazy_fixture as lf
+from rest_framework import status
 
 from django.contrib.auth import get_user_model
 
@@ -87,3 +88,26 @@ def reader_client(request) -> ApiClient:
 )
 def as_point_managing_staff(request) -> ApiClient:
     return request.param
+
+
+@pytest.fixture
+def user_fixtures_collection(as_another_company_owner, as_user, as_anon) -> dict[str, Callable]:
+    return {
+        "as_another_company_owner": as_another_company_owner,
+        "as_user": as_user,
+        "as_anon": as_anon,
+    }
+
+
+@pytest.fixture(
+    params=[
+        ("as_another_company_owner", status.HTTP_403_FORBIDDEN),
+        ("as_user", status.HTTP_403_FORBIDDEN),
+        ("as_anon", status.HTTP_401_UNAUTHORIZED),
+    ]
+)
+def as_point_non_managing_staff(request, user_fixtures_collection) -> ApiClient:
+    user, status = request.param
+    client = user_fixtures_collection[user]
+    client.expected_status = status
+    return client
