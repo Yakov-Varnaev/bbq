@@ -1,5 +1,6 @@
 import pytest
-from typing import Any, Callable
+from _pytest.fixtures import FixtureRequest  # noqa: I001
+from typing import Any
 
 from pytest_lazyfixture import lazy_fixture as lf
 from rest_framework import status
@@ -91,7 +92,9 @@ def as_point_managing_staff(request) -> ApiClient:
 
 
 @pytest.fixture
-def user_fixtures_collection(as_another_company_owner, as_user, as_anon) -> dict[str, Callable]:
+def user_fixtures_collection(
+    as_another_company_owner: ApiClient, as_user: ApiClient, as_anon: ApiClient
+) -> dict[str, ApiClient]:
     return {
         "as_another_company_owner": as_another_company_owner,
         "as_user": as_user,
@@ -106,8 +109,8 @@ def user_fixtures_collection(as_another_company_owner, as_user, as_anon) -> dict
         ("as_anon", status.HTTP_401_UNAUTHORIZED),
     ]
 )
-def as_point_non_managing_staff(request, user_fixtures_collection) -> ApiClient:
+def as_point_non_managing_staff(request: FixtureRequest, user_fixtures_collection: dict[str, ApiClient]) -> ApiClient:
     user, status = request.param
-    client = user_fixtures_collection[user]
-    client.expected_status = status
+    client: ApiClient = user_fixtures_collection[user]
+    client.expected_status = status  # type: ignore[attr-defined]
     return client
