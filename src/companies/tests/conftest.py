@@ -1,5 +1,5 @@
 import pytest
-from _pytest.fixtures import FixtureRequest  # noqa: I001
+from pytest import FixtureRequest  # noqa: PT013
 from typing import Any
 
 from pytest_lazyfixture import lazy_fixture as lf
@@ -7,7 +7,7 @@ from rest_framework import status
 
 from django.contrib.auth import get_user_model
 
-from app.testing.api import ApiClient
+from app.testing import ApiClient, StatusApiClient
 from app.types import ModelAssertion
 from companies.models import Company, Department, Employee, Point
 from companies.models.stock import StockMaterial
@@ -109,8 +109,10 @@ def user_fixtures_collection(
         ("as_anon", status.HTTP_401_UNAUTHORIZED),
     ]
 )
-def as_point_non_managing_staff(request: FixtureRequest, user_fixtures_collection: dict[str, ApiClient]) -> ApiClient:
+def as_point_non_managing_staff(
+    request: FixtureRequest, user_fixtures_collection: dict[str, ApiClient]
+) -> StatusApiClient:
     user, status = request.param
     client: ApiClient = user_fixtures_collection[user]
     client.expected_status = status  # type: ignore[attr-defined]
-    return client
+    return client  # type: ignore[return-value]

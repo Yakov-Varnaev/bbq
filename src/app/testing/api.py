@@ -74,6 +74,13 @@ class ApiClient(DRFAPIClient):
         return False
 
 
+class StatusApiClient(ApiClient):
+    def __init__(self, expected_status: int | None = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.expected_status = expected_status
+
+
 __all__ = [
     "ApiClient",
+    "StatusApiClient",
 ]

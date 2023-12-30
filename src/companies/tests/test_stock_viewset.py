@@ -4,7 +4,7 @@ from pytest_lazyfixture import lazy_fixture as lf
 
 from django.urls import reverse
 
-from app.testing.api import ApiClient
+from app.testing import ApiClient, StatusApiClient
 from app.testing.factory import FixtureFactory
 from app.types import RestPageAssertion
 from companies.api.serializers import StockListSerializer, StockSerializer
@@ -39,7 +39,7 @@ def test_authorized_users_can_create_stock(client: ApiClient, company_point: Poi
 
 
 def test_unauthorized_users_cannot_create_stock(
-    as_point_non_managing_staff: ApiClient, company_point: Point, stock_data: dict
+    as_point_non_managing_staff: StatusApiClient, company_point: Point, stock_data: dict
 ):
     as_point_non_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -50,7 +50,7 @@ def test_unauthorized_users_cannot_create_stock(
             },
         ),
         data=stock_data,
-        expected_status=as_point_non_managing_staff.expected_status,  # type: ignore[attr-defined]
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
     assert Stock.objects.count() == 0
@@ -81,7 +81,7 @@ def test_authorized_users_can_list_stocks(
 
 
 def test_unauthorized_users_cannot_list_stocks(
-    as_point_non_managing_staff: ApiClient, company_point: Point, factory: FixtureFactory
+    as_point_non_managing_staff: StatusApiClient, company_point: Point, factory: FixtureFactory
 ):
     factory.cycle(5).stock(point=company_point)
     as_point_non_managing_staff.get(  # type: ignore[no-untyped-call]
@@ -92,7 +92,7 @@ def test_unauthorized_users_cannot_list_stocks(
                 "point_pk": company_point.id,
             },
         ),
-        expected_status=as_point_non_managing_staff.expected_status,  # type: ignore[attr-defined]
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
 
@@ -113,7 +113,7 @@ def test_authorized_users_can_retrieve_stock_detail(
     assert stock_data == StockSerializer(stock).data
 
 
-def test_unauthorized_users_cannot_retrieve_stock_detail(as_point_non_managing_staff: ApiClient, stock: Stock):
+def test_unauthorized_users_cannot_retrieve_stock_detail(as_point_non_managing_staff: StatusApiClient, stock: Stock):
     as_point_non_managing_staff.get(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-detail",
@@ -123,7 +123,7 @@ def test_unauthorized_users_cannot_retrieve_stock_detail(as_point_non_managing_s
                 "pk": stock.id,
             },
         ),
-        expected_status=as_point_non_managing_staff.expected_status,  # type: ignore[attr-defined]
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
 
@@ -149,7 +149,9 @@ def test_authorized_users_can_update_stock(
     assert stock.point == company_point
 
 
-def test_unauthorized_users_cannot_update_stock(as_point_non_managing_staff: ApiClient, stock: Stock, stock_data: dict):
+def test_unauthorized_users_cannot_update_stock(
+    as_point_non_managing_staff: StatusApiClient, stock: Stock, stock_data: dict
+):
     as_point_non_managing_staff.put(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-detail",
@@ -160,7 +162,7 @@ def test_unauthorized_users_cannot_update_stock(as_point_non_managing_staff: Api
             },
         ),
         data=stock_data,
-        expected_status=as_point_non_managing_staff.expected_status,  # type: ignore[attr-defined]
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
     stock.refresh_from_db()
@@ -189,7 +191,7 @@ def test_authorized_users_can_delete_stock(client: ApiClient, company_point: Poi
     assert Stock.objects.count() == 0
 
 
-def test_unauthorized_users_cannot_delete_stock(as_point_non_managing_staff: ApiClient, stock: Stock):
+def test_unauthorized_users_cannot_delete_stock(as_point_non_managing_staff: StatusApiClient, stock: Stock):
     as_point_non_managing_staff.delete(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-detail",
@@ -199,7 +201,7 @@ def test_unauthorized_users_cannot_delete_stock(as_point_non_managing_staff: Api
                 "pk": stock.id,
             },
         ),
-        expected_status=as_point_non_managing_staff.expected_status,  # type: ignore[attr-defined]
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
     assert Stock.objects.count() == 1
