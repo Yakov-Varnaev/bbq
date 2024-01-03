@@ -1,11 +1,13 @@
 import pytest
+from pytest import FixtureRequest  # noqa: PT013
 from typing import Any
 
 from pytest_lazyfixture import lazy_fixture as lf
+from rest_framework import status
 
 from django.contrib.auth import get_user_model
 
-from app.testing.api import ApiClient
+from app.testing import ApiClient, StatusApiClient
 from app.types import ModelAssertion
 from companies.models import Company, Department, Employee, Point
 from companies.models.stock import StockMaterial
@@ -87,3 +89,29 @@ def reader_client(request) -> ApiClient:
 )
 def as_point_managing_staff(request) -> ApiClient:
     return request.param
+
+
+@pytest.fixture
+def user_fixtures_collection(
+    as_another_company_owner: ApiClient, as_user: ApiClient, as_anon: ApiClient
+) -> dict[str, ApiClient]:
+    return {
+        "as_another_company_owner": as_another_company_owner,
+        "as_user": as_user,
+        "as_anon": as_anon,
+    }
+
+
+@pytest.fixture(
+    params=[
+        ("as_another_company_owner", status.HTTP_403_FORBIDDEN),
+        ("as_user", status.HTTP_403_FORBIDDEN),
+        ("as_anon", status.HTTP_401_UNAUTHORIZED),
+    ]
+)
+def as_point_non_managing_staff(
+    request: FixtureRequest, user_fixtures_collection: dict[str, ApiClient]
+) -> StatusApiClient:
+    user, status = request.param
+    client: ApiClient = user_fixtures_collection[user]
+    return StatusApiClient(status, getattr(client, "user", None))

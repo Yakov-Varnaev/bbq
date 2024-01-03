@@ -1,11 +1,10 @@
 import pytest
 
 from pytest_lazyfixture import lazy_fixture as lf
-from rest_framework import status
 
 from django.urls import reverse
 
-from app.testing.api import ApiClient
+from app.testing import ApiClient, StatusApiClient
 from app.testing.factory import FixtureFactory
 from app.types import RestPageAssertion
 from companies.api.serializers import StockListSerializer, StockSerializer
@@ -39,18 +38,10 @@ def test_authorized_users_can_create_stock(client: ApiClient, company_point: Poi
     assert stock.point == company_point
 
 
-@pytest.mark.parametrize(
-    ("client", "expected_status"),
-    [
-        (lf("as_another_company_owner"), status.HTTP_403_FORBIDDEN),
-        (lf("as_user"), status.HTTP_403_FORBIDDEN),
-        (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
-    ],
-)
 def test_unauthorized_users_cannot_create_stock(
-    client: ApiClient, expected_status: int, company_point: Point, stock_data: dict
+    as_point_non_managing_staff: StatusApiClient, company_point: Point, stock_data: dict
 ):
-    client.post(  # type: ignore[no-untyped-call]
+    as_point_non_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-list",
             kwargs={
@@ -59,7 +50,7 @@ def test_unauthorized_users_cannot_create_stock(
             },
         ),
         data=stock_data,
-        expected_status=expected_status,
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
     assert Stock.objects.count() == 0
@@ -89,19 +80,11 @@ def test_authorized_users_can_list_stocks(
     assert_rest_page(stocks_data, stocks, StockListSerializer, None, None)
 
 
-@pytest.mark.parametrize(
-    ("client", "expected_status"),
-    [
-        (lf("as_another_company_owner"), status.HTTP_403_FORBIDDEN),
-        (lf("as_user"), status.HTTP_403_FORBIDDEN),
-        (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
-    ],
-)
 def test_unauthorized_users_cannot_list_stocks(
-    client: ApiClient, expected_status: int, company_point: Point, factory: FixtureFactory
+    as_point_non_managing_staff: StatusApiClient, company_point: Point, factory: FixtureFactory
 ):
     factory.cycle(5).stock(point=company_point)
-    client.get(  # type: ignore[no-untyped-call]
+    as_point_non_managing_staff.get(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-list",
             kwargs={
@@ -109,7 +92,7 @@ def test_unauthorized_users_cannot_list_stocks(
                 "point_pk": company_point.id,
             },
         ),
-        expected_status=expected_status,
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
 
@@ -130,16 +113,8 @@ def test_authorized_users_can_retrieve_stock_detail(
     assert stock_data == StockSerializer(stock).data
 
 
-@pytest.mark.parametrize(
-    ("client", "expected_status"),
-    [
-        (lf("as_another_company_owner"), status.HTTP_403_FORBIDDEN),
-        (lf("as_user"), status.HTTP_403_FORBIDDEN),
-        (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
-    ],
-)
-def test_unauthorized_users_cannot_retrieve_stock_detail(client: ApiClient, expected_status: int, stock: Stock):
-    client.get(  # type: ignore[no-untyped-call]
+def test_unauthorized_users_cannot_retrieve_stock_detail(as_point_non_managing_staff: StatusApiClient, stock: Stock):
+    as_point_non_managing_staff.get(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-detail",
             kwargs={
@@ -148,7 +123,7 @@ def test_unauthorized_users_cannot_retrieve_stock_detail(client: ApiClient, expe
                 "pk": stock.id,
             },
         ),
-        expected_status=expected_status,
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
 
@@ -174,18 +149,10 @@ def test_authorized_users_can_update_stock(
     assert stock.point == company_point
 
 
-@pytest.mark.parametrize(
-    ("client", "expected_status"),
-    [
-        (lf("as_another_company_owner"), status.HTTP_403_FORBIDDEN),
-        (lf("as_user"), status.HTTP_403_FORBIDDEN),
-        (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
-    ],
-)
 def test_unauthorized_users_cannot_update_stock(
-    client: ApiClient, expected_status: int, stock: Stock, stock_data: dict
+    as_point_non_managing_staff: StatusApiClient, stock: Stock, stock_data: dict
 ):
-    client.put(  # type: ignore[no-untyped-call]
+    as_point_non_managing_staff.put(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-detail",
             kwargs={
@@ -195,7 +162,7 @@ def test_unauthorized_users_cannot_update_stock(
             },
         ),
         data=stock_data,
-        expected_status=expected_status,
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
     stock.refresh_from_db()
@@ -224,16 +191,8 @@ def test_authorized_users_can_delete_stock(client: ApiClient, company_point: Poi
     assert Stock.objects.count() == 0
 
 
-@pytest.mark.parametrize(
-    ("client", "expected_status"),
-    [
-        (lf("as_another_company_owner"), status.HTTP_403_FORBIDDEN),
-        (lf("as_user"), status.HTTP_403_FORBIDDEN),
-        (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
-    ],
-)
-def test_unauthorized_users_cannot_delete_stock(client: ApiClient, expected_status: int, stock: Stock):
-    client.delete(  # type: ignore[no-untyped-call]
+def test_unauthorized_users_cannot_delete_stock(as_point_non_managing_staff: StatusApiClient, stock: Stock):
+    as_point_non_managing_staff.delete(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:stock-detail",
             kwargs={
@@ -242,7 +201,7 @@ def test_unauthorized_users_cannot_delete_stock(client: ApiClient, expected_stat
                 "pk": stock.id,
             },
         ),
-        expected_status=expected_status,
+        expected_status=as_point_non_managing_staff.expected_status,
     )
 
     assert Stock.objects.count() == 1
