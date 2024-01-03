@@ -114,5 +114,4 @@ def as_point_non_managing_staff(
 ) -> StatusApiClient:
     user, status = request.param
     client: ApiClient = user_fixtures_collection[user]
-    client.expected_status = status  # type: ignore[attr-defined]
-    return client  # type: ignore[return-value]
+    return StatusApiClient(status, getattr(client, "user", None))

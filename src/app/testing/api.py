@@ -19,7 +19,7 @@ class ApiClient(DRFAPIClient):
             self.user.set_password(self.password)
             self.user.save()
 
-            token = Token.objects.create(user=self.user)
+            token, _ = Token.objects.get_or_create(user=self.user)
             self.credentials(
                 HTTP_AUTHORIZATION=f"Token {token}",
                 HTTP_X_CLIENT="testing",
@@ -75,7 +75,7 @@ class ApiClient(DRFAPIClient):
 
 
 class StatusApiClient(ApiClient):
-    def __init__(self, expected_status: int | None = None, *args, **kwargs):
+    def __init__(self, expected_status: int | None = None, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.expected_status = expected_status
 
