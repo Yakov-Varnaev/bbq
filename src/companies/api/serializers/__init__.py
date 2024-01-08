@@ -10,6 +10,7 @@ from companies.api.serializers.employee import EmployeeSerializer
 from companies.api.serializers.point import PointCreateSerializer, PointSerializer
 from companies.api.serializers.stock import (
     MaterialSerializer,
+    MaterialTypeSerializer,
     StockCreateSerializer,
     StockListSerializer,
     StockMaterialDetailedSerializer,
@@ -29,6 +30,7 @@ __all__ = [
     "DepartmentSerializer",
     "EmployeeSerializer",
     "MaterialSerializer",
+    "MaterialTypeSerializer",
     "PointSerializer",
     "PointCreateSerializer",
     "StockCreateSerializer",

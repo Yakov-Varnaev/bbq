@@ -60,6 +60,7 @@ def assert_employee() -> ModelAssertion:
 @pytest.fixture
 def assert_material_type() -> ModelAssertion:
     def _assert_material_type(data: dict, **extra: Any) -> None:
+        data["name"] = data["name"].lower()
         material_type = MaterialType.objects.get(name=data["name"])
         for field_name, expected_value in (data | extra).items():
             assert getattr(material_type, field_name) == expected_value

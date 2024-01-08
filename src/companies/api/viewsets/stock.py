@@ -1,13 +1,15 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import filters
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import BaseSerializer
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.db.models import QuerySet
 
-from app.api.permissions import IsCompanyOwner
+from app.api.permissions import CreateOrReadOnly, IsCompanyOwner, IsSuperUser
 from companies.api.serializers import (
     MaterialSerializer,
+    MaterialTypeSerializer,
     StockCreateSerializer,
     StockListSerializer,
     StockMaterialDetailedSerializer,
@@ -15,8 +17,8 @@ from companies.api.serializers import (
     StockSerializer,
     StockUpdateSerializer,
 )
-from companies.models import Stock
-from companies.models.stock import Material, StockMaterial
+from companies.models import Material, MaterialType, Stock, StockMaterial
+from companies.services import MaterialTypeCreator
 
 
 @extend_schema(tags=["materials"])
@@ -26,6 +28,16 @@ class MaterialViewSet(ReadOnlyModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ["brand", "name"]
     pagination_class = None
+
+
+@extend_schema(tags=["types-of-materials"])
+class MaterialTypeViewSet(ModelViewSet):
+    queryset = MaterialType.objects.all()
+    serializer_class = MaterialTypeSerializer
+    permission_classes = [IsSuperUser | IsAuthenticatedOrReadOnly & CreateOrReadOnly]
+
+    def perform_create(self, serializer: MaterialTypeSerializer) -> None:
+        return MaterialTypeCreator(serializer)()
 
 
 @extend_schema(tags=["stocks"])

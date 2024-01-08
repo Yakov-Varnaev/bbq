@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory
 from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
-from companies.api.serializers import MaterialTypeReadSerializer
+from companies.api.serializers import MaterialTypeSerializer
 from companies.models import MaterialType
 
 pytestmark = pytest.mark.django_db
@@ -40,7 +40,7 @@ def test_company_create_invalid_data(
     invalid_fields: dict[str, Any],
     assert_doesnt_exist: ExistCheckAssertion,
 ):
-    url = reverse("api_v1:companies:company-list")
+    url = reverse("api_v1:companies:types-of-materials-list")
     as_user.post(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
 
     assert_doesnt_exist(MaterialType)
@@ -50,7 +50,7 @@ def test_material_type_retrieve(reader_client: ApiClient, material_type: Materia
     url = reverse("api_v1:companies:types-of-materials-detail", kwargs={"pk": material_type.pk})
     material_type_data = reader_client.get(url)  # type: ignore
 
-    assert MaterialTypeReadSerializer(material_type).data == material_type_data
+    assert MaterialTypeSerializer(material_type).data == material_type_data
 
 
 def test_material_type_list(reader_client: ApiClient, factory: FixtureFactory, assert_rest_page: RestPageAssertion):
@@ -58,7 +58,7 @@ def test_material_type_list(reader_client: ApiClient, factory: FixtureFactory, a
     url = reverse("api_v1:companies:types-of-materials-list")
     material_type_data = reader_client.get(url)  # type: ignore
 
-    assert_rest_page(material_type_data, MaterialType.objects.all(), MaterialTypeReadSerializer)  # type: ignore[call-arg]
+    assert_rest_page(material_type_data, MaterialType.objects.all(), MaterialTypeSerializer)  # type: ignore[call-arg]
 
 
 def test_udpate_material_type(
@@ -70,7 +70,7 @@ def test_udpate_material_type(
         response_data = request(url, data=material_type_data)  # type: ignore
         material_type.refresh_from_db()
 
-        assert MaterialTypeReadSerializer(material_type).data == response_data
+        assert MaterialTypeSerializer(material_type).data == response_data
         assert_material_type(material_type_data)
 
 
@@ -78,13 +78,13 @@ def test_udpate_material_type(
 def test_udpate_material_type_invalid_data(
     as_superuser: ApiClient, material_type: MaterialType, factory: FixtureFactory, invalid_fields: dict[str, str]
 ):
-    expected_data = MaterialTypeReadSerializer(material_type).data
+    expected_data = MaterialTypeSerializer(material_type).data
     url = reverse("api_v1:companies:types-of-materials-detail", kwargs={"pk": material_type.pk})
     for request in [as_superuser.put, as_superuser.patch]:
         request(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
         material_type.refresh_from_db()
 
-        assert MaterialTypeReadSerializer(material_type).data == expected_data
+        assert MaterialTypeSerializer(material_type).data == expected_data
 
 
 @pytest.mark.parametrize(
@@ -111,8 +111,20 @@ def test_can_update_only_superuser(
         (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
     ],
 )
-def test_can_delete_only_superuser(
-    client: ApiClient, expected_status: int, material_type: MaterialType, material_type_data: dict
-):
+def test_can_delete_only_superuser(client: ApiClient, expected_status: int, material_type: MaterialType):
     url = reverse("api_v1:companies:types-of-materials-detail", kwargs={"pk": material_type.pk})
     client.delete(url, expected_status=expected_status)  # type: ignore
+
+
+def test_name_field_is_in_lowercase(as_superuser: ApiClient, material_type_data: dict):
+    lower_name_material_type = material_type_data["name"].lower()
+    material_type_data["name"] = material_type_data["name"].upper()
+    post_response = as_superuser.post(reverse("api_v1:companies:types-of-materials-list"), data=material_type_data)
+    material_type = MaterialType.objects.get(name=lower_name_material_type)
+    get_response = as_superuser.get(
+        reverse("api_v1:companies:types-of-materials-detail", kwargs={"pk": material_type.pk})
+    )
+
+    assert post_response.get("name") == lower_name_material_type
+    assert material_type.name == lower_name_material_type
+    assert get_response.get("name") == lower_name_material_type
