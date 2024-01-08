@@ -12,3 +12,8 @@ def as_anon() -> ApiClient:
 @pytest.fixture
 def as_user(user: User) -> ApiClient:
     return ApiClient(user=user)
+
+
+@pytest.fixture
+def as_superuser(superuser: User) -> ApiClient:
+    return ApiClient(user=superuser)

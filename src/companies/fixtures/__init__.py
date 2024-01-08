@@ -19,7 +19,7 @@ from companies.fixtures.employee import (
     employee_with_non_existing_user,
 )
 from companies.fixtures.point import company_point, company_point_data, company_point_pk
-from companies.fixtures.stock import material, stock, stock_data, stock_material
+from companies.fixtures.stock import material, material_type, material_type_data, stock, stock_data, stock_material
 
 __all__ = [
     "another_company",
@@ -44,6 +44,8 @@ __all__ = [
     "employee_with_non_existing_department",
     "employee_with_non_existing_user",
     "material",
+    "material_type",
+    "material_type_data",
     "stock",
     "stock_data",
     "stock_material",
