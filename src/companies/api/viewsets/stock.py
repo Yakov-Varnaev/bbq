@@ -36,8 +36,8 @@ class MaterialTypeViewSet(ModelViewSet):
     serializer_class = MaterialTypeSerializer
     permission_classes = [IsSuperUser | IsAuthenticatedOrReadOnly & CreateOrReadOnly]
 
-    def perform_create(self, serializer: MaterialTypeSerializer) -> None:
-        return MaterialTypeCreator(serializer)()
+    def perform_create(self, serializer: BaseSerializer[MaterialTypeSerializer]) -> None:
+        MaterialTypeCreator(serializer)()
 
 
 @extend_schema(tags=["stocks"])

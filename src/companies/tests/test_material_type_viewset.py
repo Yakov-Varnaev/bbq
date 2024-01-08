@@ -14,14 +14,14 @@ from companies.models import MaterialType
 pytestmark = pytest.mark.django_db
 
 
-def test_material_type_create_permission(as_anon: ApiClient, material_type_data: dict):
+def test_unauthorized_users_cannot_create_material_type(as_anon: ApiClient, material_type_data: dict):
     url: str = reverse("api_v1:companies:types-of-materials-list")
     as_anon.post(url, data=material_type_data, expected_status=status.HTTP_401_UNAUTHORIZED)  # type: ignore
 
     assert not MaterialType.objects.exists()
 
 
-def test_material_type_create_permission(
+def test_authorized_user_cannot_create_material_type(
     as_user: ApiClient,
     material_type_data: dict,
     assert_material_type: ModelAssertion,
@@ -119,9 +119,9 @@ def test_can_delete_only_superuser(client: ApiClient, expected_status: int, mate
 def test_name_field_is_in_lowercase(as_superuser: ApiClient, material_type_data: dict):
     lower_name_material_type = material_type_data["name"].lower()
     material_type_data["name"] = material_type_data["name"].upper()
-    post_response = as_superuser.post(reverse("api_v1:companies:types-of-materials-list"), data=material_type_data)
+    post_response = as_superuser.post(reverse("api_v1:companies:types-of-materials-list"), data=material_type_data)  # type: ignore
     material_type = MaterialType.objects.get(name=lower_name_material_type)
-    get_response = as_superuser.get(
+    get_response = as_superuser.get(  # type: ignore
         reverse("api_v1:companies:types-of-materials-detail", kwargs={"pk": material_type.pk})
     )
 
