@@ -4,6 +4,7 @@ from rest_framework.serializers import BaseSerializer
 
 from app.services import BaseService
 from companies.api.serializers import MaterialTypeSerializer
+from companies.models import MaterialType
 
 
 class MaterialTypeCreator(BaseService):
@@ -16,5 +17,5 @@ class MaterialTypeCreator(BaseService):
     def check_serializer_is_valid(self) -> None:
         self.serializer.is_valid(raise_exception=True)
 
-    def act(self) -> None:
-        self.serializer.save()  # TODO get_or_create  # noqa:  T101
+    def act(self) -> MaterialType:
+        return MaterialType.objects.get_or_create(name=self.serializer.validated_data["name"])[0]
