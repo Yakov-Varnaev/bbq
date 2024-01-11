@@ -8,9 +8,7 @@ class LowercaseCharField(CharField):
     """
 
     def to_internal_value(self, data: str) -> str:
-        value: str = super().to_internal_value(data)
-        return value.lower()
+        return super().to_internal_value(data).strip().lower()
 
     def to_representation(self, value: str) -> str:
-        data: str = super().to_representation(value)
-        return data.lower()
+        return super().to_representation(value).strip().lower()

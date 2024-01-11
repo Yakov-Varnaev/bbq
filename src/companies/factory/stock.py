@@ -13,7 +13,7 @@ def material(self: FixtureFactory, **kwargs: dict) -> dict:
 
 
 @register
-def material_type(self: FixtureFactory, **kwargs: dict) -> dict:
+def material_type(self: FixtureFactory, **kwargs: dict) -> MaterialType:
     return self.mixer.blend(MaterialType, **kwargs)
 
 
@@ -21,7 +21,7 @@ def material_type(self: FixtureFactory, **kwargs: dict) -> dict:
 def material_type_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {
-            "name": self.field("name"),
+            "name": self.field("word"),
         },
         iterations=1,
     )

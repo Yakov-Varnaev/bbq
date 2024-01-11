@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+from rest_framework.validators import UniqueTogetherValidator
 
 from companies.api.fields import LowercaseCharField
 from companies.api.serializers import CurrentPointDefault, CurrentStockDefault
@@ -21,12 +21,7 @@ class MaterialSerializer(serializers.ModelSerializer):
 
 
 class MaterialTypeSerializer(serializers.ModelSerializer):
-    name = LowercaseCharField(
-        validators=[
-            UniqueValidator(queryset=MaterialType.objects.all()),
-        ],
-    )
-    """The "name" field converts to lowercase during serialization and deserialization."""
+    name = LowercaseCharField()
 
     class Meta:
         model = MaterialType

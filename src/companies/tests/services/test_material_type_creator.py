@@ -15,7 +15,7 @@ def test_material_type_is_created_with_valid_data(material_type_data: dict, asse
     assert_material_type(material_type_data)
 
 
-def test_material_type_do_not_duplicate(material_type_data: dict):
+def test_material_type_does_not_duplicate(material_type_data: dict):
     serializer = MaterialTypeSerializer(data=material_type_data)
     for _ in range(2):
         MaterialTypeCreator(serializer)()

@@ -18,6 +18,7 @@ from companies.fixtures.employee import (
     employee_with_non_existing_department,
     employee_with_non_existing_user,
 )
+from companies.fixtures.fields import lowercase_char_field
 from companies.fixtures.point import company_point, company_point_data, company_point_pk
 from companies.fixtures.stock import material, material_type, material_type_data, stock, stock_data, stock_material
 
@@ -43,6 +44,7 @@ __all__ = [
     "employee_with_duplicating_department",
     "employee_with_non_existing_department",
     "employee_with_non_existing_user",
+    "lowercase_char_field",
     "material",
     "material_type",
     "material_type_data",

@@ -20,7 +20,7 @@ def material_type(factory: FixtureFactory) -> MaterialType:
 
 
 @pytest.fixture
-def material_type_data(factory: FixtureFactory) -> MaterialType:
+def material_type_data(factory: FixtureFactory) -> dict:
     return factory.material_type_data()
 
 

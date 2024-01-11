@@ -30,7 +30,7 @@ class MaterialViewSet(ReadOnlyModelViewSet):
     pagination_class = None
 
 
-@extend_schema(tags=["types-of-materials"])
+@extend_schema(tags=["material-types"])
 class MaterialTypeViewSet(ModelViewSet):
     queryset = MaterialType.objects.all()
     serializer_class = MaterialTypeSerializer
