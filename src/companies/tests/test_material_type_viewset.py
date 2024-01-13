@@ -22,7 +22,7 @@ def test_unauthorized_users_cannot_create_material_type(as_anon: ApiClient, mate
     assert not MaterialType.objects.exists()
 
 
-def test_authorized_user_cannot_create_material_type(
+def test_authenticated_user_can_create_material_type(
     as_user: ApiClient,
     material_type_data: dict,
     assert_material_type: ModelAssertion,
