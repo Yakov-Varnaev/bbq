@@ -32,3 +32,15 @@ class IsCompanyOwnerOrReadOnly(IsCompanyOwner):
             return True
 
         return super().has_permission(request, view)
+
+
+class IsSuperUser(permissions.BasePermission):
+    message = _("Only superusers can perform this action.")
+
+    def has_permission(self, request: Request, view: APIView) -> bool:
+        return request.user.is_authenticated and request.user.is_superuser
+
+
+class CreateOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request: Request, view: APIView) -> bool:
+        return request.method in list(permissions.SAFE_METHODS) + ["POST"]

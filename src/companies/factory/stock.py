@@ -4,12 +4,28 @@ from typing_extensions import Unpack
 
 from app.testing import register
 from app.testing.factory import FixtureFactory
-from companies.models.stock import Material, Stock
+from companies.models import Material, MaterialType, Stock
 
 
 @register
 def material(self: FixtureFactory, **kwargs: dict) -> dict:
     return self.mixer.blend(Material, **kwargs)
+
+
+@register
+def material_type(self: FixtureFactory, **kwargs: dict) -> MaterialType:
+    return self.mixer.blend(MaterialType, **kwargs)
+
+
+@register
+def material_type_data(self: FixtureFactory, **kwargs: dict) -> dict:
+    schema = self.schema(
+        schema=lambda: {
+            "name": self.field("word"),
+        },
+        iterations=1,
+    )
+    return {**schema.create()[0], **kwargs}
 
 
 @register

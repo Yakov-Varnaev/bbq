@@ -10,6 +10,7 @@ app_name = "companies"
 router = SimpleRouter()
 router.register("companies", viewsets.CompanyViewSet, basename="company")
 router.register("materials", viewsets.MaterialViewSet, basename="base-material")
+router.register("material-types", viewsets.MaterialTypeViewSet, basename="material-types")
 
 company_router = NestedSimpleRouter(router, r"companies", lookup="company")
 company_router.register("points", viewsets.PointViewSet, basename="point")

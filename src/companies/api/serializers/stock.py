@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
+from companies.api.fields import LowercaseCharField
 from companies.api.serializers import CurrentPointDefault, CurrentStockDefault
-from companies.models import Stock
-from companies.models.stock import Material, StockMaterial
+from companies.models import Material, MaterialType, Stock, StockMaterial
 
 
 class MaterialSerializer(serializers.ModelSerializer):
@@ -18,6 +18,18 @@ class MaterialSerializer(serializers.ModelSerializer):
             "unit",
             "kind",
         )
+
+
+class MaterialTypeSerializer(serializers.ModelSerializer):
+    name = LowercaseCharField()
+
+    class Meta:
+        model = MaterialType
+        fields = (
+            "id",
+            "name",
+        )
+        read_only_fields = ("id",)
 
 
 class StockSerializer(serializers.ModelSerializer):

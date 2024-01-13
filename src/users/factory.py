@@ -13,3 +13,8 @@ def user(self: FactoryProtocol, **kwargs: dict) -> User:
 @register
 def anon(self: FactoryProtocol, **kwargs: dict) -> AnonymousUser:
     return AnonymousUser()
+
+
+@register
+def superuser(self: FactoryProtocol, **kwargs: dict) -> User:
+    return self.mixer.blend("users.User", is_superuser=True, **kwargs)
