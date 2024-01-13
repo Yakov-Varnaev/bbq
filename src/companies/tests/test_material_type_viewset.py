@@ -91,7 +91,7 @@ def test_udpate_material_type_invalid_data(
         (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
     ],
 )
-def test_can_update_only_superuser(
+def terst_unauthorized_users_cannot_update_material_type(
     client: ApiClient, expected_status: int, material_type: MaterialType, material_type_data: dict
 ):
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
