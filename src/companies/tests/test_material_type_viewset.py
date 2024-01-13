@@ -105,7 +105,7 @@ def terst_unauthorized_users_cannot_update_material_type(
         (lf("as_anon"), status.HTTP_401_UNAUTHORIZED),
     ],
 )
-def test_can_delete_only_superuser(client: ApiClient, expected_status: int, material_type: MaterialType):
+def test_only_super_user_can_delete_material_type(client: ApiClient, expected_status: int, material_type: MaterialType):
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
     client.delete(url, expected_status=expected_status)  # type: ignore
 
