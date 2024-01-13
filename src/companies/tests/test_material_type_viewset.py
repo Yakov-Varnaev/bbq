@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory
 from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from companies.api.fields import LowercaseCharField
 from companies.api.serializers import MaterialTypeSerializer
 from companies.models import MaterialType
 
@@ -15,7 +16,7 @@ pytestmark = pytest.mark.django_db
 
 
 def test_unauthorized_users_cannot_create_material_type(as_anon: ApiClient, material_type_data: dict):
-    url: str = reverse("api_v1:companies:material-types-list")
+    url = reverse("api_v1:companies:material-types-list")
     as_anon.post(url, data=material_type_data, expected_status=status.HTTP_401_UNAUTHORIZED)  # type: ignore
 
     assert not MaterialType.objects.exists()
@@ -26,7 +27,7 @@ def test_authorized_user_cannot_create_material_type(
     material_type_data: dict,
     assert_material_type: ModelAssertion,
 ):
-    url: str = reverse("api_v1:companies:material-types-list")
+    url = reverse("api_v1:companies:material-types-list")
     as_user.post(url, data=material_type_data, expected_status=status.HTTP_201_CREATED)  # type: ignore
 
     assert MaterialType.objects.exists()
@@ -77,12 +78,10 @@ def test_superuser_can_update_material_type(
 def test_udpate_material_type_invalid_data(
     as_superuser: ApiClient, material_type: MaterialType, factory: FixtureFactory, invalid_fields: dict[str, str]
 ):
-    expected_data = MaterialTypeSerializer(material_type).data
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
-    as_superuser.put(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
-    material_type.refresh_from_db()
+    request = as_superuser.put(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
 
-    assert MaterialTypeSerializer(material_type).data == expected_data
+    assert request.get("name") == [LowercaseCharField.default_error_messages.get("blank")]
 
 
 @pytest.mark.parametrize(

@@ -22,7 +22,6 @@ include(
     "conf/http.py",
     "conf/i18n.py",
     "conf/installed_apps.py",
-    "conf/logging.py",
     "conf/media.py",
     "conf/middleware.py",
     "conf/storage.py",

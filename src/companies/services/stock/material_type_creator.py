@@ -7,11 +7,12 @@ from app.services import BaseService
 from companies.api.serializers import MaterialTypeSerializer
 from companies.models import MaterialType
 
+logger = logging.getLogger(__name__)
+
 
 class MaterialTypeCreator(BaseService):
     def __init__(self, serializer: BaseSerializer[MaterialTypeSerializer]) -> None:
         self.serializer = serializer
-        self.logger = logging.getLogger(__name__)
 
     def get_validators(self) -> list[Callable]:
         return [self.check_serializer_is_valid]
@@ -21,8 +22,6 @@ class MaterialTypeCreator(BaseService):
 
     def act(self) -> MaterialType:
         material_type, created = MaterialType.objects.get_or_create(name=self.serializer.validated_data["name"])
-        if created:
-            self.logger.info("MaterialType with name `%s` was created.", material_type.name)
-        else:
-            self.logger.info("MaterialType with name `%s` already exists.", material_type.name)
+        msg = "MaterialType with name `%s` was created." if created else "MaterialType with name `%s` already exists."
+        logger.info(msg, material_type.name)
         return material_type
