@@ -28,3 +28,15 @@ class DepartmentViewSet(ModelViewSet):
             point__company_id=self.kwargs["company_pk"],
             point_id=self.kwargs["point_pk"],
         )
+
+
+@extend_schema(
+    tags=["procedure"],
+    parameters=[
+        OpenApiParameter("company_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
+        OpenApiParameter("point_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
+        OpenApiParameter("department_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
+    ],
+)
+class ProcedureViewSet(ModelViewSet):
+    ...
