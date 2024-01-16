@@ -26,5 +26,14 @@ def procedure(factory: FixtureFactory, material_type: MaterialType, department: 
 
 
 @pytest.fixture
-def procedure_data(factory: FixtureFactory) -> dict[str, Any]:
-    return factory.procedure_data()
+def procedure_data(factory: FixtureFactory, material_type: MaterialType) -> dict[str, Any]:
+    return factory.procedure_data(kind=material_type.id)
+
+
+@pytest.fixture
+def procedure_kwargs(department: Department) -> dict[str, Any]:
+    return {
+        "company_pk": department.point.company.id,
+        "point_pk": department.point.id,
+        "department_pk": department.id,
+    }

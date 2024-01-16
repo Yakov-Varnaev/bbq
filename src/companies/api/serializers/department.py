@@ -42,4 +42,4 @@ class ProcedureCreateUpdateSerialzier(ProcedureSerializer):
         ]
 
     def to_representation(self, instance: Procedure) -> dict:
-        return super().to_representation(instance)
+        return ProcedureSerializer(instance).data

@@ -31,7 +31,7 @@ class CurrentDepartmentDefault:
             Department,
             id=view_kwargs["department_pk"],
             point_id=view_kwargs["point_pk"],
-            company_id=view_kwargs["company_pk"],
+            point__company_id=view_kwargs["company_pk"],
         )
 
 

@@ -8,7 +8,14 @@ from companies.fixtures.company import (
     company_owner,
     company_pk,
 )
-from companies.fixtures.department import department, department_data, department_pk, procedure, procedure_data
+from companies.fixtures.department import (
+    department,
+    department_data,
+    department_pk,
+    procedure,
+    procedure_data,
+    procedure_kwargs,
+)
 from companies.fixtures.employee import (
     employee_data,
     employee_data_with_one_department,
@@ -50,6 +57,7 @@ __all__ = [
     "material_type_data",
     "procedure",
     "procedure_data",
+    "procedure_kwargs",
     "stock",
     "stock_data",
     "stock_material",

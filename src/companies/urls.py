@@ -32,6 +32,7 @@ urlpatterns = [
     path("", include(router.urls)),
     path("", include(company_router.urls)),
     path("", include(point_router.urls)),
+    path("", include(department_router.urls)),
     path("", include(stock_router.urls)),
     path("", include(employee_router.urls)),
 ]
