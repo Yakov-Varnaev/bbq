@@ -53,7 +53,7 @@ class ProcedureViewSet(ModelViewSet):
 
     def get_queryset(self) -> QuerySet[Procedure]:
         return Procedure.objects.filter(
-            department___point__company_id=self.kwargs["company_pk"],
-            department___point_id=self.kwargs["point_pk"],
+            department__point__company_id=self.kwargs["company_pk"],
+            department__point__id=self.kwargs["point_pk"],
             department_id=self.kwargs["department_pk"],
         )
