@@ -32,3 +32,15 @@ class Procedure(DefaultModel):
         ordering = ("name",)
         verbose_name = _("procedure")
         verbose_name_plural = _("procedures")
+
+    def get_absolute_url(self) -> str:
+        from django.urls import reverse
+        return reverse(  # noqa: BLK100
+            "api_v1:companies:procedure-detail",
+            kwargs={
+                "company_pk": self.department.point.company.id,
+                "point_pk": self.department.point.id,
+                "department_pk": self.department.id,
+                "pk": self.pk,
+            },
+        )

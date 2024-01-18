@@ -31,7 +31,7 @@ def procedure_data(factory: FixtureFactory, material_type: MaterialType) -> dict
 
 
 @pytest.fixture
-def procedure_kwargs(department: Department) -> dict[str, Any]:
+def procedure_reverse_kwargs(department: Department) -> dict[str, Any]:
     return {
         "company_pk": department.point.company.id,
         "point_pk": department.point.id,

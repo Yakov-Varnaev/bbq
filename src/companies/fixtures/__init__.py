@@ -14,7 +14,7 @@ from companies.fixtures.department import (
     department_pk,
     procedure,
     procedure_data,
-    procedure_kwargs,
+    procedure_reverse_kwargs,
 )
 from companies.fixtures.employee import (
     employee_data,
@@ -57,7 +57,7 @@ __all__ = [
     "material_type_data",
     "procedure",
     "procedure_data",
-    "procedure_kwargs",
+    "procedure_reverse_kwargs",
     "stock",
     "stock_data",
     "stock_material",
