@@ -17,6 +17,7 @@ from companies.fixtures.department import (
     procedure_reverse_kwargs,
 )
 from companies.fixtures.employee import (
+    employee,
     employee_data,
     employee_data_with_one_department,
     employee_data_with_several_departments,
@@ -24,6 +25,8 @@ from companies.fixtures.employee import (
     employee_with_duplicating_department,
     employee_with_non_existing_department,
     employee_with_non_existing_user,
+    master_procedure,
+    master_procedure_data,
 )
 from companies.fixtures.fields import lowercase_char_field
 from companies.fixtures.point import company_point, company_point_data, company_point_pk
@@ -44,6 +47,7 @@ __all__ = [
     "department",
     "department_data",
     "department_pk",
+    "employee",
     "employee_data",
     "employee_data_with_one_department",
     "employee_data_with_several_departments",
@@ -52,6 +56,8 @@ __all__ = [
     "employee_with_non_existing_department",
     "employee_with_non_existing_user",
     "lowercase_char_field",
+    "master_procedure",
+    "master_procedure_data",
     "material",
     "material_type",
     "material_type_data",

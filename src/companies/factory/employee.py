@@ -2,9 +2,9 @@ from typing import TypedDict
 
 from typing_extensions import Unpack
 
-from app.testing import register
-from app.testing.factory import FixtureFactory
-from companies.models.department import Department
+from app.testing import FixtureFactory, register
+from app.testing.types import FactoryProtocol
+from companies.models import Department, Employee, MasterProcedure
 from users.models import User
 
 
@@ -26,3 +26,22 @@ def employee_data(self: FixtureFactory, **kwargs: Unpack[EmployeeData]) -> dict:
         "departments": [department if isinstance(department, int) else department.pk for department in departments],
         "position": self.field("text.word"),
     }
+
+
+@register
+def employee(self: FactoryProtocol, **kwargs: dict) -> Employee:
+    return self.mixer.blend(Employee, **kwargs)
+
+
+@register
+def master_procedure_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+    schema = self.schema(
+        schema=lambda: {"price": self.field("random.randint", 1, 9999)},
+        iterations=1,
+    )
+    return {**schema.create()[0], **kwargs}
+
+
+@register
+def master_procedure(self: FactoryProtocol, **kwargs: dict) -> MasterProcedure:
+    return self.mixer.blend(MasterProcedure, **kwargs)

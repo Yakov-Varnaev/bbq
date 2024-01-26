@@ -4,7 +4,8 @@ from typing import Any
 from pytest_lazyfixture import lazy_fixture as lf
 
 from app.testing.factory import FixtureFactory
-from companies.models.point import Point
+from companies.models import Department, Employee, Point, Procedure
+from users.models import User
 
 
 @pytest.fixture
@@ -46,3 +47,18 @@ def employee_with_non_existing_department(factory: FixtureFactory) -> dict:
 )
 def employee_invalid_data(request: pytest.FixtureRequest) -> dict:
     return request.param
+
+
+@pytest.fixture
+def employee(factory: FixtureFactory, user: User, department: Department) -> Employee:
+    return factory.employee(user=user, department=department)
+
+
+@pytest.fixture
+def master_procedure_data(factory: FixtureFactory) -> dict[str, Any]:
+    return factory.master_procedure_data()
+
+
+@pytest.fixture
+def master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
+    return factory.master_procedure(procedure=procedure, employee=employee)
