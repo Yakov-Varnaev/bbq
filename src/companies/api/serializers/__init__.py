@@ -11,7 +11,7 @@ from companies.api.serializers.department import (
     ProcedureCreateUpdateSerialzier,
     ProcedureSerializer,
 )
-from companies.api.serializers.employee import EmployeeSerializer
+from companies.api.serializers.employee import EmployeeSerializer, MasterProcedureSerializer
 from companies.api.serializers.point import PointCreateSerializer, PointSerializer
 from companies.api.serializers.stock import (
     MaterialSerializer,
@@ -34,6 +34,7 @@ __all__ = [
     "DepartmentCreateSerialzier",
     "DepartmentSerializer",
     "EmployeeSerializer",
+    "MasterProcedureSerializer",
     "MaterialSerializer",
     "MaterialTypeSerializer",
     "PointSerializer",

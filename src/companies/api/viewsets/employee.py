@@ -6,8 +6,8 @@ from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
 
 from app.api.permissions import IsCompanyOwnerOrReadOnly
-from companies.api.serializers import EmployeeSerializer
-from companies.models.employee import Employee
+from companies.api.serializers import EmployeeSerializer, MasterProcedureSerializer
+from companies.models import Employee, MasterProcedure
 
 
 @extend_schema(
@@ -26,4 +26,25 @@ class EmployeeViewSet(ModelViewSet):
         return Employee.objects.filter(
             departments__point__company_id=self.kwargs["company_pk"],
             departments__point_id=self.kwargs["point_pk"],
+        )
+
+
+@extend_schema(
+    tags=["master-procedure"],
+    parameters=[
+        OpenApiParameter("company_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
+        OpenApiParameter("point_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
+        OpenApiParameter("employee_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
+    ],
+)
+class MasterProcedureViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
+    queryset = MasterProcedure.objects.all()
+    serializer_class = MasterProcedureSerializer
+
+    def get_queryset(self) -> QuerySet[MasterProcedure]:
+        return MasterProcedure.objects.filter(
+            employee__point__company_id=self.kwargs["company_pk"],
+            employee__point_id=self.kwargs["point_pk"],
+            employee_id=self.kwargs["employee_pk"],
         )
