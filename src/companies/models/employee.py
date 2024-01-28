@@ -55,3 +55,15 @@ class MasterProcedure(TimestampedModel):
     class Meta:
         verbose_name = _("procedure master")
         verbose_name_plural = _("procedure masters")
+
+    def get_absolute_url(self) -> str:
+        from django.urls import reverse
+        return reverse(  # noqa: BLK100
+            "api_v1:companies:master-procedure-detail",
+            kwargs={
+                "company_pk": self.procedure.department.point.company.id,
+                "point_pk": self.procedure.department.point.id,
+                "employee_pk": self.employee.id,
+                "pk": self.id,
+            },
+        )

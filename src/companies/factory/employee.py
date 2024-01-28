@@ -36,7 +36,7 @@ def employee(self: FactoryProtocol, **kwargs: dict) -> Employee:
 @register
 def master_procedure_data(self: FactoryProtocol, **kwargs: dict) -> dict:
     schema = self.schema(
-        schema=lambda: {"price": self.field("random.randint", 1, 9999)},
+        schema=lambda: {"price": self.field("random.randint", a=1, b=99999)},
         iterations=1,
     )
     return {**schema.create()[0], **kwargs}

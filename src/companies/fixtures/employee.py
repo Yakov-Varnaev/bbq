@@ -55,10 +55,19 @@ def employee(factory: FixtureFactory, user: User, department: Department) -> Emp
 
 
 @pytest.fixture
-def master_procedure_data(factory: FixtureFactory) -> dict[str, Any]:
-    return factory.master_procedure_data()
+def master_procedure_data(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
+    return factory.master_procedure_data(procedure=procedure.id, employee=employee.id)
 
 
 @pytest.fixture
 def master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
     return factory.master_procedure(procedure=procedure, employee=employee)
+
+
+@pytest.fixture
+def master_procedure_reverse_kwargs(procedure: Procedure, employee: Employee) -> dict[str, Any]:
+    return {
+        "company_pk": procedure.department.point.company.id,
+        "point_pk": procedure.department.point.id,
+        "employee_pk": employee.id,
+    }

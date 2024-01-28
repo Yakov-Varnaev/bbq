@@ -39,12 +39,11 @@ class EmployeeViewSet(ModelViewSet):
 )
 class MasterProcedureViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
-    queryset = MasterProcedure.objects.all()
     serializer_class = MasterProcedureSerializer
 
     def get_queryset(self) -> QuerySet[MasterProcedure]:
         return MasterProcedure.objects.filter(
-            employee__point__company_id=self.kwargs["company_pk"],
-            employee__point_id=self.kwargs["point_pk"],
+            procedure__department__point__company_id=self.kwargs["company_pk"],
+            procedure__department__point_id=self.kwargs["point_pk"],
             employee_id=self.kwargs["employee_pk"],
         )

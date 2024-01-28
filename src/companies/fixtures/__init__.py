@@ -27,6 +27,7 @@ from companies.fixtures.employee import (
     employee_with_non_existing_user,
     master_procedure,
     master_procedure_data,
+    master_procedure_reverse_kwargs,
 )
 from companies.fixtures.fields import lowercase_char_field
 from companies.fixtures.point import company_point, company_point_data, company_point_pk
@@ -58,6 +59,7 @@ __all__ = [
     "lowercase_char_field",
     "master_procedure",
     "master_procedure_data",
+    "master_procedure_reverse_kwargs",
     "material",
     "material_type",
     "material_type_data",
