@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 
 from app.testing import ApiClient, StatusApiClient
 from app.types import ModelAssertion
-from companies.models import Company, Department, Employee, MaterialType, Point, Procedure, StockMaterial
+from companies.models import Category, Company, Department, Employee, MaterialType, Point, Procedure, StockMaterial
 
 User = get_user_model()
 
@@ -45,6 +45,16 @@ def assert_department() -> ModelAssertion:
 
 
 @pytest.fixture
+def assert_category() -> ModelAssertion:
+    def _assert_category(data: dict, **extra: Any) -> None:
+        category = Category.objects.get(name=data["name"])
+        for field_name, expected_value in (data | extra).items():
+            assert getattr(category, field_name) == expected_value
+
+    return _assert_category
+
+
+@pytest.fixture
 def assert_procedure() -> ModelAssertion:
     def _assert_procedure(data: dict, **extra: Any) -> None:
         procedure = Procedure.objects.get(name=data["name"])
@@ -70,7 +80,6 @@ def assert_employee() -> ModelAssertion:
 @pytest.fixture
 def assert_material_type() -> ModelAssertion:
     def _assert_material_type(data: dict, **extra: Any) -> None:
-        data["name"] = data["name"].lower()
         material_type = MaterialType.objects.get(name=data["name"])
         for field_name, expected_value in (data | extra).items():
             assert getattr(material_type, field_name) == expected_value

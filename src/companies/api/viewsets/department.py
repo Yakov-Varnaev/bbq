@@ -38,6 +38,7 @@ class DepartmentViewSet(ModelViewSet):
         )
 
 
+@extend_schema(tags=["categories"])
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
