@@ -1,7 +1,9 @@
 from typing import Any
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.utils import timezone
 
 __all__ = [
     "models",
@@ -48,3 +50,40 @@ class TimestampedModel(DefaultModel):
 
     class Meta:
         abstract = True
+
+
+class StoreDeletedQuerySet(models.QuerySet):
+    def get_queryset(self):
+        return self.not_deleted()
+
+    def not_deleted(self):
+        return self.filter(deleted__isnull=True)
+
+    def deleted(self):
+        return self.filter(deleted__isnull=False)
+
+    def allow_deleted(self):
+        return self
+
+
+class StoreDeleted(DefaultModel):
+    deleted = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    objects = StoreDeletedQuerySet.as_manager()
+
+    def __check_object_exists(self) -> bool:
+        if not self.pk:
+            raise ObjectDoesNotExist("Object must be created before this operation.")
+
+    def delete(self, *args: Any, **kwargs: Any) -> None:
+        self.__check_object_exists()
+        self.deleted = timezone.now()
+        return super(StoreDeleted, self).save(*args, **kwargs)
+
+    def restore(self, *args: Any, **kwargs: Any):
+        self.__check_object_exists()
+        self.deleted = None
+        return super(StoreDeleted, self).save(*args, **kwargs)
