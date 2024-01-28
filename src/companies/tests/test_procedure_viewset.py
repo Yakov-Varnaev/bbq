@@ -8,21 +8,21 @@ from django.urls import reverse
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
 from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
 from companies.api.serializers import ProcedureSerializer
-from companies.models import Department, MaterialType, Procedure
+from companies.models import Category, Department, Procedure
 
 pytestmark = [pytest.mark.django_db]
 
 
 def test_point_managing_staff_can_create_procedure(
     as_point_managing_staff: ApiClient,
-    material_type: MaterialType,
+    category: Category,
     procedure_data: dict[str, Any],
     procedure_reverse_kwargs: dict[str, Any],
     assert_procedure: ModelAssertion,
 ):
     response = as_point_managing_staff.post(reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs), procedure_data)  # type: ignore[no-untyped-call]
 
-    assert_procedure(procedure_data, kind=material_type)
+    assert_procedure(procedure_data, category=category)
     assert response == ProcedureSerializer(Procedure.objects.get(**procedure_data)).data
 
 
@@ -79,7 +79,7 @@ def test_create_procedure_invalid_data(
 
 def test_department_field_is_ignored_on_procedure_creation(
     as_point_managing_staff: ApiClient,
-    material_type: MaterialType,
+    category: Category,
     factory: FixtureFactory,
     procedure_data: dict[str, Any],
     procedure_reverse_kwargs: dict[str, Any],
@@ -91,18 +91,18 @@ def test_department_field_is_ignored_on_procedure_creation(
         expected_status=status.HTTP_201_CREATED,
     )
 
-    assert_procedure(procedure_data, kind=material_type)
+    assert_procedure(procedure_data, category=category)
 
 
 def test_procedure_list(
     reader_client: ApiClient,
     factory: FixtureFactory,
-    material_type: MaterialType,
+    category: Category,
     department: Department,
     procedure_reverse_kwargs: dict[str, Any],
     assert_rest_page: RestPageAssertion,
 ):
-    procedures = sorted(factory.cycle(5).procedure(kind=material_type, department=department), key=lambda d: d.name)
+    procedures = sorted(factory.cycle(5).procedure(category=category, department=department), key=lambda d: d.name)
     response = reader_client.get(reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs))  # type: ignore[no-untyped-call]
 
     assert_rest_page(response, procedures, ProcedureSerializer, None, None)
@@ -117,14 +117,14 @@ def test_procedure_detail(reader_client: ApiClient, procedure: Procedure):
 def test_point_managing_staff_can_update_procedure(
     as_point_managing_staff: ApiClient,
     procedure: Procedure,
-    material_type: MaterialType,
+    category: Category,
     procedure_data: dict[str, Any],
     assert_procedure: ModelAssertion,
 ):
     response = as_point_managing_staff.put(procedure.get_absolute_url(), procedure_data)  # type: ignore[no-untyped-call]
     procedure.refresh_from_db()
 
-    assert_procedure(procedure_data, kind=material_type)
+    assert_procedure(procedure_data, category=category)
     assert response == ProcedureSerializer(Procedure.objects.get(**procedure_data)).data
 
 
