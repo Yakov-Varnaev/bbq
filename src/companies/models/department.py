@@ -19,10 +19,22 @@ class Department(models.Model):
         verbose_name_plural = _("departments")
 
 
+class Category(DefaultModel):
+    name = models.CharField(
+        _("procedure category name"),
+        max_length=255,
+    )
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name = _("procedure category")
+        verbose_name_plural = _("categories of procedures")
+
+
 class Procedure(DefaultModel):
     name = models.CharField(_("procedure name"), max_length=255)
-    kind = models.ForeignKey(
-        "companies.MaterialType", on_delete=models.CASCADE, related_name="procedures", verbose_name=_("material type")
+    category = models.ForeignKey(
+        "Category", on_delete=models.CASCADE, related_name="procedures", verbose_name=_("procedure category")
     )
     department = models.ForeignKey(
         "Department", on_delete=models.CASCADE, related_name="procedures", verbose_name=_("department")

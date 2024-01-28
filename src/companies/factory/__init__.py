@@ -1,5 +1,5 @@
 from companies.factory.company import company, company_data
-from companies.factory.department import department, department_data, procedure, procedure_data
+from companies.factory.department import category, category_data, department, department_data, procedure, procedure_data
 from companies.factory.employee import employee_data
 from companies.factory.point import company_point, company_point_data
 from companies.factory.stock import (
@@ -12,6 +12,8 @@ from companies.factory.stock import (
 )
 
 __all__ = [
+    "category",
+    "category_data",
     "company",
     "company_data",
     "company_point",
