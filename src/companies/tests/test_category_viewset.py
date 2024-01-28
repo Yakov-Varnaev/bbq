@@ -77,9 +77,9 @@ def test_udpate_category_invalid_data(
     as_superuser: ApiClient, category: Category, factory: FixtureFactory, invalid_fields: dict[str, str]
 ):
     url = reverse("api_v1:companies:category-detail", kwargs={"pk": category.pk})
-    request = as_superuser.put(url, data=factory.category_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
+    response = as_superuser.put(url, data=factory.category_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
 
-    assert request.get("name") == [LowercaseCharField.default_error_messages.get("blank")]
+    assert response.get("name") == [LowercaseCharField.default_error_messages.get("blank")]
 
 
 @pytest.mark.parametrize(
@@ -92,8 +92,12 @@ def test_udpate_category_invalid_data(
 def terst_unauthorized_users_cannot_update_category(
     client: ApiClient, expected_status: int, category: Category, category_data: dict
 ):
+    expected_data = CategorySerializer(category).data
     url = reverse("api_v1:companies:category-detail", kwargs={"pk": category.pk})
     client.put(url, data=category_data, expected_status=expected_status)  # type: ignore
+    category.refresh_from_db()
+
+    assert CategorySerializer(category).data == expected_data
 
 
 @pytest.mark.parametrize(
@@ -106,6 +110,8 @@ def terst_unauthorized_users_cannot_update_category(
 def test_only_super_user_can_delete_category(client: ApiClient, expected_status: int, category: Category):
     url = reverse("api_v1:companies:category-detail", kwargs={"pk": category.pk})
     client.delete(url, expected_status=expected_status)  # type: ignore
+
+    assert Category.objects.count()
 
 
 def test_name_field_is_in_lowercase(as_superuser: ApiClient, category_data: dict):

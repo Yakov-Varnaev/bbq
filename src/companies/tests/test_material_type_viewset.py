@@ -79,9 +79,9 @@ def test_udpate_material_type_invalid_data(
     as_superuser: ApiClient, material_type: MaterialType, factory: FixtureFactory, invalid_fields: dict[str, str]
 ):
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
-    request = as_superuser.put(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
+    response = as_superuser.put(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
 
-    assert request.get("name") == [LowercaseCharField.default_error_messages.get("blank")]
+    assert response.get("name") == [LowercaseCharField.default_error_messages.get("blank")]
 
 
 @pytest.mark.parametrize(
@@ -94,8 +94,12 @@ def test_udpate_material_type_invalid_data(
 def terst_unauthorized_users_cannot_update_material_type(
     client: ApiClient, expected_status: int, material_type: MaterialType, material_type_data: dict
 ):
+    expected_data = MaterialTypeSerializer(material_type).data
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
     client.put(url, data=material_type_data, expected_status=expected_status)  # type: ignore
+    material_type.refresh_from_db()
+
+    assert MaterialTypeSerializer(material_type).data == expected_data
 
 
 @pytest.mark.parametrize(
@@ -108,6 +112,8 @@ def terst_unauthorized_users_cannot_update_material_type(
 def test_only_super_user_can_delete_material_type(client: ApiClient, expected_status: int, material_type: MaterialType):
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
     client.delete(url, expected_status=expected_status)  # type: ignore
+
+    assert MaterialType.objects.count()
 
 
 def test_name_field_is_in_lowercase(as_superuser: ApiClient, material_type_data: dict):
