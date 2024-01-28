@@ -6,6 +6,7 @@ from companies.api.serializers.defaults import (
     CurrentStockDefault,
 )
 from companies.api.serializers.department import (
+    CategorySerializer,
     DepartmentCreateSerialzier,
     DepartmentSerializer,
     ProcedureCreateUpdateSerialzier,
@@ -25,6 +26,7 @@ from companies.api.serializers.stock import (
 )
 
 __all__ = [
+    "CategorySerializer",
     "CompanySerializer",
     "CompanyCreateSerializer",
     "CurrentCompanyDefault",

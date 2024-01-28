@@ -9,6 +9,8 @@ from companies.fixtures.company import (
     company_pk,
 )
 from companies.fixtures.department import (
+    category,
+    category_data,
     department,
     department_data,
     department_pk,
@@ -38,6 +40,8 @@ __all__ = [
     "another_company_owner",
     "as_another_company_owner",
     "as_company_owner",
+    "category",
+    "category_data",
     "company",
     "company_data",
     "company_owner",

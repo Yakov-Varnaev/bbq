@@ -2,7 +2,7 @@ import pytest
 from typing import Any
 
 from app.testing.factory import FixtureFactory
-from companies.models import Department, MaterialType, Point, Procedure
+from companies.models import Category, Department, Point, Procedure
 
 
 @pytest.fixture
@@ -21,13 +21,23 @@ def department_pk(department: Department) -> int:
 
 
 @pytest.fixture
-def procedure(factory: FixtureFactory, material_type: MaterialType, department: Department) -> Procedure:
-    return factory.procedure(kind=material_type, department=department)
+def category_data(factory: FixtureFactory) -> dict:
+    return factory.category_data()
 
 
 @pytest.fixture
-def procedure_data(factory: FixtureFactory, material_type: MaterialType) -> dict[str, Any]:
-    return factory.procedure_data(kind=material_type.id)
+def category(factory: FixtureFactory) -> Category:
+    return factory.category()
+
+
+@pytest.fixture
+def procedure(factory: FixtureFactory, category: Category, department: Department) -> Procedure:
+    return factory.procedure(category=category, department=department)
+
+
+@pytest.fixture
+def procedure_data(factory: FixtureFactory, category: Category) -> dict[str, Any]:
+    return factory.procedure_data(category=category.id)
 
 
 @pytest.fixture
