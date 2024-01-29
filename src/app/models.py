@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Self
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -53,17 +53,16 @@ class TimestampedModel(DefaultModel):
 
 
 class StoreDeletedQuerySet(models.QuerySet):
-    def get_queryset(self):
-        return self.not_deleted()
-
-    def not_deleted(self):
+    def not_deleted(self) -> Self:
         return self.filter(deleted__isnull=True)
 
-    def deleted(self):
+    def deleted(self) -> Self:
         return self.filter(deleted__isnull=False)
 
-    def allow_deleted(self):
-        return self
+
+class StoreDeletedManager(models.Manager):
+    def get_queryset(self) -> StoreDeletedQuerySet:
+        return StoreDeletedQuerySet(self.model, using=self._db).not_deleted()
 
 
 class StoreDeleted(DefaultModel):
@@ -72,18 +71,19 @@ class StoreDeleted(DefaultModel):
     class Meta:
         abstract = True
 
-    objects = StoreDeletedQuerySet.as_manager()
+    objects = StoreDeletedManager()
+    include_deleted = StoreDeletedQuerySet.as_manager()
 
-    def __check_object_exists(self) -> bool:
+    def __check_object_exists(self) -> None:
         if not self.pk:
             raise ObjectDoesNotExist("Object must be created before this operation.")
 
-    def delete(self, *args: Any, **kwargs: Any) -> None:
+    def delete(self, *args: Any, **kwargs: Any) -> Self:
         self.__check_object_exists()
         self.deleted = timezone.now()
         return super(StoreDeleted, self).save(*args, **kwargs)
 
-    def restore(self, *args: Any, **kwargs: Any):
+    def restore(self, *args: Any, **kwargs: Any) -> Self:
         self.__check_object_exists()
         self.deleted = None
         return super(StoreDeleted, self).save(*args, **kwargs)

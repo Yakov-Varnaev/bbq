@@ -1,3 +1,4 @@
+from companies.fixtures.clients import *
 from companies.fixtures.company import (
     another_company,
     another_company_owner,
@@ -61,4 +62,15 @@ __all__ = [
     "stock",
     "stock_data",
     "stock_material",
+    "assert_company",
+    "assert_company_point",
+    "assert_department",
+    "assert_employee",
+    "assert_material_type",
+    "assert_procedure",
+    "assert_stock_material",
+    "reader_client",
+    "as_point_managing_staff",
+    "user_fixtures_collection",
+    "as_non_point_managing_staff",
 ]

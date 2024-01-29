@@ -1,6 +1,6 @@
-from purchases.api.serializers.product_material import ProductMaterialsCreateSerializer, ProductMaterialsSerializer
+from purchases.api.serializers.product_material import ProductMaterialCreateSerializer, ProductMaterialSerializer
 
 __all__ = [
-    "ProductMaterialsSerializer",
-    "ProductMaterialsCreateSerializer",
+    "ProductMaterialSerializer",
+    "ProductMaterialCreateSerializer",
 ]

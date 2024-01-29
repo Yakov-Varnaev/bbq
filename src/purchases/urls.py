@@ -10,5 +10,5 @@ router.register("products", viewsets.ProductMaterialViewSet, basename="products"
 app_name = "purchases"
 
 urlpatterns = [
-    path("companies/<int:company_id>/points/<int:point_id>/", include(router.urls)),
+    path("companies/<int:company_pk>/points/<int:point_pk>/", include(router.urls)),
 ]
