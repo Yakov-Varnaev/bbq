@@ -2,6 +2,7 @@ from companies.api.serializers.company import CompanyCreateSerializer, CompanySe
 from companies.api.serializers.defaults import (
     CurrentCompanyDefault,
     CurrentDepartmentDefault,
+    CurrentEmployeeDefault,
     CurrentPointDefault,
     CurrentStockDefault,
 )
@@ -31,6 +32,7 @@ __all__ = [
     "CompanyCreateSerializer",
     "CurrentCompanyDefault",
     "CurrentDepartmentDefault",
+    "CurrentEmployeeDefault",
     "CurrentPointDefault",
     "CurrentStockDefault",
     "DepartmentCreateSerialzier",

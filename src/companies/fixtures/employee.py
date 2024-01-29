@@ -51,7 +51,7 @@ def employee_invalid_data(request: pytest.FixtureRequest) -> dict:
 
 @pytest.fixture
 def employee(factory: FixtureFactory, user: User, department: Department) -> Employee:
-    return factory.employee(user=user, department=department)
+    return factory.employee(user=user, departments=[department])
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@ from rest_framework.serializers import Field
 
 from django.shortcuts import get_object_or_404
 
-from companies.models import Company, Department, Point
+from companies.models import Company, Department, Employee, Point
 from companies.models.stock import Stock
 
 
@@ -45,4 +45,17 @@ class CurrentStockDefault:
             id=view_kwargs["stock_pk"],
             point_id=view_kwargs["point_pk"],
             point__company_id=view_kwargs["company_pk"],
+        )
+
+
+class CurrentEmployeeDefault:
+    requires_context = True
+
+    def __call__(self, serializer_field: Field) -> Employee:
+        view_kwargs = serializer_field.context["view"].kwargs
+        return get_object_or_404(
+            Employee,
+            id=view_kwargs["employee_pk"],
+            departments__point_id=view_kwargs["point_pk"],
+            departments__point__company_id=view_kwargs["company_pk"],
         )

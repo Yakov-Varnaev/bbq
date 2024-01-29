@@ -1,9 +1,12 @@
+from typing import Any
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
 from django.utils.translation import gettext_lazy as _
 
+from companies.api.serializers import CurrentEmployeeDefault
 from companies.models import Employee, MasterProcedure
 
 
@@ -19,6 +22,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class MasterProcedureSerializer(serializers.ModelSerializer):
+    employee = serializers.HiddenField(default=CurrentEmployeeDefault())
+
     class Meta:
         model = MasterProcedure
         fields = (
@@ -37,3 +42,16 @@ class MasterProcedureSerializer(serializers.ModelSerializer):
                 fields=["procedure", "employee"],
             ),
         ]
+
+    def to_representation(self, instance: MasterProcedure) -> dict[str, Any]:
+        data = super().to_representation(instance)
+        data["employee"] = {
+            "first_name": instance.employee.user.first_name,
+            "last_name": instance.employee.user.last_name,
+            "id": instance.employee.id,
+        }
+        data["procedure"] = {
+            "name": instance.procedure.name,
+            "category": instance.procedure.category.name,
+        }
+        return data

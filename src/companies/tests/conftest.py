@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from app.testing import ApiClient, StatusApiClient
 from app.types import ModelAssertion
 from companies.models import (
+    Category,
     Company,
     Department,
     Employee,
