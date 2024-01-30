@@ -1,4 +1,6 @@
-from typing import Any, Self
+from typing import Any
+
+from typing_extensions import Self
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -81,12 +83,13 @@ class ArchiveDeleted(DefaultModel):
         if not self.pk:
             raise ObjectDoesNotExist("Object must be created before this operation.")
 
-    def delete(self, *args: Any, **kwargs: Any) -> Self:
+    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, Any]]:
         self.__check_object_exists()
         self.archived = timezone.now()
-        return super(ArchiveDeleted, self).save(*args, **kwargs)
+        super(ArchiveDeleted, self).save(*args, **kwargs)
+        return (1, {})
 
-    def restore(self, *args: Any, **kwargs: Any) -> Self:
+    def restore(self, *args: Any, **kwargs: Any) -> None:
         self.__check_object_exists()
         self.archived = None
-        return super(ArchiveDeleted, self).save(*args, **kwargs)
+        super(ArchiveDeleted, self).save(*args, **kwargs)
