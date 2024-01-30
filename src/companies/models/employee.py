@@ -33,12 +33,12 @@ class Employee(TimestampedModel):
 class MasterProcedure(TimestampedModel, ArchiveDeleted):
     procedure = models.ForeignKey(
         "companies.Procedure",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="procedures",
     )
     employee = models.ForeignKey(
         "Employee",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="employees",
     )
     price = models.PositiveIntegerField(_("procedure price"))
