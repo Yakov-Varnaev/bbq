@@ -2,7 +2,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from app.models import TimestampedModel
+from app.models import ArchiveDeleted, TimestampedModel
 
 
 class Employee(TimestampedModel):
@@ -30,7 +30,7 @@ class Employee(TimestampedModel):
         verbose_name_plural = _("employees")
 
 
-class MasterProcedure(TimestampedModel):
+class MasterProcedure(TimestampedModel, ArchiveDeleted):
     procedure = models.ForeignKey(
         "companies.Procedure",
         on_delete=models.CASCADE,
@@ -46,10 +46,6 @@ class MasterProcedure(TimestampedModel):
         _("coefficient"),
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(1)],
-    )
-    archived = models.BooleanField(
-        _("archived"),
-        default=False,
     )
 
     class Meta:

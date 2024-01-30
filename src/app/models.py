@@ -59,10 +59,10 @@ class TimestampedModel(DefaultModel):
 
 class ArchiveDeletedQuerySet(models.QuerySet):
     def not_archived(self) -> Self:
-        return self.filter(deleted__isnull=True)
+        return self.filter(archived__isnull=True)
 
     def archived(self) -> Self:
-        return self.filter(deleted__isnull=False)
+        return self.filter(archived__isnull=False)
 
 
 class ArchiveDeletedManager(models.Manager):

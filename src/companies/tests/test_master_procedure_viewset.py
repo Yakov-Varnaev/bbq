@@ -1,9 +1,11 @@
 import pytest
 from typing import Any
 
+from freezegun import freeze_time
 from rest_framework import status
 
 from django.urls import reverse
+from django.utils import timezone
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
 from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
@@ -164,6 +166,7 @@ def test_update_master_procedure_invalid_data(
     )
 
 
+@freeze_time()
 def test_point_managing_staff_can_delete_master_procedure(
     as_point_managing_staff: ApiClient,
     master_procedure: MasterProcedure,
@@ -172,8 +175,10 @@ def test_point_managing_staff_can_delete_master_procedure(
     as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
 
     assert_doesnt_exist(MasterProcedure)
+    assert MasterProcedure.include_archived.filter(archived=timezone.now()).exists()
 
 
+@freeze_time()
 def test_point_non_managing_staff_cannot_delete_procedure(
     as_point_non_managing_staff: StatusApiClient,
     master_procedure: MasterProcedure,
@@ -184,4 +189,18 @@ def test_point_non_managing_staff_cannot_delete_procedure(
         expected_status=as_point_non_managing_staff.expected_status,
     )
 
+    assert_exists(MasterProcedure)
+    assert not MasterProcedure.include_archived.filter(archived=timezone.now()).exists()
+
+
+@freeze_time()
+def test_master_procedure_can_restore(
+    as_point_managing_staff: ApiClient,
+    master_procedure: MasterProcedure,
+    assert_exists: ExistCheckAssertion,
+):
+    as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
+
+    archived_master_procedure = MasterProcedure.include_archived.get(archived=timezone.now())
+    archived_master_procedure.restore()
     assert_exists(MasterProcedure)
