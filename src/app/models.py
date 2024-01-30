@@ -87,7 +87,7 @@ class ArchiveDeleted(DefaultModel):
         self.__check_object_exists()
         self.archived = timezone.now()
         super(ArchiveDeleted, self).save(*args, **kwargs)
-        return (1, {f"{self._meta.app_label}.{self.__cls__.__name__}": 1})
+        return (1, {f"{self._meta.app_label}.{self.__class__.__name__}": 1})
 
     def restore(self, *args: Any, **kwargs: Any) -> None:
         self.__check_object_exists()
