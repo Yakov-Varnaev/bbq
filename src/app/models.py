@@ -1,12 +1,19 @@
 from typing import Any
 
+from typing_extensions import Self
+
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.utils import timezone
 
 __all__ = [
     "models",
     "DefaultModel",
     "TimestampedModel",
+    "ArchiveDeleted",
+    "ArchiveDeletedQuerySet",
+    "ArchiveDeletedManager",
 ]
 
 
@@ -48,3 +55,41 @@ class TimestampedModel(DefaultModel):
 
     class Meta:
         abstract = True
+
+
+class ArchiveDeletedQuerySet(models.QuerySet):
+    def not_archived(self) -> Self:
+        return self.filter(deleted__isnull=True)
+
+    def archived(self) -> Self:
+        return self.filter(deleted__isnull=False)
+
+
+class ArchiveDeletedManager(models.Manager):
+    def get_queryset(self) -> ArchiveDeletedQuerySet:
+        return ArchiveDeletedQuerySet(self.model, using=self._db).not_archived()
+
+
+class ArchiveDeleted(DefaultModel):
+    archived = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    objects = ArchiveDeletedManager()
+    include_archived = ArchiveDeletedQuerySet.as_manager()
+
+    def __check_object_exists(self) -> None:
+        if not self.pk:
+            raise ObjectDoesNotExist("Object must be created before this operation.")
+
+    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, Any]]:
+        self.__check_object_exists()
+        self.archived = timezone.now()
+        super(ArchiveDeleted, self).save(*args, **kwargs)
+        return (1, {f"{self._meta.app_label}.{self.__class__.__name__}": 1})
+
+    def restore(self, *args: Any, **kwargs: Any) -> None:
+        self.__check_object_exists()
+        self.archived = None
+        super(ArchiveDeleted, self).save(*args, **kwargs)
