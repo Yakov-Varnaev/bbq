@@ -12,7 +12,6 @@ pytestmark = pytest.mark.django_db
 
 
 # test anyone can read
-# test deleted objects are not returned
 # test only point managing staff can create/update/delete
 # test cannot create duplicated of same product material
 # test duplicated product material can be created if previous one is marked as deleted
