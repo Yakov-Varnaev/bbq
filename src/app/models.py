@@ -1,7 +1,9 @@
-from typing import Any
+from typing import Any, Self
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.utils import timezone
 
 __all__ = [
     "models",
@@ -48,3 +50,40 @@ class TimestampedModel(DefaultModel):
 
     class Meta:
         abstract = True
+
+
+class ArchivableQuerySet(models.QuerySet):
+    def not_archived(self) -> Self:
+        return self.filter(deleted__isnull=True)
+
+    def archived(self) -> Self:
+        return self.filter(deleted__isnull=False)
+
+
+class ArchivableManager(models.Manager):
+    def get_queryset(self) -> ArchivableQuerySet:
+        return ArchivableQuerySet(self.model, using=self._db).not_archived()
+
+
+class ArchiveDeleted(DefaultModel):
+    archived = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    objects = ArchivableManager()
+    include_archived = ArchivableQuerySet.as_manager()
+
+    def __check_object_exists(self) -> None:
+        if not self.pk:
+            raise ObjectDoesNotExist("Object must be created before this operation.")
+
+    def delete(self, *args: Any, **kwargs: Any) -> Self:
+        self.__check_object_exists()
+        self.archived = timezone.now()
+        return super(ArchiveDeleted, self).save(*args, **kwargs)
+
+    def restore(self, *args: Any, **kwargs: Any) -> Self:
+        self.__check_object_exists()
+        self.archived = None
+        return super(ArchiveDeleted, self).save(*args, **kwargs)
