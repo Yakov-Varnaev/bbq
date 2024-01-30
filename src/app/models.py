@@ -9,6 +9,9 @@ __all__ = [
     "models",
     "DefaultModel",
     "TimestampedModel",
+    "ArchiveDeleted",
+    "ArchiveDeletedQuerySet",
+    "ArchiveDeletedManager",
 ]
 
 
@@ -52,7 +55,7 @@ class TimestampedModel(DefaultModel):
         abstract = True
 
 
-class ArchivableQuerySet(models.QuerySet):
+class ArchiveDeletedQuerySet(models.QuerySet):
     def not_archived(self) -> Self:
         return self.filter(deleted__isnull=True)
 
@@ -60,9 +63,9 @@ class ArchivableQuerySet(models.QuerySet):
         return self.filter(deleted__isnull=False)
 
 
-class ArchivableManager(models.Manager):
-    def get_queryset(self) -> ArchivableQuerySet:
-        return ArchivableQuerySet(self.model, using=self._db).not_archived()
+class ArchiveDeletedManager(models.Manager):
+    def get_queryset(self) -> ArchiveDeletedQuerySet:
+        return ArchiveDeletedQuerySet(self.model, using=self._db).not_archived()
 
 
 class ArchiveDeleted(DefaultModel):
@@ -71,8 +74,8 @@ class ArchiveDeleted(DefaultModel):
     class Meta:
         abstract = True
 
-    objects = ArchivableManager()
-    include_archived = ArchivableQuerySet.as_manager()
+    objects = ArchiveDeletedManager()
+    include_archived = ArchiveDeletedQuerySet.as_manager()
 
     def __check_object_exists(self) -> None:
         if not self.pk:
