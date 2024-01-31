@@ -19,6 +19,7 @@ from companies.fixtures.department import (
     procedure_reverse_kwargs,
 )
 from companies.fixtures.employee import (
+    archived_master_procedure,
     employee,
     employee_data,
     employee_data_with_one_department,
@@ -38,6 +39,7 @@ from companies.fixtures.stock import material, material_type, material_type_data
 __all__ = [
     "another_company",
     "another_company_owner",
+    "archived_master_procedure",
     "as_another_company_owner",
     "as_company_owner",
     "category",

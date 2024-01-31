@@ -3,6 +3,8 @@ from typing import Any
 
 from pytest_lazyfixture import lazy_fixture as lf
 
+from django.utils import timezone
+
 from app.testing.factory import FixtureFactory
 from companies.models import Department, Employee, Point, Procedure
 from users.models import User
@@ -62,6 +64,11 @@ def master_procedure_data(factory: FixtureFactory, procedure: Procedure, employe
 @pytest.fixture
 def master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
     return factory.master_procedure(procedure=procedure, employee=employee)
+
+
+@pytest.fixture
+def archived_master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
+    return factory.master_procedure(procedure=procedure, employee=employee, archived=timezone.now())
 
 
 @pytest.fixture

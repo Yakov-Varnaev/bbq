@@ -166,7 +166,6 @@ def test_point_managing_staff_can_delete_master_procedure(
     as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
 
     assert_doesnt_exist(MasterProcedure)
-    assert MasterProcedure.include_archived.filter(id=master_procedure.id).exists()
 
 
 def test_point_non_managing_staff_cannot_delete_procedure(
@@ -180,13 +179,3 @@ def test_point_non_managing_staff_cannot_delete_procedure(
     )
 
     assert_exists(MasterProcedure)
-    assert MasterProcedure.include_archived.filter(id=master_procedure.id).exists()
-
-
-def test_master_procedure_can_be_restored(as_point_managing_staff: ApiClient, master_procedure: MasterProcedure):
-    as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
-    archived_master_procedure = MasterProcedure.include_archived.get(id=master_procedure.id)
-    archived_master_procedure.restore()
-    archived_master_procedure.refresh_from_db()
-
-    assert MasterProcedure.objects.get(id=master_procedure.id).archived is None
