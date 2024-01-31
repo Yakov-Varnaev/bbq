@@ -1,12 +1,12 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from django.db.models import QuerySet
 
 from app.api.permissions import IsCompanyOwnerOrReadOnly
-from companies.api.serializers import EmployeeSerializer, MasterProcedureSerializer
+from companies.api.serializers import EmployeeSerializer, MasterProcedureReadSerializer, MasterProcedureWriteSerializer
 from companies.models import Employee, MasterProcedure
 
 
@@ -39,7 +39,11 @@ class EmployeeViewSet(ModelViewSet):
 )
 class MasterProcedureViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
-    serializer_class = MasterProcedureSerializer
+
+    def get_serializer_class(self) -> type[MasterProcedureReadSerializer | MasterProcedureWriteSerializer]:
+        if self.request.method in SAFE_METHODS:
+            return MasterProcedureReadSerializer
+        return MasterProcedureWriteSerializer
 
     def get_queryset(self) -> QuerySet[MasterProcedure]:
         return MasterProcedure.objects.filter(

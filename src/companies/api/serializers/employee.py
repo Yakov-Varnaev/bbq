@@ -1,12 +1,10 @@
-from typing import Any
-
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
 from django.utils.translation import gettext_lazy as _
 
-from companies.api.serializers import CurrentEmployeeDefault
+from companies.api.serializers import CurrentEmployeeDefault, ProcedureSerializer
 from companies.models import Employee, MasterProcedure
 
 
@@ -21,8 +19,22 @@ class EmployeeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class MasterProcedureSerializer(serializers.ModelSerializer):
-    employee = serializers.HiddenField(default=CurrentEmployeeDefault())
+class EmployeeShortSerialiser(serializers.ModelSerializer):
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
+
+    class Meta:
+        model = Employee
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+        )
+
+
+class MasterProcedureReadSerializer(serializers.ModelSerializer):
+    procedure = ProcedureSerializer()
+    employee = EmployeeShortSerialiser()
 
     class Meta:
         model = MasterProcedure
@@ -31,10 +43,15 @@ class MasterProcedureSerializer(serializers.ModelSerializer):
             "employee",
             "price",
             "coef",
-            "archived",
             "created",
             "modified",
         )
+
+
+class MasterProcedureWriteSerializer(serializers.ModelSerializer):
+    employee = serializers.HiddenField(default=CurrentEmployeeDefault())
+
+    class Meta(MasterProcedureReadSerializer.Meta):
         read_only_fields = ("created", "modified")
         validators = [
             UniqueTogetherValidator(
@@ -43,15 +60,5 @@ class MasterProcedureSerializer(serializers.ModelSerializer):
             ),
         ]
 
-    def to_representation(self, instance: MasterProcedure) -> dict[str, Any]:
-        data = super().to_representation(instance)
-        data["employee"] = {
-            "first_name": instance.employee.user.first_name,
-            "last_name": instance.employee.user.last_name,
-            "id": instance.employee.id,
-        }
-        data["procedure"] = {
-            "name": instance.procedure.name,
-            "category": instance.procedure.category.name,
-        }
-        return data
+    def to_representation(self, instance: MasterProcedure) -> dict:
+        return MasterProcedureReadSerializer(instance).data

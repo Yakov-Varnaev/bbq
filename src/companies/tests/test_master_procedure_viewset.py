@@ -1,15 +1,13 @@
 import pytest
 from typing import Any
 
-from freezegun import freeze_time
 from rest_framework import status
 
 from django.urls import reverse
-from django.utils import timezone
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
 from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
-from companies.api.serializers import MasterProcedureSerializer
+from companies.api.serializers import MasterProcedureReadSerializer
 from companies.models import Employee, MasterProcedure, Procedure
 
 pytestmark = [pytest.mark.django_db]
@@ -23,30 +21,21 @@ def test_point_managing_staff_can_create_master_procedure(
     master_procedure_data: dict[str, Any],
     assert_master_procedure: ModelAssertion,
 ):
-    response = as_point_managing_staff.post(reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs), master_procedure_data)  # type: ignore[no-untyped-call]
+    url = reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs)
+    response = as_point_managing_staff.post(url, master_procedure_data)  # type: ignore[no-untyped-call]
 
     assert_master_procedure(master_procedure_data, employee=employee, procedure=procedure)
-    assert response == MasterProcedureSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
+    assert response == MasterProcedureReadSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
 
 
+@pytest.mark.usefixtures("master_procedure")
 def test_point_managing_staff_cannot_create_duplicate_master_procedure(
     as_point_managing_staff: ApiClient,
     master_procedure_reverse_kwargs: dict[str, Any],
     master_procedure_data: dict[str, Any],
 ):
     as_point_managing_staff.post(  # type: ignore[no-untyped-call]
-        reverse(
-            "api_v1:companies:master-procedure-list",
-            kwargs=master_procedure_reverse_kwargs,
-        ),
-        master_procedure_data,
-        expected_status=status.HTTP_201_CREATED,
-    )
-    as_point_managing_staff.post(  # type: ignore[no-untyped-call]
-        reverse(
-            "api_v1:companies:master-procedure-list",
-            kwargs=master_procedure_reverse_kwargs,
-        ),
+        reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs),
         master_procedure_data,
         expected_status=status.HTTP_400_BAD_REQUEST,
     )
@@ -114,13 +103,16 @@ def test_master_procedure_list(
     assert_rest_page: RestPageAssertion,
 ):
     master_procedures = factory.cycle(5).master_procedure(procedure=procedure, employee=employee)
-    response = reader_client.get(reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs))  # type: ignore[no-untyped-call]
-
-    assert_rest_page(response, master_procedures, MasterProcedureSerializer, None, None)
+    response = reader_client.get(  # type: ignore[no-untyped-call]
+        reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs)
+    )
+    assert_rest_page(response, master_procedures, MasterProcedureReadSerializer, None, None)
 
 
 def test_master_procedure_detail(reader_client: ApiClient, master_procedure: MasterProcedure):
-    assert reader_client.get(master_procedure.get_absolute_url()) == MasterProcedureSerializer(master_procedure).data  # type: ignore[no-untyped-call]
+    url = master_procedure.get_absolute_url()
+
+    assert reader_client.get(url) == MasterProcedureReadSerializer(master_procedure).data  # type: ignore[no-untyped-call]
 
 
 def test_point_managing_staff_can_update_master_procedure(
@@ -135,7 +127,7 @@ def test_point_managing_staff_can_update_master_procedure(
     master_procedure.refresh_from_db()
 
     assert_master_procedure(master_procedure_data, procedure=procedure, employee=employee)
-    assert response == MasterProcedureSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
+    assert response == MasterProcedureReadSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
 
 
 def test_point_non_managing_staff_cannot_update_master_procedure(
@@ -166,7 +158,6 @@ def test_update_master_procedure_invalid_data(
     )
 
 
-@freeze_time()
 def test_point_managing_staff_can_delete_master_procedure(
     as_point_managing_staff: ApiClient,
     master_procedure: MasterProcedure,
@@ -175,10 +166,9 @@ def test_point_managing_staff_can_delete_master_procedure(
     as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
 
     assert_doesnt_exist(MasterProcedure)
-    assert MasterProcedure.include_archived.filter(archived=timezone.now()).exists()
+    assert MasterProcedure.include_archived.filter(id=master_procedure.id).exists()
 
 
-@freeze_time()
 def test_point_non_managing_staff_cannot_delete_procedure(
     as_point_non_managing_staff: StatusApiClient,
     master_procedure: MasterProcedure,
@@ -190,17 +180,13 @@ def test_point_non_managing_staff_cannot_delete_procedure(
     )
 
     assert_exists(MasterProcedure)
-    assert not MasterProcedure.include_archived.filter(archived=timezone.now()).exists()
+    assert MasterProcedure.include_archived.filter(id=master_procedure.id).exists()
 
 
-@freeze_time()
-def test_master_procedure_can_restore(
-    as_point_managing_staff: ApiClient,
-    master_procedure: MasterProcedure,
-    assert_exists: ExistCheckAssertion,
-):
+def test_master_procedure_can_be_restored(as_point_managing_staff: ApiClient, master_procedure: MasterProcedure):
     as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
-
-    archived_master_procedure = MasterProcedure.include_archived.get(archived=timezone.now())
+    archived_master_procedure = MasterProcedure.include_archived.get(id=master_procedure.id)
     archived_master_procedure.restore()
-    assert_exists(MasterProcedure)
+    archived_master_procedure.refresh_from_db()
+
+    assert MasterProcedure.objects.get(id=master_procedure.id).archived is None
