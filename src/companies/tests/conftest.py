@@ -9,7 +9,17 @@ from django.contrib.auth import get_user_model
 
 from app.testing import ApiClient, StatusApiClient
 from app.types import ModelAssertion
-from companies.models import Category, Company, Department, Employee, MaterialType, Point, Procedure, StockMaterial
+from companies.models import (
+    Category,
+    Company,
+    Department,
+    Employee,
+    MasterProcedure,
+    MaterialType,
+    Point,
+    Procedure,
+    StockMaterial,
+)
 
 User = get_user_model()
 
@@ -75,6 +85,19 @@ def assert_employee() -> ModelAssertion:
             assert getattr(employee, field_name) == expected_value
 
     return _assert_employee
+
+
+@pytest.fixture
+def assert_master_procedure() -> ModelAssertion:
+    def _assert_master_procedure(data: dict, **extra: Any) -> None:
+        master_procedure = MasterProcedure.objects.get(procedure_id=data["procedure"], employee_id=data["employee"])
+        assert master_procedure.procedure.id == data.pop("procedure")
+        assert master_procedure.employee.id == data.pop("employee")
+
+        for field_name, expected_value in (data | extra).items():
+            assert getattr(master_procedure, field_name) == expected_value
+
+    return _assert_master_procedure
 
 
 @pytest.fixture

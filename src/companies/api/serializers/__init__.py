@@ -2,6 +2,7 @@ from companies.api.serializers.company import CompanyCreateSerializer, CompanySe
 from companies.api.serializers.defaults import (
     CurrentCompanyDefault,
     CurrentDepartmentDefault,
+    CurrentEmployeeDefault,
     CurrentPointDefault,
     CurrentStockDefault,
 )
@@ -12,7 +13,11 @@ from companies.api.serializers.department import (
     ProcedureCreateUpdateSerialzier,
     ProcedureSerializer,
 )
-from companies.api.serializers.employee import EmployeeSerializer
+from companies.api.serializers.employee import (
+    EmployeeSerializer,
+    MasterProcedureReadSerializer,
+    MasterProcedureWriteSerializer,
+)
 from companies.api.serializers.point import PointCreateSerializer, PointSerializer
 from companies.api.serializers.stock import (
     MaterialSerializer,
@@ -31,11 +36,14 @@ __all__ = [
     "CompanyCreateSerializer",
     "CurrentCompanyDefault",
     "CurrentDepartmentDefault",
+    "CurrentEmployeeDefault",
     "CurrentPointDefault",
     "CurrentStockDefault",
     "DepartmentCreateSerialzier",
     "DepartmentSerializer",
     "EmployeeSerializer",
+    "MasterProcedureReadSerializer",
+    "MasterProcedureWriteSerializer",
     "MaterialSerializer",
     "MaterialTypeSerializer",
     "PointSerializer",

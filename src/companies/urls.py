@@ -19,6 +19,7 @@ company_router.register("points", viewsets.PointViewSet, basename="point")
 point_router = NestedSimpleRouter(company_router, "points", lookup="point")
 point_router.register("departments", viewsets.DepartmentViewSet, basename="department")
 point_router.register("stocks", viewsets.StockViewSet, basename="stock")
+point_router.register("employees", viewsets.EmployeeViewSet, basename="employee")
 
 department_router = NestedSimpleRouter(point_router, "departments", lookup="department")
 department_router.register("procedures", viewsets.ProcedureViewSet, basename="procedure")
@@ -26,8 +27,8 @@ department_router.register("procedures", viewsets.ProcedureViewSet, basename="pr
 stock_router = NestedSimpleRouter(point_router, "stocks", lookup="stock")
 stock_router.register("materials", viewsets.StockMaterialViewSet, basename="material")
 
-employee_router = NestedSimpleRouter(company_router, "points", lookup="point")
-point_router.register("employees", viewsets.EmployeeViewSet, basename="employee")
+employee_router = NestedSimpleRouter(point_router, "employees", lookup="employee")
+employee_router.register("master-procedures", viewsets.MasterProcedureViewSet, basename="master-procedure")
 
 urlpatterns = [
     path("", include(router.urls)),
