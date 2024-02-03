@@ -1,5 +1,5 @@
-from tests.factories.app.factory import factory
+from tests.factories.app.factory import image
 
 __all__ = [
-    "factory",
+    "image",
 ]
