@@ -1,8 +1,8 @@
 # fmt: off
 pytest_plugins = [
-    "tests.asserts.app",
-    "tests.factories.app",
-    "tests.fixtures.app",
+    "tests.asserts.apps.app",
+    "tests.factories.apps.app",
+    "tests.fixtures.apps.app",
 
     "tests.factories.apps.a12n",
     "tests.fixtures.apps.a12n",
