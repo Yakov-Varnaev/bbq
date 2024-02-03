@@ -19,12 +19,12 @@ lint:
 	dotenv-linter src/app/.env.ci
 	cd src && ./manage.py check
 	flake8 src
-	cd src && mypy
+	mypy .
 
 test:
 	mkdir -p src/static
 	cd src && ./manage.py makemigrations --dry-run --no-input --check
 	cd src && ./manage.py compilemessages
 	# doesn't really work with lazy-fixtures
-	# cd src && pytest --dead-fixtures
-	cd src && pytest -x -n auto
+	# pytest --dead-fixtures
+	pytest -x -n auto
