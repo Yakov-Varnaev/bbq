@@ -5,6 +5,4 @@ pytest_plugins = [
     "a12n.fixtures",
     "users.factory",
     "users.fixtures",
-    "companies.factory",
-    "companies.fixtures",
 ]
