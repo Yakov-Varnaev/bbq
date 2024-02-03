@@ -1,4 +1,4 @@
-from companies.fixtures.company import (
+from tests.fixtures.apps.companies.company import (
     another_company,
     another_company_owner,
     as_another_company_owner,
@@ -8,17 +8,16 @@ from companies.fixtures.company import (
     company_owner,
     company_pk,
 )
-from companies.fixtures.department import (
+from tests.fixtures.apps.companies.department import (
     category,
     category_data,
     department,
     department_data,
-    department_pk,
     procedure,
     procedure_data,
     procedure_reverse_kwargs,
 )
-from companies.fixtures.employee import (
+from tests.fixtures.apps.companies.employee import (
     archived_master_procedure,
     employee,
     employee_data,
@@ -32,9 +31,16 @@ from companies.fixtures.employee import (
     master_procedure_data,
     master_procedure_reverse_kwargs,
 )
-from companies.fixtures.fields import lowercase_char_field
-from companies.fixtures.point import company_point, company_point_data, company_point_pk
-from companies.fixtures.stock import material, material_type, material_type_data, stock, stock_data, stock_material
+from tests.fixtures.apps.companies.fields import lowercase_char_field
+from tests.fixtures.apps.companies.point import company_point, company_point_data, company_point_pk
+from tests.fixtures.apps.companies.stock import (
+    material,
+    material_type,
+    material_type_data,
+    stock,
+    stock_data,
+    stock_material,
+)
 
 __all__ = [
     "another_company",
@@ -53,7 +59,6 @@ __all__ = [
     "company_point_pk",
     "department",
     "department_data",
-    "department_pk",
     "employee",
     "employee_data",
     "employee_data_with_one_department",

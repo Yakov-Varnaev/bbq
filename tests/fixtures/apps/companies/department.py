@@ -16,11 +16,6 @@ def department_data(factory: FixtureFactory) -> dict[str, Any]:
 
 
 @pytest.fixture
-def department_pk(department: Department) -> int:
-    return department.pk
-
-
-@pytest.fixture
 def category_data(factory: FixtureFactory) -> dict:
     return factory.category_data()
 

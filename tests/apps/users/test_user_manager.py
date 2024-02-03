@@ -3,7 +3,7 @@ from collections.abc import Callable
 
 from django.contrib.auth import get_user_model
 
-from a12n.factory import RegistrationData, UserData
+from tests.factories.apps.a12n import RegistrationData, UserData
 
 User = get_user_model()
 

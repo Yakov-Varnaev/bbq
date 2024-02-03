@@ -128,6 +128,7 @@ line_length = 120
 [tool.pytest.ini_options]
  DJANGO_SETTINGS_MODULE = "app.settings"
  python_files = ["test*.py"]
+ pythonpath = ". src"
  addopts = ["--reuse-db"]
  markers = [
    "freeze_time: freezing time marker (pytest-freezegun does not register it)",
@@ -141,4 +142,12 @@ line_length = 120
    "CELERY_ALWAYS_EAGER=True",
    "DISABLE_THROTTLING=True",
    "AXES_ENABLED=False",
+   "DEBUG=Off",
+   "SECRET_KEY=secret",
+   "DATABASE_URL=sqlite:///db.sqlite",
+ ]
+ [tool.mypy]
+ env = [
+    "SECRET_KEY=secret",
+    "DATABASE_URL=sqlite:///db.sqlite",
  ]
