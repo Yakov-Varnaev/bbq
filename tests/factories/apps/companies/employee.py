@@ -2,8 +2,8 @@ from typing import TypedDict
 
 from typing_extensions import Unpack
 
-from app.testing import FixtureFactory, register
-from app.testing.types import FactoryProtocol
+from app.testing import register
+from app.testing.factory import FixtureFactory
 from companies.models import Department, Employee, MasterProcedure
 from users.models import User
 
@@ -29,12 +29,12 @@ def employee_data(self: FixtureFactory, **kwargs: Unpack[EmployeeData]) -> dict:
 
 
 @register
-def employee(self: FactoryProtocol, **kwargs: dict) -> Employee:
+def employee(self: FixtureFactory, **kwargs: dict) -> Employee:
     return self.mixer.blend(Employee, **kwargs)
 
 
 @register
-def master_procedure_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def master_procedure_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {"price": self.field("random.randint", a=1, b=99999)},
         iterations=1,
@@ -43,5 +43,5 @@ def master_procedure_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def master_procedure(self: FactoryProtocol, **kwargs: dict) -> MasterProcedure:
+def master_procedure(self: FixtureFactory, **kwargs: dict) -> MasterProcedure:
     return self.mixer.blend(MasterProcedure, **kwargs)

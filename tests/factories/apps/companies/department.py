@@ -1,10 +1,10 @@
 from app.testing import register
-from app.testing.types import FactoryProtocol
+from app.testing.factory import FixtureFactory
 from companies.models import Category, Department, Procedure
 
 
 @register
-def department_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def department_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {"name": self.field("text.word")},
         iterations=1,
@@ -13,12 +13,12 @@ def department_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def department(self: FactoryProtocol, **kwargs: dict) -> Department:
+def department(self: FixtureFactory, **kwargs: dict) -> Department:
     return self.mixer.blend(Department, **kwargs)
 
 
 @register
-def category_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def category_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {"name": self.field("text.word")},
         iterations=1,
@@ -27,12 +27,12 @@ def category_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def category(self: FactoryProtocol, **kwargs: dict) -> Category:
+def category(self: FixtureFactory, **kwargs: dict) -> Category:
     return self.mixer.blend(Category, **kwargs)
 
 
 @register
-def procedure_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def procedure_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {"name": self.field("text.word")},
         iterations=1,
@@ -41,5 +41,5 @@ def procedure_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def procedure(self: FactoryProtocol, **kwargs: dict) -> Procedure:
+def procedure(self: FixtureFactory, **kwargs: dict) -> Procedure:
     return self.mixer.blend(Procedure, **kwargs)
