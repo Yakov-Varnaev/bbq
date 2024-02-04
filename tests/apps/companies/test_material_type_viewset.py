@@ -59,7 +59,7 @@ def test_material_type_list(reader_client: ApiClient, factory: FixtureFactory, a
     url = reverse("api_v1:companies:material-types-list")
     material_type_data = reader_client.get(url)  # type: ignore
 
-    assert_rest_page(material_type_data, MaterialType.objects.all(), MaterialTypeSerializer)  # type: ignore[call-arg]
+    assert_rest_page(material_type_data, MaterialType.objects.all(), MaterialTypeSerializer)
 
 
 def test_superuser_can_update_material_type(

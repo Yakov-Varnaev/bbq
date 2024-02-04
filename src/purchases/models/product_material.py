@@ -1,6 +1,7 @@
 from typing import Self
 
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from app.models import ArchiveDeleted, ArchiveDeletedManager, ArchiveDeletedQuerySet, TimestampedModel
@@ -55,3 +56,13 @@ class ProductMaterial(ArchiveDeleted, TimestampedModel):
 
     def __str__(self) -> str:
         return f"Product: {self.material.material.name}"
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "api_v1:purchases:product-detail",
+            kwargs={
+                "company_pk": self.material.stock.point.company.pk,
+                "point_pk": self.material.stock.point.pk,
+                "pk": self.pk,
+            },
+        )

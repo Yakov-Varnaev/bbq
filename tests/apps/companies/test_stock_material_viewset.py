@@ -181,7 +181,7 @@ def test_authorized_users_can_list_stock_materials(
         )
     )
 
-    assert_rest_page(stock_material_data, StockMaterial.objects.all(), StockMaterialDetailedSerializer)  # type: ignore[call-arg]
+    assert_rest_page(stock_material_data, StockMaterial.objects.all(), StockMaterialDetailedSerializer)
 
 
 @pytest.mark.parametrize(

@@ -14,7 +14,7 @@ class ProductMaterialViewSet(ModelViewSet):
     permission_classes = [IsCompanyOwnerOrReadOnly]
 
     def get_queryset(self) -> QuerySet[ProductMaterial]:
-        return ProductMaterial.objects.with_material_info().point(self.kwargs["company_pk"], self.kwargs["point_pk"])
+        return ProductMaterial.objects.point(self.kwargs["company_pk"], self.kwargs["point_pk"]).with_material_info()
 
     def get_serializer_class(self) -> type[ProductMaterialSerializer | ProductMaterialCreateSerializer]:
         if self.request.method in SAFE_METHODS:

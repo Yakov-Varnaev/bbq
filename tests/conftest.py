@@ -11,6 +11,10 @@ pytest_plugins = [
     "tests.fixtures.apps.companies",
     "tests.asserts.apps.companies",
 
+    "tests.asserts.apps.purchases",
+    "tests.factories.apps.purchases",
+    "tests.fixtures.apps.purchases",
+
     "tests.factories.apps.users",
     "tests.fixtures.apps.users",
     "tests.asserts.apps.users",

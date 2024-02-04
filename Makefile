@@ -28,3 +28,6 @@ test:
 	# doesn't really work with lazy-fixtures
 	# pytest --dead-fixtures
 	pytest -x -n auto
+
+server:
+	cd src && python manage.py runserver

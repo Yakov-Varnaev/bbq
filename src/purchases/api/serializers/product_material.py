@@ -11,7 +11,7 @@ class ProductMaterialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductMaterial
-        fields = "__all__"
+        fields = ("id", "price", "brand", "name", "kind", "unit")
 
 
 class ProductMaterialCreateSerializer(serializers.ModelSerializer):
