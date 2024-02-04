@@ -26,6 +26,5 @@ class GenericModelAssertion(Generic[ModelData]):
         ...
 
 
-# RestPageAssertion = Callable[[dict, QuerySet | list[Model], type[BaseSerializer], str | None, str | None], None]
 ExistCheckAssertion = Callable[[Arg(type[Model], "model"), KwArg()], None]  # noqa: F821
 ModelAssertion = Callable[[Arg(dict, "data"), KwArg()], None]  # noqa: F821
