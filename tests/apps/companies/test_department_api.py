@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
-from app.testing.factory import FixtureFactory
+from app.testing.factory import FactoryProtocol
 from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
 from companies.api.serializers import DepartmentSerializer
 from companies.models import Department, Point
@@ -102,7 +102,7 @@ def test_create_department_invalid_data(
     as_company_owner: ApiClient,
     company_point: Point,
     invalid_data: dict,
-    factory: FixtureFactory,
+    factory: FactoryProtocol,
     assert_doesnt_exist: ExistCheckAssertion,
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
@@ -121,7 +121,7 @@ def test_point_field_is_ignored_on_department_creation(
     as_company_owner: ApiClient,
     company_point: Point,
     department_data: dict,
-    factory: FixtureFactory,
+    factory: FactoryProtocol,
     assert_department: ModelAssertion,
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
@@ -139,7 +139,7 @@ def test_point_field_is_ignored_on_department_creation(
 def test_department_list(
     reader_client: ApiClient,
     company_point: Point,
-    factory: FixtureFactory,
+    factory: FactoryProtocol,
     assert_rest_page: RestPageAssertion,
 ):
     departments = sorted(factory.cycle(5).department(point=company_point), key=lambda d: d.name)
@@ -204,7 +204,7 @@ def test_company_owner_cannot_update_department_with_invalid_data(
     as_company_owner: ApiClient,
     department: Department,
     invalid_data: dict,
-    factory: FixtureFactory,
+    factory: FactoryProtocol,
     assert_department: ModelAssertion,
 ):
     department_data = DepartmentSerializer(department).data

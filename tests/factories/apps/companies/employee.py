@@ -2,7 +2,7 @@ from typing import TypedDict
 
 from typing_extensions import Unpack
 
-from app.testing import FixtureFactory, register
+from app.testing import register
 from app.testing.types import FactoryProtocol
 from companies.models import Department, Employee, MasterProcedure
 from users.models import User
@@ -14,7 +14,7 @@ class EmployeeData(TypedDict, total=False):
 
 
 @register
-def employee_data(self: FixtureFactory, **kwargs: Unpack[EmployeeData]) -> dict:
+def employee_data(self: FactoryProtocol, **kwargs: Unpack[EmployeeData]) -> dict:
     departments = kwargs.pop("departments", None)
     user = kwargs.pop("user", None)
     if departments is None:
