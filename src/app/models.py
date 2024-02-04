@@ -87,7 +87,7 @@ class ArchiveDeleted(DefaultModel):
     class Meta:
         abstract = True
 
-    objects = ArchiveDeletedManager()
+    objects: models.Manager = ArchiveDeletedManager()
     include_archived: models.Manager = ArchiveDeletedBaseManager()
 
     def __check_object_exists(self) -> None:
