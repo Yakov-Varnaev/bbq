@@ -3,22 +3,22 @@ from typing import TypedDict
 from typing_extensions import Unpack
 
 from app.testing import register
-from app.testing.types import FactoryProtocol
+from app.testing.factory import FixtureFactory
 from companies.models import Material, MaterialType, Stock
 
 
 @register
-def material(self: FactoryProtocol, **kwargs: dict) -> dict:
+def material(self: FixtureFactory, **kwargs: dict) -> dict:
     return self.mixer.blend(Material, **kwargs)
 
 
 @register
-def material_type(self: FactoryProtocol, **kwargs: dict) -> MaterialType:
+def material_type(self: FixtureFactory, **kwargs: dict) -> MaterialType:
     return self.mixer.blend(MaterialType, **kwargs)
 
 
 @register
-def material_type_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def material_type_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {
             "name": self.field("word"),
@@ -29,7 +29,7 @@ def material_type_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def stock_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def stock_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {
             "date": self.field("date"),
@@ -40,7 +40,7 @@ def stock_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def stock(self: FactoryProtocol, **kwargs: dict) -> dict:
+def stock(self: FixtureFactory, **kwargs: dict) -> dict:
     return self.mixer.blend(Stock, **kwargs)
 
 
@@ -51,7 +51,7 @@ class StockMaterialData(TypedDict, total=False):
 
 
 @register
-def stock_material_data(self: FactoryProtocol, **kwargs: Unpack[StockMaterialData]) -> dict:
+def stock_material_data(self: FixtureFactory, **kwargs: Unpack[StockMaterialData]) -> dict:
     material = kwargs.pop("material", None)
     if material is None:
         material = self.stock_material()
@@ -67,5 +67,5 @@ def stock_material_data(self: FactoryProtocol, **kwargs: Unpack[StockMaterialDat
 
 
 @register
-def stock_material(self: FactoryProtocol, **kwargs: dict) -> dict:
+def stock_material(self: FixtureFactory, **kwargs: dict) -> dict:
     return self.mixer.blend("companies.StockMaterial", **kwargs)

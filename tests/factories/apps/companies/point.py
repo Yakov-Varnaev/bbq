@@ -1,10 +1,10 @@
 from app.testing import register
-from app.testing.types import FactoryProtocol
+from app.testing.factory import FixtureFactory
 from companies.models import Point
 
 
 @register
-def company_point_data(self: FactoryProtocol, **kwargs: dict) -> dict:
+def company_point_data(self: FixtureFactory, **kwargs: dict) -> dict:
     schema = self.schema(
         schema=lambda: {
             "address": self.field("address"),
@@ -15,5 +15,5 @@ def company_point_data(self: FactoryProtocol, **kwargs: dict) -> dict:
 
 
 @register
-def company_point(self: FactoryProtocol, **kwargs: dict) -> Point:
+def company_point(self: FixtureFactory, **kwargs: dict) -> Point:
     return self.mixer.blend(Point, **kwargs)

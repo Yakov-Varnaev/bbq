@@ -4,7 +4,7 @@ from mimesis import Field, Fieldset, Generic, Schema
 from mixer.backend.django import mixer
 
 
-class FactoryProtocol(Protocol):
+class FixtureFactory(Protocol):
     mixer: mixer
     schema: type[Schema]
     generic: Generic
@@ -13,5 +13,5 @@ class FactoryProtocol(Protocol):
 
 
 __all__ = [
-    "FactoryProtocol",
+    "FixtureFactory",
 ]

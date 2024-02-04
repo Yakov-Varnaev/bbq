@@ -1,7 +1,7 @@
 from typing import TypedDict
 
 from app.testing import register
-from app.testing.types import FactoryProtocol
+from app.testing.factory import FixtureFactory
 
 
 class UserData(TypedDict, total=False):
@@ -15,7 +15,7 @@ class RegistrationData(UserData, total=False):
 
 
 @register
-def registration_data(self: FactoryProtocol, **kwargs: RegistrationData) -> RegistrationData:
+def registration_data(self: FixtureFactory, **kwargs: RegistrationData) -> RegistrationData:
     schema = self.schema(
         schema=lambda: {
             "email": self.generic.person.email(),
@@ -29,5 +29,5 @@ def registration_data(self: FactoryProtocol, **kwargs: RegistrationData) -> Regi
 
 
 @register
-def expected_user_data(_: FactoryProtocol, registration_data: RegistrationData) -> UserData:
+def expected_user_data(_: FixtureFactory, registration_data: RegistrationData) -> UserData:
     return {k: v for k, v in registration_data.items() if not k.startswith("password")}  # type: ignore[return-value]

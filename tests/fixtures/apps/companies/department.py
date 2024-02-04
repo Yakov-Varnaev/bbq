@@ -1,37 +1,37 @@
 import pytest
 from typing import Any
 
-from app.testing.factory import FactoryProtocol
+from app.testing.factory import FixtureFactory
 from companies.models import Category, Department, Point, Procedure
 
 
 @pytest.fixture
-def department(factory: FactoryProtocol, company_point: Point) -> Department:
+def department(factory: FixtureFactory, company_point: Point) -> Department:
     return factory.department(point=company_point)
 
 
 @pytest.fixture
-def department_data(factory: FactoryProtocol) -> dict[str, Any]:
+def department_data(factory: FixtureFactory) -> dict[str, Any]:
     return factory.department_data()
 
 
 @pytest.fixture
-def category_data(factory: FactoryProtocol) -> dict:
+def category_data(factory: FixtureFactory) -> dict:
     return factory.category_data()
 
 
 @pytest.fixture
-def category(factory: FactoryProtocol) -> Category:
+def category(factory: FixtureFactory) -> Category:
     return factory.category()
 
 
 @pytest.fixture
-def procedure(factory: FactoryProtocol, category: Category, department: Department) -> Procedure:
+def procedure(factory: FixtureFactory, category: Category, department: Department) -> Procedure:
     return factory.procedure(category=category, department=department)
 
 
 @pytest.fixture
-def procedure_data(factory: FactoryProtocol, category: Category) -> dict[str, Any]:
+def procedure_data(factory: FixtureFactory, category: Category) -> dict[str, Any]:
     return factory.procedure_data(category=category.id)
 
 
