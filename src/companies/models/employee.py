@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from app.models import ArchiveDeleted, TimestampedModel
@@ -53,8 +54,7 @@ class MasterProcedure(TimestampedModel, ArchiveDeleted):
         verbose_name_plural = _("procedure masters")
 
     def get_absolute_url(self) -> str:
-        from django.urls import reverse
-        return reverse(  # noqa: BLK100
+        return reverse(
             "api_v1:companies:master-procedure-detail",
             kwargs={
                 "company_pk": self.procedure.department.point.company.id,

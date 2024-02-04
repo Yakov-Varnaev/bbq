@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, ClassVar
 
 from typing_extensions import Self
 
@@ -65,6 +65,17 @@ class ArchiveDeletedQuerySet(models.QuerySet):
         return self.filter(archived__isnull=False)
 
 
+class ArchiveDeletedBaseManager(models.Manager):
+    def get_queryset(self) -> ArchiveDeletedQuerySet:
+        return ArchiveDeletedQuerySet(self.model, using=self._db)
+
+    def not_archived(self) -> ArchiveDeletedQuerySet:
+        return self.get_queryset().not_archived()
+
+    def archived(self) -> ArchiveDeletedQuerySet:
+        return self.get_queryset().archived()
+
+
 class ArchiveDeletedManager(models.Manager):
     def get_queryset(self) -> ArchiveDeletedQuerySet:
         return ArchiveDeletedQuerySet(self.model, using=self._db).not_archived()
@@ -77,7 +88,7 @@ class ArchiveDeleted(DefaultModel):
         abstract = True
 
     objects = ArchiveDeletedManager()
-    include_archived = ArchiveDeletedQuerySet.as_manager()
+    include_archived: models.Manager = ArchiveDeletedBaseManager()
 
     def __check_object_exists(self) -> None:
         if not self.pk:
