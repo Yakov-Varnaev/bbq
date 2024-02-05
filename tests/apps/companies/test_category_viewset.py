@@ -57,7 +57,7 @@ def test_category_list(reader_client: ApiClient, factory: FixtureFactory, assert
     factory.cycle(5).category()
     category_data = reader_client.get(reverse("api_v1:companies:category-list"))  # type: ignore
 
-    assert_rest_page(category_data, Category.objects.all(), CategorySerializer)  # type: ignore[call-arg]
+    assert_rest_page(category_data, Category.objects.all(), CategorySerializer)
 
 
 def test_superuser_can_update_category(

@@ -55,7 +55,9 @@ class ApiClient(DRFAPIClient):
             return response
 
         content = self._decode(response)
-        assert response.status_code == expected, content
+        assert (
+            response.status_code == expected
+        ), f"Expected status {expected}, got {response.status_code} with content: {content}"
         return content
 
     def _decode(self, response):

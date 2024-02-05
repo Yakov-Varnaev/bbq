@@ -75,8 +75,7 @@ def test_company_list(reader_client: ApiClient, factory: FixtureFactory, assert_
     url = reverse("api_v1:companies:company-list")
     companies_data = reader_client.get(url)  # type: ignore
 
-    # TODO: mypy bug?  # noqa:  T101
-    assert_rest_page(companies_data, Company.objects.all(), CompanySerializer)  # type: ignore[call-arg]
+    assert_rest_page(companies_data, Company.objects.all(), CompanySerializer)
 
 
 def test_udpate_company(

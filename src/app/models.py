@@ -1,4 +1,4 @@
-from typing import Any, ClassVar
+from typing import Any
 
 from typing_extensions import Self
 
@@ -87,7 +87,7 @@ class ArchiveDeleted(DefaultModel):
     class Meta:
         abstract = True
 
-    objects = ArchiveDeletedManager()
+    objects: models.Manager = ArchiveDeletedManager()
     include_archived: models.Manager = ArchiveDeletedBaseManager()
 
     def __check_object_exists(self) -> None:
