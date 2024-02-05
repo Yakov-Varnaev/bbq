@@ -1,5 +1,4 @@
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
@@ -10,13 +9,7 @@ from companies.api.serializers import EmployeeSerializer, MasterProcedureReadSer
 from companies.models import Employee, MasterProcedure
 
 
-@extend_schema(
-    tags=["employees"],
-    parameters=[
-        OpenApiParameter("company_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
-        OpenApiParameter("point_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
-    ],
-)
+@extend_schema(tags=["employees"])
 class EmployeeViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
     queryset = Employee.objects.none()  # for swagger schema
@@ -29,14 +22,7 @@ class EmployeeViewSet(ModelViewSet):
         )
 
 
-@extend_schema(
-    tags=["master-procedure"],
-    parameters=[
-        OpenApiParameter("company_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
-        OpenApiParameter("point_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
-        OpenApiParameter("employee_pk", OpenApiTypes.INT, OpenApiParameter.PATH),
-    ],
-)
+@extend_schema(tags=["master-procedure"])
 class MasterProcedureViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
 
