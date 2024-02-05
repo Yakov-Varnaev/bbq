@@ -126,22 +126,13 @@ def test_non_point_managing_staff_cannot_update(
 def test_point_managing_staff_can_delete(
     as_point_managing_staff: ApiClient,
     product_material: ProductMaterial,
-    assert_product_material: ModelAssertion,
+    assert_doesnt_exist: ExistCheckAssertion,
 ):
     client = as_point_managing_staff
     url = product_material.get_absolute_url()
     client.delete(url)  # type: ignore[no-untyped-call]
 
-    product_material.refresh_from_db()
-    assert_product_material(
-        {},
-        id=product_material.pk,
-        price=product_material.price,
-        material=product_material.material,
-        created=product_material.created,
-        modified=product_material.modified,
-        archived=timezone.now(),
-    )
+    assert_doesnt_exist(ProductMaterial)
 
 
 @pytest.mark.skip("not implemented")
