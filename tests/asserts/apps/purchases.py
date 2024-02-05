@@ -13,7 +13,7 @@ class ProductMaterialAssert(GenericModelAssertion[ProductMaterialData]):
         assert isinstance(product_id, int)
         product = ProductMaterial.objects.get(id=product_id)
 
-        for key, value in data.items():
+        for key, value in merged_data.items():
             assert getattr(product, key) == value, f"{key} is not {value} but {getattr(product, key)}"
 
 
