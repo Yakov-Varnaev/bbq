@@ -1,4 +1,3 @@
-from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
@@ -8,7 +7,6 @@ from companies.api.serializers import CompanyCreateSerializer, CompanySerializer
 from companies.models import Company
 
 
-@extend_schema("companies")
 class CompanyViewSet(ModelViewSet):
     queryset = Company.objects.all()
     filterset_class = CompanyFilterSet

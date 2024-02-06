@@ -12,7 +12,7 @@ AUTHENTICATION_BACKENDS = [
 
 DJOSER = {
     "SERIALIZERS": {
-        "user": "users.api.serializers.UserSerializer",
+        "user": "users.api.serializers.UserModelSerializer",
     }
 }
 

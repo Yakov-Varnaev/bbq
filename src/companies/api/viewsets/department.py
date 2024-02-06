@@ -47,6 +47,7 @@ class CategoryViewSet(ModelViewSet):
 @extend_schema(tags=["procedure"])
 class ProcedureViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
+    queryset = Procedure.objects.none()  # for swagger schema
 
     def get_serializer_class(self) -> type[ProcedureSerializer | ProcedureCreateUpdateSerialzier]:
         if self.request.method in SAFE_METHODS:

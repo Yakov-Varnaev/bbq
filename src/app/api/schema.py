@@ -15,6 +15,7 @@ tags_for_customization = [
     "procedure",
     "products",
     "stocks",
+    "stock-materials",
 ]
 
 

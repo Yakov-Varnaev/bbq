@@ -25,6 +25,7 @@ class EmployeeViewSet(ModelViewSet):
 @extend_schema(tags=["master-procedure"])
 class MasterProcedureViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsCompanyOwnerOrReadOnly]
+    queryset = MasterProcedure.objects.none()  # for swagger schema
 
     def get_serializer_class(self) -> type[MasterProcedureReadSerializer | MasterProcedureWriteSerializer]:
         if self.request.method in SAFE_METHODS:
