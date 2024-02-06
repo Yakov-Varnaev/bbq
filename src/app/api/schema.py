@@ -19,9 +19,8 @@ tags_for_customization = [
 
 
 def _customize_parameters(parameters: dict, tags: list[str]) -> None:
-    for tag in tags:
-        if tag in tags_for_customization:
-            return
+    if all(tag not in tags_for_customization for tag in tags):
+        return
     for parameter in parameters:
         new_parameter = OpenApiParameter(parameter["name"], OpenApiTypes.INT, OpenApiParameter.PATH)
         parameter["in"] = str(new_parameter.location)
