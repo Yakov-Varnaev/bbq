@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import CompanySerializer
 from companies.models import Company
 
@@ -27,12 +27,15 @@ def test_anonymous_user_cannot_create_company(as_anon: ApiClient, company_data: 
 
 
 @freeze_time()
-def test_authenticated_user_can_create_company(as_user: ApiClient, company_data: dict, assert_company: ModelAssertion):
+def test_authenticated_user_can_create_company(
+    as_user: ApiClient, company_data: dict, assert_company: GenericModelAssertion
+):
     now = timezone.now()
     url = reverse("api_v1:companies:company-list")
     as_user.post(url, data=company_data)  # type: ignore
+    company = Company.objects.get(name=company_data["name"])
 
-    assert_company(company_data, created=now, modified=now)
+    assert_company(company_data, id=company.id, created=now, modified=now)
 
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])
@@ -50,7 +53,7 @@ def test_company_create_invalid_data(
 
 @freeze_time()
 def test_company_cannot_be_created_with_owner(
-    as_user: ApiClient, factory: FixtureFactory, assert_company: ModelAssertion
+    as_user: ApiClient, factory: FixtureFactory, assert_company: GenericModelAssertion
 ):
     """
     As DRF doesn't really give any api to disallow extra fields, we have to at least ensure
@@ -59,8 +62,9 @@ def test_company_cannot_be_created_with_owner(
     url = reverse("api_v1:companies:company-list")
     company_data = factory.company_data(owner=factory.user().id)
     as_user.post(url, data=company_data)  # type: ignore
+    company = Company.objects.get(owner=as_user.user.id)
 
-    assert_company(company_data, owner=as_user.user)
+    assert_company(company_data, id=company.id, owner=as_user.user)
 
 
 def test_company_retrieve(reader_client: ApiClient, company: Company):
@@ -79,7 +83,7 @@ def test_company_list(reader_client: ApiClient, factory: FixtureFactory, assert_
 
 
 def test_udpate_company(
-    as_company_owner: ApiClient, company: Company, assert_company: ModelAssertion, factory: FixtureFactory
+    as_company_owner: ApiClient, company: Company, assert_company: GenericModelAssertion, factory: FixtureFactory
 ):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
     company_data = factory.company_data()
@@ -89,7 +93,7 @@ def test_udpate_company(
 
     assert CompanySerializer(company).data == response_data
     assert company.modified > old_modified_ts
-    assert_company(company_data, modified=company.modified)
+    assert_company(company_data, id=company.id, modified=company.modified)
 
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])

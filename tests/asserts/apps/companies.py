@@ -8,7 +8,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 
 from app.testing import ApiClient, StatusApiClient
-from app.types import ModelAssertion
+from app.types import GenericModelAssertion, ModelAssertion
 from companies.models import (
     Category,
     Company,
@@ -20,18 +20,25 @@ from companies.models import (
     Procedure,
     StockMaterial,
 )
+from companies.types import CompanyData
 
 User = get_user_model()
 
 
-@pytest.fixture
-def assert_company() -> ModelAssertion:
-    def _assert_company(data: dict, **extra: Any) -> None:
-        company = Company.objects.get(name=data["name"])
-        for key, value in {**data, **extra}.items():
-            assert getattr(company, key) == value
+class CompanyAssert(GenericModelAssertion[CompanyData]):
+    def __call__(self, data: CompanyData, **extra: Any) -> None:
+        merged_data = data | extra
+        company_id = merged_data["id"]
+        assert isinstance(company_id, int)
+        company = Company.objects.get(id=company_id)
 
-    return _assert_company
+        for key, value in merged_data.items():
+            assert getattr(company, key) == value, f"{key} is not {value} but {getattr(company, key)}"
+
+
+@pytest.fixture
+def assert_company() -> GenericModelAssertion:
+    return CompanyAssert()
 
 
 @pytest.fixture
