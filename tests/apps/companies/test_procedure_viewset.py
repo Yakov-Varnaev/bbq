@@ -6,7 +6,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import ProcedureSerializer
 from companies.models import Category, Department, Procedure
 
@@ -18,11 +18,11 @@ def test_point_managing_staff_can_create_procedure(
     category: Category,
     procedure_data: dict[str, Any],
     procedure_reverse_kwargs: dict[str, Any],
-    assert_procedure: ModelAssertion,
+    assert_procedure: GenericModelAssertion,
 ):
     response = as_point_managing_staff.post(reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs), procedure_data)  # type: ignore[no-untyped-call]
 
-    assert_procedure(procedure_data, category=category)
+    assert_procedure(procedure_data, id=response["id"], category=category)
     assert response == ProcedureSerializer(Procedure.objects.get(**procedure_data)).data
 
 
@@ -83,15 +83,14 @@ def test_department_field_is_ignored_on_procedure_creation(
     factory: FixtureFactory,
     procedure_data: dict[str, Any],
     procedure_reverse_kwargs: dict[str, Any],
-    assert_procedure: ModelAssertion,
+    assert_procedure: GenericModelAssertion,
 ):
-    as_point_managing_staff.post(  # type: ignore[no-untyped-call]
+    response = as_point_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs),
         procedure_data | {"department": factory.department().id},
-        expected_status=status.HTTP_201_CREATED,
     )
 
-    assert_procedure(procedure_data, category=category)
+    assert_procedure(procedure_data, id=response["id"], category=category)
 
 
 def test_procedure_list(
@@ -119,12 +118,12 @@ def test_point_managing_staff_can_update_procedure(
     procedure: Procedure,
     category: Category,
     procedure_data: dict[str, Any],
-    assert_procedure: ModelAssertion,
+    assert_procedure: GenericModelAssertion,
 ):
     response = as_point_managing_staff.put(procedure.get_absolute_url(), procedure_data)  # type: ignore[no-untyped-call]
     procedure.refresh_from_db()
 
-    assert_procedure(procedure_data, category=category)
+    assert_procedure(procedure_data, id=response["id"], category=category)
     assert response == ProcedureSerializer(Procedure.objects.get(**procedure_data)).data
 
 
