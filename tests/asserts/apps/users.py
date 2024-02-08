@@ -1,37 +1,44 @@
 import pytest
+from typing import Any
 
-from typing_extensions import Callable
-
-from tests.factories.apps.a12n import UserData
+from app.types import GenericModelAssertion
 from users.models import User
+from users.types import UserData
 
 
-def __asert_user(user: User, expected: UserData) -> None:
-    assert user.id
-    assert user.is_active
+class DefaultUserAssert(GenericModelAssertion[UserData]):
+    def check_superuser(self, user: User) -> None:
+        ...
 
-    for field_name, field_value in expected.items():
-        assert getattr(user, field_name) == field_value
+    def __call__(self, data: UserData, **extra: Any) -> User:
+        merged_data = data | extra
+        user_id = merged_data["id"]
+        assert isinstance(user_id, int)
+        user = User.objects.get(id=user_id)
+        assert user.is_active
+        self.check_superuser(user)
+
+        for key, value in merged_data.items():
+            assert getattr(user, key) == value, f"{key} is not {value} but {getattr(user, key)}"
 
 
-@pytest.fixture
-def assert_user() -> Callable:
-    def _assert_user(email: str, expected: UserData) -> None:
-        user = User.objects.get(email=email)
-        __asert_user(user, expected)
-
+class UserAssert(DefaultUserAssert):
+    def check_superuser(self, user: User) -> None:
         assert not user.is_superuser
         assert not user.is_staff
 
-    return _assert_user
 
-
-@pytest.fixture
-def assert_superuser() -> Callable:
-    def _assert_superuser(email: str, expected: UserData) -> None:
-        user = User.objects.get(email=email)
-        __asert_user(user, expected)
+class SuperuserAssert(DefaultUserAssert):
+    def check_superuser(self, user: User) -> None:
         assert user.is_superuser
         assert user.is_staff
 
-    return _assert_superuser
+
+@pytest.fixture
+def assert_user() -> GenericModelAssertion:
+    return UserAssert()
+
+
+@pytest.fixture
+def assert_superuser() -> GenericModelAssertion:
+    return SuperuserAssert()

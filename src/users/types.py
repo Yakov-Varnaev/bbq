@@ -12,3 +12,7 @@ class UserData(TypedDict, total=False):
     is_active: bool
     date_joined: datetime
     bio: str
+
+
+class RegistrationData(UserData, total=False):
+    password: str

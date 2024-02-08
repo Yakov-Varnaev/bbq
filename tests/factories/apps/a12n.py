@@ -1,17 +1,6 @@
-from typing import TypedDict
-
 from app.testing import register
 from app.testing.factory import FixtureFactory
-
-
-class UserData(TypedDict, total=False):
-    email: str
-    first_name: str
-    last_name: str
-
-
-class RegistrationData(UserData, total=False):
-    password: str
+from users.types import RegistrationData, UserData
 
 
 @register

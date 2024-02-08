@@ -1,16 +1,9 @@
-from typing import TypedDict
-
 from typing_extensions import Unpack
 
 from app.testing import register
 from app.testing.factory import FixtureFactory
-from companies.models import Department, Employee, MasterProcedure
-from users.models import User
-
-
-class EmployeeData(TypedDict, total=False):
-    departments: list[int | Department]
-    user: int | User
+from companies.models import Employee, MasterProcedure
+from companies.types import EmployeeData
 
 
 @register
