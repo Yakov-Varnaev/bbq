@@ -11,7 +11,7 @@ from django.utils import timezone
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import PointSerializer
 from companies.models import Company, Point
 
@@ -28,13 +28,15 @@ non_company_owner_client_parametrize = (
 
 @freeze_time()
 def test_company_owner_can_create_point(
-    as_company_owner: ApiClient, company: Company, company_point_data: dict, assert_company_point: ModelAssertion
+    as_company_owner: ApiClient, company: Company, company_point_data: dict, assert_company_point: GenericModelAssertion
 ):
-    as_company_owner.post(  # type: ignore[no-untyped-call]
+    point_data = as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id}), data=company_point_data
     )
 
-    assert_company_point(company_point_data, company=company, created=timezone.now(), modified=timezone.now())
+    assert_company_point(
+        company_point_data, id=point_data["id"], company=company, created=timezone.now(), modified=timezone.now()
+    )
 
 
 def test_point_cannot_be_created_with_non_existing_company(
@@ -120,7 +122,7 @@ def test_list_points(
 
 @freeze_time()
 def test_owner_can_update_point(
-    as_company_owner: ApiClient, company: Company, company_point: Point, assert_company_point: ModelAssertion
+    as_company_owner: ApiClient, company: Company, company_point: Point, assert_company_point: GenericModelAssertion
 ):
     as_company_owner.patch(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-detail", kwargs={"company_pk": company.id, "pk": company_point.id}),
@@ -128,7 +130,11 @@ def test_owner_can_update_point(
     )
 
     assert_company_point(
-        {"address": "new address"}, company=company, created=company_point.created, modified=timezone.now()
+        {"address": "new address"},
+        id=company_point.id,
+        company=company,
+        created=company_point.created,
+        modified=timezone.now(),
     )
 
 
@@ -139,7 +145,7 @@ def test_non_owner_cannot_update_point(
     message: str,
     company: Company,
     company_point: Point,
-    assert_company_point: ModelAssertion,
+    assert_company_point: GenericModelAssertion,
 ):
     response = client.patch(  # type: ignore[no-untyped-call]
         reverse(
@@ -150,7 +156,9 @@ def test_non_owner_cannot_update_point(
         expected_status=status_code,
     )
 
-    assert_company_point({"address": company_point.address}, company=company, modified=company_point.modified)
+    assert_company_point(
+        {"address": company_point.address}, id=company_point.id, company=company, modified=company_point.modified
+    )
     assert response == {"detail": message}
 
 
