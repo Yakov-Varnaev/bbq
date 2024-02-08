@@ -20,7 +20,7 @@ from companies.models import (
     Procedure,
     StockMaterial,
 )
-from companies.types import CompanyData, DepartmentData, PointData
+from companies.types import CategoryData, CompanyData, DepartmentData, PointData
 
 User = get_user_model()
 
@@ -73,14 +73,20 @@ def assert_department() -> GenericModelAssertion:
     return DepartmentAssert()
 
 
-@pytest.fixture
-def assert_category() -> ModelAssertion:
-    def _assert_category(data: dict, **extra: Any) -> None:
-        category = Category.objects.get(name=data["name"])
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(category, field_name) == expected_value
+class CategoryAssert(GenericModelAssertion[CategoryData]):
+    def __call__(self, data: CategoryData, **extra: Any) -> None:
+        merged_data = data | extra
+        category_id = merged_data["id"]
+        assert isinstance(category_id, int)
+        category = Category.objects.get(id=category_id)
 
-    return _assert_category
+        for key, value in merged_data.items():
+            assert getattr(category, key) == value, f"{key} is not {value} but {getattr(category, key)}"
+
+
+@pytest.fixture
+def assert_category() -> GenericModelAssertion:
+    return CategoryAssert()
 
 
 @pytest.fixture

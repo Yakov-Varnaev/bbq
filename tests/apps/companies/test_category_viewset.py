@@ -7,7 +7,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.fields import LowercaseCharField
 from companies.api.serializers import CategorySerializer
 from companies.models import Category
@@ -25,13 +25,14 @@ def test_unauthorized_users_cannot_create_category(as_anon: ApiClient, category_
 def test_authenticated_user_can_create_category(
     as_user: ApiClient,
     category_data: dict,
-    assert_category: ModelAssertion,
+    assert_category: GenericModelAssertion,
 ):
     url = reverse("api_v1:companies:category-list")
     as_user.post(url, data=category_data, expected_status=status.HTTP_201_CREATED)  # type: ignore
+    category = Category.objects.filter(name=category_data["name"])
 
-    assert Category.objects.exists()
-    assert_category(data=category_data)
+    assert category.exists()
+    assert_category(data=category_data, id=category.get().id)
 
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])
@@ -61,7 +62,7 @@ def test_category_list(reader_client: ApiClient, factory: FixtureFactory, assert
 
 
 def test_superuser_can_update_category(
-    as_superuser: ApiClient, category: Category, assert_category: ModelAssertion, factory: FixtureFactory
+    as_superuser: ApiClient, category: Category, assert_category: GenericModelAssertion, factory: FixtureFactory
 ):
     url = reverse("api_v1:companies:category-detail", kwargs={"pk": category.pk})
     category_data = factory.category_data()
@@ -69,7 +70,7 @@ def test_superuser_can_update_category(
     category.refresh_from_db()
 
     assert CategorySerializer(category).data == response_data
-    assert_category(category_data)
+    assert_category(category_data, id=category.id)
 
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])
