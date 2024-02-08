@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ModelAssertion, RestPageAssertion
+from app.types import GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import StockMaterialDetailedSerializer
 from companies.models.stock import Material, Stock, StockMaterial
 
@@ -25,10 +25,10 @@ def test_authorized_users_can_add_stock_material(
     stock: Stock,
     material: Material,
     factory: FixtureFactory,
-    assert_stock_material: ModelAssertion,
+    assert_stock_material: GenericModelAssertion,
 ):
     material_data = factory.stock_material_data(material=material)
-    as_point_managing_staff.post(  # type: ignore[no-untyped-call]
+    response = as_point_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:material-list",
             kwargs={
@@ -40,7 +40,7 @@ def test_authorized_users_can_add_stock_material(
         data=material_data,
     )
 
-    assert_stock_material(material_data, stock=stock)
+    assert_stock_material(material_data, id=response["id"], stock=stock)
 
 
 @pytest.mark.parametrize(
@@ -75,7 +75,7 @@ def test_authorized_users_can_edit_stock_material(
     as_point_managing_staff: ApiClient,
     stock_material: StockMaterial,
     factory: FixtureFactory,
-    assert_stock_material: ModelAssertion,
+    assert_stock_material: GenericModelAssertion,
 ):
     material_data = factory.stock_material_data(material=stock_material.material)
     as_point_managing_staff.put(  # type: ignore[no-untyped-call]
@@ -92,7 +92,7 @@ def test_authorized_users_can_edit_stock_material(
     )
     stock_material.refresh_from_db()
 
-    assert_stock_material(material_data)
+    assert_stock_material(material_data, id=stock_material.id)
 
 
 @pytest.mark.parametrize(

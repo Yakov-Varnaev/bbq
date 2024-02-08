@@ -58,7 +58,7 @@ class MaterialTypeData(TypedDict, total=False):
     name: str
 
 
-class StockMaterialTypeData(TypedDict, total=False):
+class StockMaterialData(TypedDict, total=False):
     material: Material
     price: Decimal
     quantity: int

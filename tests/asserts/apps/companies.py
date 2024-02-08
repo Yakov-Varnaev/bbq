@@ -8,7 +8,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 
 from app.testing import ApiClient, StatusApiClient
-from app.types import GenericModelAssertion, ModelAssertion
+from app.types import GenericModelAssertion
 from companies.models import (
     Category,
     Company,
@@ -29,6 +29,7 @@ from companies.types import (
     MaterialTypeData,
     PointData,
     ProcedureData,
+    StockMaterialData,
 )
 
 User = get_user_model()
@@ -116,7 +117,7 @@ def assert_procedure() -> GenericModelAssertion:
 
 class EmployeeAssert(GenericModelAssertion[EmployeeData]):
     def __call__(self, data: EmployeeData, **extra: Any) -> None:
-        merged_data = data | extra
+        merged_data: dict[str, Any] = data | extra
         employee_id = merged_data["id"]
         assert isinstance(employee_id, int)
         employee = Employee.objects.get(id=employee_id)
@@ -166,16 +167,21 @@ def assert_material_type() -> GenericModelAssertion:
     return MaterialTypeAssert()
 
 
+class StockMaterialAssert(GenericModelAssertion[StockMaterialData]):
+    def __call__(self, data: StockMaterialData, **extra: Any) -> None:
+        merged_data = data | extra
+        stock_material_id = merged_data["id"]
+        assert isinstance(stock_material_id, int)
+        stock_material = StockMaterial.objects.get(id=stock_material_id)
+        assert stock_material.material.id == merged_data.pop("material")
+
+        for key, value in merged_data.items():
+            assert getattr(stock_material, key) == value, f"{key} is not {value} but {getattr(stock_material, key)}"
+
+
 @pytest.fixture
-def assert_stock_material() -> ModelAssertion:
-    def _assert_stock_material(data: dict, **extra: Any) -> None:
-        stock_material = StockMaterial.objects.get(material_id=data["material"])
-        assert stock_material.material.id == data.pop("material")
-
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(stock_material, field_name) == expected_value
-
-    return _assert_stock_material
+def assert_stock_material() -> GenericModelAssertion:
+    return StockMaterialAssert()
 
 
 @pytest.fixture(
