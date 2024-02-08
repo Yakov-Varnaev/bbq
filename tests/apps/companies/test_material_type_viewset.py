@@ -7,7 +7,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.fields import LowercaseCharField
 from companies.api.serializers import MaterialTypeSerializer
 from companies.models import MaterialType
@@ -25,13 +25,14 @@ def test_unauthorized_users_cannot_create_material_type(as_anon: ApiClient, mate
 def test_authenticated_user_can_create_material_type(
     as_user: ApiClient,
     material_type_data: dict,
-    assert_material_type: ModelAssertion,
+    assert_material_type: GenericModelAssertion,
 ):
     url = reverse("api_v1:companies:material-types-list")
     as_user.post(url, data=material_type_data, expected_status=status.HTTP_201_CREATED)  # type: ignore
+    material_type = MaterialType.objects.filter(**material_type_data)
 
-    assert MaterialType.objects.exists()
-    assert_material_type(data=material_type_data)
+    assert material_type.exists()
+    assert_material_type(data=material_type_data, id=material_type.get().id)
 
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])
@@ -63,7 +64,10 @@ def test_material_type_list(reader_client: ApiClient, factory: FixtureFactory, a
 
 
 def test_superuser_can_update_material_type(
-    as_superuser: ApiClient, material_type: MaterialType, assert_material_type: ModelAssertion, factory: FixtureFactory
+    as_superuser: ApiClient,
+    material_type: MaterialType,
+    assert_material_type: GenericModelAssertion,
+    factory: FixtureFactory,
 ):
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})
     material_type_data = factory.material_type_data()
@@ -71,7 +75,7 @@ def test_superuser_can_update_material_type(
     material_type.refresh_from_db()
 
     assert MaterialTypeSerializer(material_type).data == response_data
-    assert_material_type(material_type_data)
+    assert_material_type(material_type_data, id=material_type.id)
 
 
 @pytest.mark.parametrize("invalid_fields", [{"name": ""}])

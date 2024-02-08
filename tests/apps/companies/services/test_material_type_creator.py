@@ -10,9 +10,8 @@ pytestmark = [pytest.mark.django_db]
 
 def test_material_type_is_created_with_valid_data(material_type_data: dict, assert_material_type: ModelAssertion):
     serializer = MaterialTypeSerializer(data=material_type_data)
-    MaterialTypeCreator(serializer)()
 
-    assert_material_type(material_type_data)
+    assert_material_type(material_type_data, id=MaterialTypeCreator(serializer)().id)
 
 
 def test_material_type_does_not_duplicate(material_type_data: dict):

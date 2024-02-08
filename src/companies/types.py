@@ -36,7 +36,7 @@ class ProcedureData(TypedDict, total=False):
 
 
 class EmployeeData(TypedDict, total=False):
-    department: Department
+    departments: list[Department]
     user: User
     position: str
     fire_date: datetime

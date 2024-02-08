@@ -26,6 +26,7 @@ from companies.types import (
     DepartmentData,
     EmployeeData,
     MasterProcedureData,
+    MaterialTypeData,
     PointData,
     ProcedureData,
 )
@@ -137,8 +138,8 @@ class MasterProcedureAssert(GenericModelAssertion[MasterProcedureData]):
         master_procedure_id = merged_data["id"]
         assert isinstance(master_procedure_id, int)
         master_procedure = MasterProcedure.objects.get(id=master_procedure_id)
-        assert master_procedure.procedure.id == data.pop("procedure")
-        assert master_procedure.employee.id == data.pop("employee")
+        assert master_procedure.procedure == merged_data.pop("procedure")
+        assert master_procedure.employee == merged_data.pop("employee")
 
         for key, value in merged_data.items():
             assert getattr(master_procedure, key) == value, f"{key} is not {value} but {getattr(master_procedure, key)}"
@@ -149,14 +150,20 @@ def assert_master_procedure() -> GenericModelAssertion:
     return MasterProcedureAssert()
 
 
-@pytest.fixture
-def assert_material_type() -> ModelAssertion:
-    def _assert_material_type(data: dict, **extra: Any) -> None:
-        material_type = MaterialType.objects.get(name=data["name"])
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(material_type, field_name) == expected_value
+class MaterialTypeAssert(GenericModelAssertion[MaterialTypeData]):
+    def __call__(self, data: MaterialTypeData, **extra: Any) -> None:
+        merged_data = data | extra
+        material_type_id = merged_data["id"]
+        assert isinstance(material_type_id, int)
+        material_type = MaterialType.objects.get(id=material_type_id)
 
-    return _assert_material_type
+        for key, value in merged_data.items():
+            assert getattr(material_type, key) == value, f"{key} is not {value} but {getattr(material_type, key)}"
+
+
+@pytest.fixture
+def assert_material_type() -> GenericModelAssertion:
+    return MaterialTypeAssert()
 
 
 @pytest.fixture
