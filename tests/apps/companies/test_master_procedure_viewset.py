@@ -6,7 +6,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import MasterProcedureReadSerializer
 from companies.models import Employee, MasterProcedure, Procedure
 
@@ -19,13 +19,14 @@ def test_point_managing_staff_can_create_master_procedure(
     procedure: Procedure,
     master_procedure_reverse_kwargs: dict[str, Any],
     master_procedure_data: dict[str, Any],
-    assert_master_procedure: ModelAssertion,
+    assert_master_procedure: GenericModelAssertion,
 ):
     url = reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs)
     response = as_point_managing_staff.post(url, master_procedure_data)  # type: ignore[no-untyped-call]
+    master_procedure = MasterProcedure.objects.get(**master_procedure_data)
 
-    assert_master_procedure(master_procedure_data, employee=employee, procedure=procedure)
-    assert response == MasterProcedureReadSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
+    assert_master_procedure(master_procedure_data, id=master_procedure.id, employee=employee, procedure=procedure)
+    assert response == MasterProcedureReadSerializer(master_procedure).data
 
 
 @pytest.mark.usefixtures("master_procedure")
@@ -121,12 +122,12 @@ def test_point_managing_staff_can_update_master_procedure(
     procedure: Procedure,
     employee: Employee,
     master_procedure_data: dict[str, Any],
-    assert_master_procedure: ModelAssertion,
+    assert_master_procedure: GenericModelAssertion,
 ):
     response = as_point_managing_staff.put(master_procedure.get_absolute_url(), master_procedure_data)  # type: ignore[no-untyped-call]
     master_procedure.refresh_from_db()
 
-    assert_master_procedure(master_procedure_data, procedure=procedure, employee=employee)
+    assert_master_procedure(master_procedure_data, id=master_procedure.id, procedure=procedure, employee=employee)
     assert response == MasterProcedureReadSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
 
 

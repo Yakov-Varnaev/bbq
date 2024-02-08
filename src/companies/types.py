@@ -44,7 +44,7 @@ class EmployeeData(TypedDict, total=False):
     modified: datetime
 
 
-class MasterProcedure(TypedDict, total=False):
+class MasterProcedureData(TypedDict, total=False):
     procedure: Procedure
     employee: Employee
     price: Decimal

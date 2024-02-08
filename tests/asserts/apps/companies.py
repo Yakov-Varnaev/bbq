@@ -20,7 +20,15 @@ from companies.models import (
     Procedure,
     StockMaterial,
 )
-from companies.types import CategoryData, CompanyData, DepartmentData, EmployeeData, PointData, ProcedureData
+from companies.types import (
+    CategoryData,
+    CompanyData,
+    DepartmentData,
+    EmployeeData,
+    MasterProcedureData,
+    PointData,
+    ProcedureData,
+)
 
 User = get_user_model()
 
@@ -123,17 +131,22 @@ def assert_employee() -> GenericModelAssertion:
     return EmployeeAssert()
 
 
-@pytest.fixture
-def assert_master_procedure() -> ModelAssertion:
-    def _assert_master_procedure(data: dict, **extra: Any) -> None:
-        master_procedure = MasterProcedure.objects.get(procedure_id=data["procedure"], employee_id=data["employee"])
+class MasterProcedureAssert(GenericModelAssertion[MasterProcedureData]):
+    def __call__(self, data: MasterProcedureData, **extra: Any) -> None:
+        merged_data = data | extra
+        master_procedure_id = merged_data["id"]
+        assert isinstance(master_procedure_id, int)
+        master_procedure = MasterProcedure.objects.get(id=master_procedure_id)
         assert master_procedure.procedure.id == data.pop("procedure")
         assert master_procedure.employee.id == data.pop("employee")
 
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(master_procedure, field_name) == expected_value
+        for key, value in merged_data.items():
+            assert getattr(master_procedure, key) == value, f"{key} is not {value} but {getattr(master_procedure, key)}"
 
-    return _assert_master_procedure
+
+@pytest.fixture
+def assert_master_procedure() -> GenericModelAssertion:
+    return MasterProcedureAssert()
 
 
 @pytest.fixture
