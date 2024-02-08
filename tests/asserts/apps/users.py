@@ -10,7 +10,7 @@ class DefaultUserAssert(GenericModelAssertion[UserData]):
     def check_superuser(self, user: User) -> None:
         ...
 
-    def __call__(self, data: UserData, **extra: Any) -> User:
+    def __call__(self, data: UserData, **extra: Any) -> None:
         merged_data = data | extra
         user_id = merged_data["id"]
         assert isinstance(user_id, int)
