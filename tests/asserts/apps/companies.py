@@ -20,7 +20,7 @@ from companies.models import (
     Procedure,
     StockMaterial,
 )
-from companies.types import CategoryData, CompanyData, DepartmentData, PointData, ProcedureData
+from companies.types import CategoryData, CompanyData, DepartmentData, EmployeeData, PointData, ProcedureData
 
 User = get_user_model()
 
@@ -105,17 +105,22 @@ def assert_procedure() -> GenericModelAssertion:
     return ProcedureAssert()
 
 
+class EmployeeAssert(GenericModelAssertion[EmployeeData]):
+    def __call__(self, data: EmployeeData, **extra: Any) -> None:
+        merged_data = data | extra
+        employee_id = merged_data["id"]
+        assert isinstance(employee_id, int)
+        employee = Employee.objects.get(id=employee_id)
+        assert sorted([d.id for d in employee.departments.all()]) == sorted(merged_data.pop("departments"))
+        assert employee.user.id == merged_data.pop("user")
+
+        for key, value in merged_data.items():
+            assert getattr(employee, key) == value, f"{key} is not {value} but {getattr(employee, key)}"
+
+
 @pytest.fixture
-def assert_employee() -> ModelAssertion:
-    def _assert_employee(data: dict, **extra: Any) -> None:
-        employee = Employee.objects.get(user_id=data["user"])
-        assert sorted([d.id for d in employee.departments.all()]) == sorted(data.pop("departments"))
-        assert employee.user.id == data.pop("user")
-
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(employee, field_name) == expected_value
-
-    return _assert_employee
+def assert_employee() -> GenericModelAssertion:
+    return EmployeeAssert()
 
 
 @pytest.fixture
