@@ -9,7 +9,8 @@ from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
 from app.types import GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import StockMaterialDetailedSerializer
-from companies.models.stock import Material, Stock, StockMaterial
+from companies.models import Material, Stock, StockMaterial
+from companies.types import StockMaterialData
 
 pytestmark = pytest.mark.django_db
 
@@ -25,7 +26,7 @@ def test_authorized_users_can_add_stock_material(
     stock: Stock,
     material: Material,
     factory: FixtureFactory,
-    assert_stock_material: GenericModelAssertion,
+    assert_stock_material: GenericModelAssertion[StockMaterialData],
 ):
     material_data = factory.stock_material_data(material=material)
     response = as_point_managing_staff.post(  # type: ignore[no-untyped-call]
@@ -75,7 +76,7 @@ def test_authorized_users_can_edit_stock_material(
     as_point_managing_staff: ApiClient,
     stock_material: StockMaterial,
     factory: FixtureFactory,
-    assert_stock_material: GenericModelAssertion,
+    assert_stock_material: GenericModelAssertion[StockMaterialData],
 ):
     material_data = factory.stock_material_data(material=stock_material.material)
     as_point_managing_staff.put(  # type: ignore[no-untyped-call]

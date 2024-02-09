@@ -16,7 +16,7 @@ def test_registration(
     as_anon: ApiClient,
     registration_data: RegistrationData,
     expected_user_data: UserData,
-    assert_user: GenericModelAssertion,
+    assert_user: GenericModelAssertion[UserData],
 ):
     response = as_anon.post(reverse("api_v1:a12n:user-list"), data=registration_data)  # type: ignore
 

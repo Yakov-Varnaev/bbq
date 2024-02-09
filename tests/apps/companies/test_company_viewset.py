@@ -13,6 +13,7 @@ from app.testing.factory import FixtureFactory
 from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import CompanySerializer
 from companies.models import Company
+from companies.types import CompanyData
 
 pytestmark = [
     pytest.mark.django_db,
@@ -28,7 +29,7 @@ def test_anonymous_user_cannot_create_company(as_anon: ApiClient, company_data: 
 
 @freeze_time()
 def test_authenticated_user_can_create_company(
-    as_user: ApiClient, company_data: dict, assert_company: GenericModelAssertion
+    as_user: ApiClient, company_data: CompanyData, assert_company: GenericModelAssertion[CompanyData]
 ):
     now = timezone.now()
     url = reverse("api_v1:companies:company-list")
@@ -53,7 +54,7 @@ def test_company_create_invalid_data(
 
 @freeze_time()
 def test_company_cannot_be_created_with_owner(
-    as_user: ApiClient, factory: FixtureFactory, assert_company: GenericModelAssertion
+    as_user: ApiClient, factory: FixtureFactory, assert_company: GenericModelAssertion[CompanyData]
 ):
     """
     As DRF doesn't really give any api to disallow extra fields, we have to at least ensure
@@ -83,7 +84,10 @@ def test_company_list(reader_client: ApiClient, factory: FixtureFactory, assert_
 
 
 def test_udpate_company(
-    as_company_owner: ApiClient, company: Company, assert_company: GenericModelAssertion, factory: FixtureFactory
+    as_company_owner: ApiClient,
+    company: Company,
+    assert_company: GenericModelAssertion[CompanyData],
+    factory: FixtureFactory,
 ):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
     company_data = factory.company_data()

@@ -9,6 +9,7 @@ from app.testing import ApiClient, FixtureFactory, StatusApiClient
 from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import ProcedureSerializer
 from companies.models import Category, Department, Procedure
+from companies.types import ProcedureData
 
 pytestmark = [pytest.mark.django_db]
 
@@ -16,9 +17,9 @@ pytestmark = [pytest.mark.django_db]
 def test_point_managing_staff_can_create_procedure(
     as_point_managing_staff: ApiClient,
     category: Category,
-    procedure_data: dict[str, Any],
+    procedure_data: ProcedureData,
     procedure_reverse_kwargs: dict[str, Any],
-    assert_procedure: GenericModelAssertion,
+    assert_procedure: GenericModelAssertion[ProcedureData],
 ):
     response = as_point_managing_staff.post(reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs), procedure_data)  # type: ignore[no-untyped-call]
 
@@ -28,7 +29,7 @@ def test_point_managing_staff_can_create_procedure(
 
 def test_non_point_managing_staff_cannot_create_procedure(
     as_point_non_managing_staff: StatusApiClient,
-    procedure_data: dict[str, Any],
+    procedure_data: ProcedureData,
     procedure_reverse_kwargs: dict[str, Any],
     assert_doesnt_exist: ExistCheckAssertion,
 ):
@@ -45,7 +46,7 @@ def test_non_point_managing_staff_cannot_create_procedure(
 def test_create_procedure_with_non_existing_company_or_point_or_department(
     pk: str,
     as_point_managing_staff: ApiClient,
-    procedure_data: dict[str, Any],
+    procedure_data: ProcedureData,
     procedure_reverse_kwargs: dict[str, Any],
     assert_doesnt_exist: ExistCheckAssertion,
 ):
@@ -81,9 +82,9 @@ def test_department_field_is_ignored_on_procedure_creation(
     as_point_managing_staff: ApiClient,
     category: Category,
     factory: FixtureFactory,
-    procedure_data: dict[str, Any],
+    procedure_data: ProcedureData,
     procedure_reverse_kwargs: dict[str, Any],
-    assert_procedure: GenericModelAssertion,
+    assert_procedure: GenericModelAssertion[ProcedureData],
 ):
     response = as_point_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs),
@@ -117,8 +118,8 @@ def test_point_managing_staff_can_update_procedure(
     as_point_managing_staff: ApiClient,
     procedure: Procedure,
     category: Category,
-    procedure_data: dict[str, Any],
-    assert_procedure: GenericModelAssertion,
+    procedure_data: ProcedureData,
+    assert_procedure: GenericModelAssertion[ProcedureData],
 ):
     response = as_point_managing_staff.put(procedure.get_absolute_url(), procedure_data)  # type: ignore[no-untyped-call]
     procedure.refresh_from_db()
@@ -130,7 +131,7 @@ def test_point_managing_staff_can_update_procedure(
 def test_point_non_managing_staff_cannot_update_procedure(
     as_point_non_managing_staff: StatusApiClient,
     procedure: Procedure,
-    procedure_data: dict[str, Any],
+    procedure_data: ProcedureData,
 ):
     as_point_non_managing_staff.put(  # type: ignore[no-untyped-call]
         procedure.get_absolute_url(),

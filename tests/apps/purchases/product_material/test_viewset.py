@@ -18,7 +18,7 @@ def test_point_managing_staff_can_create(
     as_point_managing_staff: ApiClient,
     product_material_data: ProductMaterialData,
     stock_material: StockMaterial,
-    assert_product_material: GenericModelAssertion,
+    assert_product_material: GenericModelAssertion[ProductMaterialData],
 ):
     point = stock_material.stock.point
     url = reverse("api_v1:purchases:product-list", kwargs={"company_pk": point.company.pk, "point_pk": point.pk})
@@ -75,7 +75,7 @@ def test_point_managing_staff_can_update(
     as_point_managing_staff: ApiClient,
     product_material: ProductMaterial,
     product_material_data: ProductMaterialData,
-    assert_product_material: GenericModelAssertion,
+    assert_product_material: GenericModelAssertion[ProductMaterialData],
 ):
     client = as_point_managing_staff
     url = product_material.get_absolute_url()
@@ -101,7 +101,7 @@ def test_non_point_managing_staff_cannot_update(
     as_point_non_managing_staff: StatusApiClient,
     product_material: ProductMaterial,
     product_material_data: ProductMaterialData,
-    assert_product_material: GenericModelAssertion,
+    assert_product_material: GenericModelAssertion[ProductMaterialData],
 ):
     client = as_point_non_managing_staff
     url = product_material.get_absolute_url()

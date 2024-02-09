@@ -14,6 +14,7 @@ from app.testing.factory import FixtureFactory
 from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import PointSerializer
 from companies.models import Company, Point
+from companies.types import PointData
 
 pytestmark = [pytest.mark.django_db]
 non_company_owner_client_parametrize = (
@@ -28,7 +29,10 @@ non_company_owner_client_parametrize = (
 
 @freeze_time()
 def test_company_owner_can_create_point(
-    as_company_owner: ApiClient, company: Company, company_point_data: dict, assert_company_point: GenericModelAssertion
+    as_company_owner: ApiClient,
+    company: Company,
+    company_point_data: PointData,
+    assert_company_point: GenericModelAssertion[PointData],
 ):
     point_data = as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id}), data=company_point_data
@@ -40,7 +44,7 @@ def test_company_owner_can_create_point(
 
 
 def test_point_cannot_be_created_with_non_existing_company(
-    as_company_owner: ApiClient, company_point_data: dict, assert_doesnt_exist: ExistCheckAssertion
+    as_company_owner: ApiClient, company_point_data: PointData, assert_doesnt_exist: ExistCheckAssertion
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": 999}),
@@ -57,7 +61,7 @@ def test_non_owner_cannot_create_point(
     status_code: int,
     message: str,
     company: Company,
-    company_point_data: dict,
+    company_point_data: PointData,
     assert_doesnt_exist: ExistCheckAssertion,
 ):
     response = client.post(  # type: ignore[no-untyped-call]
@@ -122,7 +126,10 @@ def test_list_points(
 
 @freeze_time()
 def test_owner_can_update_point(
-    as_company_owner: ApiClient, company: Company, company_point: Point, assert_company_point: GenericModelAssertion
+    as_company_owner: ApiClient,
+    company: Company,
+    company_point: Point,
+    assert_company_point: GenericModelAssertion[PointData],
 ):
     as_company_owner.patch(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-detail", kwargs={"company_pk": company.id, "pk": company_point.id}),
@@ -145,7 +152,7 @@ def test_non_owner_cannot_update_point(
     message: str,
     company: Company,
     company_point: Point,
-    assert_company_point: GenericModelAssertion,
+    assert_company_point: GenericModelAssertion[PointData],
 ):
     response = client.patch(  # type: ignore[no-untyped-call]
         reverse(

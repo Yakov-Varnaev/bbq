@@ -11,6 +11,7 @@ from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssert
 from companies.api.fields import LowercaseCharField
 from companies.api.serializers import MaterialTypeSerializer
 from companies.models import MaterialType
+from companies.types import MaterialTypeData
 
 pytestmark = pytest.mark.django_db
 
@@ -24,8 +25,8 @@ def test_unauthorized_users_cannot_create_material_type(as_anon: ApiClient, mate
 
 def test_authenticated_user_can_create_material_type(
     as_user: ApiClient,
-    material_type_data: dict,
-    assert_material_type: GenericModelAssertion,
+    material_type_data: MaterialTypeData,
+    assert_material_type: GenericModelAssertion[MaterialTypeData],
 ):
     url = reverse("api_v1:companies:material-types-list")
     as_user.post(url, data=material_type_data, expected_status=status.HTTP_201_CREATED)  # type: ignore
@@ -66,7 +67,7 @@ def test_material_type_list(reader_client: ApiClient, factory: FixtureFactory, a
 def test_superuser_can_update_material_type(
     as_superuser: ApiClient,
     material_type: MaterialType,
-    assert_material_type: GenericModelAssertion,
+    assert_material_type: GenericModelAssertion[MaterialTypeData],
     factory: FixtureFactory,
 ):
     url = reverse("api_v1:companies:material-types-detail", kwargs={"pk": material_type.pk})

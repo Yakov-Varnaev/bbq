@@ -6,38 +6,39 @@ from pytest_lazyfixture import lazy_fixture as lf
 from django.utils import timezone
 
 from app.testing.factory import FixtureFactory
-from companies.models import Department, Employee, Point, Procedure
+from companies.models import Department, Employee, MasterProcedure, Point, Procedure
+from companies.types import EmployeeData, MasterProcedureData
 from users.models import User
 
 
 @pytest.fixture
-def employee_data_with_one_department(factory: FixtureFactory) -> dict[str, Any]:
+def employee_data_with_one_department(factory: FixtureFactory) -> EmployeeData:
     return factory.employee_data()
 
 
 @pytest.fixture
-def employee_data_with_several_departments(factory: FixtureFactory, company_point: Point) -> dict[str, Any]:
+def employee_data_with_several_departments(factory: FixtureFactory, company_point: Point) -> EmployeeData:
     return factory.employee_data(departments=factory.cycle(3).department(point=company_point))
 
 
 @pytest.fixture(params=[lf("employee_data_with_one_department"), lf("employee_data_with_several_departments")])
-def employee_data(request: pytest.FixtureRequest) -> dict[str, Any]:
+def employee_data(request: pytest.FixtureRequest) -> EmployeeData:
     return request.param
 
 
 @pytest.fixture
-def employee_with_non_existing_user(factory: FixtureFactory) -> dict:
+def employee_with_non_existing_user(factory: FixtureFactory) -> EmployeeData:
     return factory.employee_data(user=999)
 
 
 @pytest.fixture
-def employee_with_duplicating_department(factory: FixtureFactory) -> dict:
+def employee_with_duplicating_department(factory: FixtureFactory) -> EmployeeData:
     department = factory.department()
     return factory.employee_data(departments=[department, department])
 
 
 @pytest.fixture
-def employee_with_non_existing_department(factory: FixtureFactory) -> dict:
+def employee_with_non_existing_department(factory: FixtureFactory) -> EmployeeData:
     return factory.employee_data(departments=[999])
 
 
@@ -57,17 +58,17 @@ def employee(factory: FixtureFactory, user: User, department: Department) -> Emp
 
 
 @pytest.fixture
-def master_procedure_data(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
+def master_procedure_data(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> MasterProcedureData:
     return factory.master_procedure_data(procedure=procedure.id, employee=employee.id)
 
 
 @pytest.fixture
-def master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
+def master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> MasterProcedure:
     return factory.master_procedure(procedure=procedure, employee=employee)
 
 
 @pytest.fixture
-def archived_master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> dict[str, Any]:
+def archived_master_procedure(factory: FixtureFactory, procedure: Procedure, employee: Employee) -> MasterProcedure:
     return factory.master_procedure(procedure=procedure, employee=employee, archived=timezone.now())
 
 

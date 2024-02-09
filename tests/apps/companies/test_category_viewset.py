@@ -11,6 +11,7 @@ from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssert
 from companies.api.fields import LowercaseCharField
 from companies.api.serializers import CategorySerializer
 from companies.models import Category
+from companies.types import CategoryData
 
 pytestmark = pytest.mark.django_db
 
@@ -24,8 +25,8 @@ def test_unauthorized_users_cannot_create_category(as_anon: ApiClient, category_
 
 def test_authenticated_user_can_create_category(
     as_user: ApiClient,
-    category_data: dict,
-    assert_category: GenericModelAssertion,
+    category_data: CategoryData,
+    assert_category: GenericModelAssertion[CategoryData],
 ):
     url = reverse("api_v1:companies:category-list")
     as_user.post(url, data=category_data, expected_status=status.HTTP_201_CREATED)  # type: ignore
@@ -62,7 +63,10 @@ def test_category_list(reader_client: ApiClient, factory: FixtureFactory, assert
 
 
 def test_superuser_can_update_category(
-    as_superuser: ApiClient, category: Category, assert_category: GenericModelAssertion, factory: FixtureFactory
+    as_superuser: ApiClient,
+    category: Category,
+    assert_category: GenericModelAssertion[CategoryData],
+    factory: FixtureFactory,
 ):
     url = reverse("api_v1:companies:category-detail", kwargs={"pk": category.pk})
     category_data = factory.category_data()
