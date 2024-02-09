@@ -27,7 +27,7 @@ class Employee(TimestampedModel):
     )
 
     class Meta:
-        ordering = ("fire_date",)
+        ordering = ("created",)
         verbose_name = _("employee")
         verbose_name_plural = _("employees")
 

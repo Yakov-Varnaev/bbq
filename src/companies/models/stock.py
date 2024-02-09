@@ -18,7 +18,7 @@ class MaterialType(DefaultModel):
 
 class Material(DefaultModel):
     class Meta:
-        ordering = ("kind", "name")
+        ordering = ("name",)
         verbose_name = _("material")
         verbose_name_plural = _("materials")
 
