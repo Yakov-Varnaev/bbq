@@ -115,7 +115,7 @@ def test_list_points(
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id})
     )
 
-    assert_rest_page(points_data, points, PointSerializer, None, None)
+    assert_rest_page(points_data, points, PointSerializer)
 
 
 @freeze_time()

@@ -77,7 +77,7 @@ def test_authorized_users_can_list_stocks(
         ),
     )
 
-    assert_rest_page(stocks_data, stocks, StockListSerializer, None, None)
+    assert_rest_page(stocks_data, stocks, StockListSerializer)
 
 
 def test_unauthorized_users_cannot_list_stocks(

@@ -105,7 +105,7 @@ def test_procedure_list(
     procedures = sorted(factory.cycle(5).procedure(category=category, department=department), key=lambda d: d.name)
     response = reader_client.get(reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs))  # type: ignore[no-untyped-call]
 
-    assert_rest_page(response, procedures, ProcedureSerializer, None, None)
+    assert_rest_page(response, procedures, ProcedureSerializer)
 
 
 def test_procedure_detail(reader_client: ApiClient, procedure: Procedure):

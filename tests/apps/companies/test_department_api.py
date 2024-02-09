@@ -150,7 +150,7 @@ def test_department_list(
         )
     )
 
-    assert_rest_page(response, departments, DepartmentSerializer, None, None)
+    assert_rest_page(response, departments, DepartmentSerializer)
 
 
 def test_department_retrieve(

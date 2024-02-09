@@ -106,7 +106,7 @@ def test_master_procedure_list(
     response = reader_client.get(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs)
     )
-    assert_rest_page(response, master_procedures, MasterProcedureReadSerializer, None, None)
+    assert_rest_page(response, master_procedures, MasterProcedureReadSerializer)
 
 
 def test_master_procedure_detail(reader_client: ApiClient, master_procedure: MasterProcedure):
