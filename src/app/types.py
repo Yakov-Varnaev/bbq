@@ -18,6 +18,11 @@ class RestPageAssertion(Protocol):
         ...
 
 
+class ExistCheckAssertion(Protocol):
+    def __call__(self, model: type[Model], **filter: Any) -> None:
+        ...
+
+
 ModelData = TypeVar("ModelData")
 
 
@@ -26,5 +31,4 @@ class GenericModelAssertion(Generic[ModelData]):
         ...
 
 
-ExistCheckAssertion = Callable[[Arg(type[Model], "model"), KwArg()], None]  # noqa: F821
 ModelAssertion = Callable[[Arg(dict, "data"), KwArg()], None]  # noqa: F821
