@@ -27,6 +27,7 @@ class Employee(TimestampedModel):
     )
 
     class Meta:
+        ordering = ("fire_date",)
         verbose_name = _("employee")
         verbose_name_plural = _("employees")
 
@@ -50,6 +51,7 @@ class MasterProcedure(TimestampedModel, ArchiveDeleted):
     )
 
     class Meta:
+        ordering = ("employee", "procedure")
         verbose_name = _("procedure master")
         verbose_name_plural = _("procedure masters")
 
