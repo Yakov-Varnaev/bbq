@@ -27,4 +27,3 @@ class GenericModelAssertion(Generic[ModelData]):
 
 
 ExistCheckAssertion = Callable[[Arg(type[Model], "model"), KwArg()], None]  # noqa: F821
-ModelAssertion = Callable[[Arg(dict, "data"), KwArg()], None]  # noqa: F821
