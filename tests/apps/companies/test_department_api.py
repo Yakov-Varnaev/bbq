@@ -9,9 +9,10 @@ from django.urls import reverse
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import DepartmentSerializer
 from companies.models import Department, Point
+from companies.types import DepartmentData
 
 pytestmark = [pytest.mark.django_db]
 
@@ -27,9 +28,9 @@ non_point_managing_users_parametrization = (
 
 def test_point_managing_staff_can_create_departments(
     as_point_managing_staff: ApiClient,
-    department_data: dict,
+    department_data: DepartmentData,
     company_point: Point,
-    assert_department: ModelAssertion,
+    assert_department: GenericModelAssertion[DepartmentData],
 ):
     response = as_point_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -39,7 +40,7 @@ def test_point_managing_staff_can_create_departments(
         department_data,
     )
 
-    assert_department(department_data, point=company_point)
+    assert_department(department_data, id=response["id"], point=company_point)
     assert response == DepartmentSerializer(Department.objects.first()).data
 
 
@@ -48,7 +49,7 @@ def test_non_point_managing_staff_cannot_create_departments(
     client: ApiClient,
     status_code: int,
     message: str,
-    department_data: dict,
+    department_data: DepartmentData,
     company_point: Point,
     assert_doesnt_exist: ExistCheckAssertion,
 ):
@@ -77,7 +78,7 @@ def test_create_department_with_non_existing_company_or_point(
     as_company_owner: ApiClient,
     company_id: int,
     point_id: int,
-    department_data: dict,
+    department_data: DepartmentData,
     assert_doesnt_exist: ExistCheckAssertion,
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
@@ -120,11 +121,11 @@ def test_create_department_invalid_data(
 def test_point_field_is_ignored_on_department_creation(
     as_company_owner: ApiClient,
     company_point: Point,
-    department_data: dict,
+    department_data: DepartmentData,
     factory: FixtureFactory,
-    assert_department: ModelAssertion,
+    assert_department: GenericModelAssertion[DepartmentData],
 ):
-    as_company_owner.post(  # type: ignore[no-untyped-call]
+    response = as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:department-list",
             kwargs={"company_pk": company_point.company.id, "point_pk": company_point.id},
@@ -133,7 +134,7 @@ def test_point_field_is_ignored_on_department_creation(
         expected_status=status.HTTP_201_CREATED,
     )
 
-    assert_department(department_data, point=company_point)
+    assert_department(department_data, id=response["id"], point=company_point)
 
 
 def test_department_list(
@@ -174,8 +175,8 @@ def test_department_retrieve(
 def test_point_managing_staff_can_update_department(
     as_point_managing_staff: ApiClient,
     department: Department,
-    department_data: dict,
-    assert_department: ModelAssertion,
+    department_data: DepartmentData,
+    assert_department: GenericModelAssertion[DepartmentData],
 ):
     response = as_point_managing_staff.patch(  # type: ignore[no-untyped-call]
         reverse(
@@ -190,7 +191,7 @@ def test_point_managing_staff_can_update_department(
     )
     department.refresh_from_db()
 
-    assert_department(department_data, point=department.point)
+    assert_department(department_data, id=department.id, point=department.point)
     assert response == DepartmentSerializer(department).data
 
 
@@ -205,9 +206,9 @@ def test_company_owner_cannot_update_department_with_invalid_data(
     department: Department,
     invalid_data: dict,
     factory: FixtureFactory,
-    assert_department: ModelAssertion,
+    assert_department: GenericModelAssertion[DepartmentData],
 ):
-    department_data = DepartmentSerializer(department).data
+    department_data = DepartmentData(**DepartmentSerializer(department).data)
     as_company_owner.patch(  # type: ignore[no-untyped-call]
         reverse(
             "api_v1:companies:department-detail",
@@ -221,7 +222,7 @@ def test_company_owner_cannot_update_department_with_invalid_data(
         expected_status=status.HTTP_400_BAD_REQUEST,
     )
 
-    assert_department(department_data, point=department.point)
+    assert_department(department_data, id=department.id, point=department.point)
 
 
 @pytest.mark.parametrize(*non_point_managing_users_parametrization)
@@ -230,8 +231,8 @@ def test_non_point_managing_staff_cannot_update_department(
     status_code: int,
     message: str,
     department: Department,
-    department_data: dict,
-    assert_department: ModelAssertion,
+    department_data: DepartmentData,
+    assert_department: GenericModelAssertion[DepartmentData],
 ):
     response = client.patch(  # type: ignore[no-untyped-call]
         reverse(
@@ -246,7 +247,7 @@ def test_non_point_managing_staff_cannot_update_department(
         expected_status=status_code,
     )
 
-    assert_department(DepartmentSerializer(department).data, point=department.point)
+    assert_department(DepartmentData(**DepartmentSerializer(department).data), id=department.id, point=department.point)
     assert response == {"detail": message}
 
 

@@ -4,21 +4,23 @@ from rest_framework.exceptions import ValidationError
 
 from django.contrib.auth import get_user_model
 
-from app.types import ExistCheckAssertion, ModelAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion
 from companies.api.serializers import EmployeeSerializer
-from companies.models.employee import Employee
+from companies.models import Employee
 from companies.services import EmployeeCreator
+from companies.types import EmployeeData
 
 User = get_user_model()
 
 pytestmark = [pytest.mark.django_db]
 
 
-def test_employee_is_created_with_valid_data(employee_data: dict, assert_employee: ModelAssertion):
+def test_employee_is_created_with_valid_data(
+    employee_data: EmployeeData, assert_employee: GenericModelAssertion[EmployeeData]
+):
     serializer = EmployeeSerializer(data=employee_data)
-    EmployeeCreator(serializer)()
 
-    assert_employee(employee_data)
+    assert_employee(employee_data, id=EmployeeCreator(serializer)().id)
 
 
 def test_employee_is_not_created_with_invalid_data(

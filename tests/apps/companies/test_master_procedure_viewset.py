@@ -6,9 +6,10 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import MasterProcedureReadSerializer
 from companies.models import Employee, MasterProcedure, Procedure
+from companies.types import MasterProcedureData
 
 pytestmark = [pytest.mark.django_db]
 
@@ -18,21 +19,22 @@ def test_point_managing_staff_can_create_master_procedure(
     employee: Employee,
     procedure: Procedure,
     master_procedure_reverse_kwargs: dict[str, Any],
-    master_procedure_data: dict[str, Any],
-    assert_master_procedure: ModelAssertion,
+    master_procedure_data: MasterProcedureData,
+    assert_master_procedure: GenericModelAssertion[MasterProcedureData],
 ):
     url = reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs)
     response = as_point_managing_staff.post(url, master_procedure_data)  # type: ignore[no-untyped-call]
+    master_procedure = MasterProcedure.objects.get(**master_procedure_data)
 
-    assert_master_procedure(master_procedure_data, employee=employee, procedure=procedure)
-    assert response == MasterProcedureReadSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
+    assert_master_procedure(master_procedure_data, id=master_procedure.id, employee=employee, procedure=procedure)
+    assert response == MasterProcedureReadSerializer(master_procedure).data
 
 
 @pytest.mark.usefixtures("master_procedure")
 def test_point_managing_staff_cannot_create_duplicate_master_procedure(
     as_point_managing_staff: ApiClient,
     master_procedure_reverse_kwargs: dict[str, Any],
-    master_procedure_data: dict[str, Any],
+    master_procedure_data: MasterProcedureData,
 ):
     as_point_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs),
@@ -44,7 +46,7 @@ def test_point_managing_staff_cannot_create_duplicate_master_procedure(
 
 def test_non_point_managing_staff_cannot_create_master_procedure(
     as_point_non_managing_staff: StatusApiClient,
-    master_procedure_data: dict[str, Any],
+    master_procedure_data: MasterProcedureData,
     master_procedure_reverse_kwargs: dict[str, Any],
     assert_doesnt_exist: ExistCheckAssertion,
 ):
@@ -61,7 +63,7 @@ def test_non_point_managing_staff_cannot_create_master_procedure(
 def test_create_master_procedure_with_non_existing_company_or_point_or_employee(
     pk: str,
     as_point_managing_staff: ApiClient,
-    master_procedure_data: dict[str, Any],
+    master_procedure_data: MasterProcedureData,
     master_procedure_reverse_kwargs: dict[str, Any],
     assert_doesnt_exist: ExistCheckAssertion,
 ):
@@ -120,20 +122,20 @@ def test_point_managing_staff_can_update_master_procedure(
     master_procedure: Procedure,
     procedure: Procedure,
     employee: Employee,
-    master_procedure_data: dict[str, Any],
-    assert_master_procedure: ModelAssertion,
+    master_procedure_data: MasterProcedureData,
+    assert_master_procedure: GenericModelAssertion[MasterProcedureData],
 ):
     response = as_point_managing_staff.put(master_procedure.get_absolute_url(), master_procedure_data)  # type: ignore[no-untyped-call]
     master_procedure.refresh_from_db()
 
-    assert_master_procedure(master_procedure_data, procedure=procedure, employee=employee)
+    assert_master_procedure(master_procedure_data, id=master_procedure.id, procedure=procedure, employee=employee)
     assert response == MasterProcedureReadSerializer(MasterProcedure.objects.get(**master_procedure_data)).data
 
 
 def test_point_non_managing_staff_cannot_update_master_procedure(
     as_point_non_managing_staff: StatusApiClient,
     master_procedure: MasterProcedure,
-    master_procedure_data: dict[str, Any],
+    master_procedure_data: MasterProcedureData,
 ):
     as_point_non_managing_staff.put(  # type: ignore[no-untyped-call]
         master_procedure.get_absolute_url(),

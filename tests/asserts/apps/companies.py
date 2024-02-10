@@ -8,7 +8,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 
 from app.testing import ApiClient, StatusApiClient
-from app.types import ModelAssertion
+from app.types import GenericModelAssertion
 from companies.models import (
     Category,
     Company,
@@ -20,106 +20,168 @@ from companies.models import (
     Procedure,
     StockMaterial,
 )
+from companies.types import (
+    CategoryData,
+    CompanyData,
+    DepartmentData,
+    EmployeeData,
+    MasterProcedureData,
+    MaterialTypeData,
+    PointData,
+    ProcedureData,
+    StockMaterialData,
+)
 
 User = get_user_model()
 
 
-@pytest.fixture
-def assert_company() -> ModelAssertion:
-    def _assert_company(data: dict, **extra: Any) -> None:
-        company = Company.objects.get(name=data["name"])
-        for key, value in {**data, **extra}.items():
-            assert getattr(company, key) == value
+class CompanyAssert(GenericModelAssertion[CompanyData]):
+    def __call__(self, data: CompanyData, **extra: Any) -> None:
+        merged_data = data | extra
+        company_id = merged_data["id"]
+        assert isinstance(company_id, int)
+        company = Company.objects.get(id=company_id)
 
-    return _assert_company
-
-
-@pytest.fixture
-def assert_company_point() -> ModelAssertion:
-    def _assert_company_point(data: dict, **extra: Any) -> None:
-        point = Point.objects.get(address=data["address"])
-        for key, value in {**data, **extra}.items():
-            assert getattr(point, key) == value
-
-    return _assert_company_point
+        for key, value in merged_data.items():
+            assert getattr(company, key) == value, f"{key} is not {value} but {getattr(company, key)}"
 
 
 @pytest.fixture
-def assert_department() -> ModelAssertion:
-    def _assert_department(data: dict, **extra: Any) -> None:
-        department = Department.objects.get(name=data["name"])
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(department, field_name) == expected_value
-
-    return _assert_department
+def assert_company() -> GenericModelAssertion:
+    return CompanyAssert()
 
 
-@pytest.fixture
-def assert_category() -> ModelAssertion:
-    def _assert_category(data: dict, **extra: Any) -> None:
-        category = Category.objects.get(name=data["name"])
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(category, field_name) == expected_value
+class PointAssert(GenericModelAssertion[PointData]):
+    def __call__(self, data: PointData, **extra: Any) -> None:
+        merged_data = data | extra
+        point_id = merged_data["id"]
+        assert isinstance(point_id, int)
+        point = Point.objects.get(id=point_id)
 
-    return _assert_category
+        for key, value in merged_data.items():
+            assert getattr(point, key) == value, f"{key} is not {value} but {getattr(point, key)}"
 
 
 @pytest.fixture
-def assert_procedure() -> ModelAssertion:
-    def _assert_procedure(data: dict, **extra: Any) -> None:
-        procedure = Procedure.objects.get(name=data["name"])
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(procedure, field_name) == expected_value
-
-    return _assert_procedure
+def assert_company_point() -> GenericModelAssertion:
+    return PointAssert()
 
 
-@pytest.fixture
-def assert_employee() -> ModelAssertion:
-    def _assert_employee(data: dict, **extra: Any) -> None:
-        employee = Employee.objects.get(user_id=data["user"])
-        assert sorted([d.id for d in employee.departments.all()]) == sorted(data.pop("departments"))
-        assert employee.user.id == data.pop("user")
+class DepartmentAssert(GenericModelAssertion[DepartmentData]):
+    def __call__(self, data: DepartmentData, **extra: Any) -> None:
+        merged_data = data | extra
+        department_id = merged_data["id"]
+        assert isinstance(department_id, int)
+        department = Department.objects.get(id=department_id)
 
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(employee, field_name) == expected_value
-
-    return _assert_employee
+        for key, value in merged_data.items():
+            assert getattr(department, key) == value, f"{key} is not {value} but {getattr(department, key)}"
 
 
 @pytest.fixture
-def assert_master_procedure() -> ModelAssertion:
-    def _assert_master_procedure(data: dict, **extra: Any) -> None:
-        master_procedure = MasterProcedure.objects.get(procedure_id=data["procedure"], employee_id=data["employee"])
-        assert master_procedure.procedure.id == data.pop("procedure")
-        assert master_procedure.employee.id == data.pop("employee")
-
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(master_procedure, field_name) == expected_value
-
-    return _assert_master_procedure
+def assert_department() -> GenericModelAssertion:
+    return DepartmentAssert()
 
 
-@pytest.fixture
-def assert_material_type() -> ModelAssertion:
-    def _assert_material_type(data: dict, **extra: Any) -> None:
-        material_type = MaterialType.objects.get(name=data["name"])
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(material_type, field_name) == expected_value
+class CategoryAssert(GenericModelAssertion[CategoryData]):
+    def __call__(self, data: CategoryData, **extra: Any) -> None:
+        merged_data = data | extra
+        category_id = merged_data["id"]
+        assert isinstance(category_id, int)
+        category = Category.objects.get(id=category_id)
 
-    return _assert_material_type
+        for key, value in merged_data.items():
+            assert getattr(category, key) == value, f"{key} is not {value} but {getattr(category, key)}"
 
 
 @pytest.fixture
-def assert_stock_material() -> ModelAssertion:
-    def _assert_stock_material(data: dict, **extra: Any) -> None:
-        stock_material = StockMaterial.objects.get(material_id=data["material"])
-        assert stock_material.material.id == data.pop("material")
+def assert_category() -> GenericModelAssertion:
+    return CategoryAssert()
 
-        for field_name, expected_value in (data | extra).items():
-            assert getattr(stock_material, field_name) == expected_value
 
-    return _assert_stock_material
+class ProcedureAssert(GenericModelAssertion[ProcedureData]):
+    def __call__(self, data: ProcedureData, **extra: Any) -> None:
+        merged_data = data | extra
+        procedure_id = merged_data["id"]
+        assert isinstance(procedure_id, int)
+        procedure = Procedure.objects.get(id=procedure_id)
+
+        for key, value in merged_data.items():
+            assert getattr(procedure, key) == value, f"{key} is not {value} but {getattr(procedure, key)}"
+
+
+@pytest.fixture
+def assert_procedure() -> GenericModelAssertion:
+    return ProcedureAssert()
+
+
+class EmployeeAssert(GenericModelAssertion[EmployeeData]):
+    def __call__(self, data: EmployeeData, **extra: Any) -> None:
+        merged_data: dict[str, Any] = data | extra
+        employee_id = merged_data["id"]
+        assert isinstance(employee_id, int)
+        employee = Employee.objects.get(id=employee_id)
+        assert sorted([d.id for d in employee.departments.all()]) == sorted(merged_data.pop("departments"))
+        assert employee.user.id == merged_data.pop("user")
+
+        for key, value in merged_data.items():
+            assert getattr(employee, key) == value, f"{key} is not {value} but {getattr(employee, key)}"
+
+
+@pytest.fixture
+def assert_employee() -> GenericModelAssertion:
+    return EmployeeAssert()
+
+
+class MasterProcedureAssert(GenericModelAssertion[MasterProcedureData]):
+    def __call__(self, data: MasterProcedureData, **extra: Any) -> None:
+        merged_data = data | extra
+        master_procedure_id = merged_data["id"]
+        assert isinstance(master_procedure_id, int)
+        master_procedure = MasterProcedure.objects.get(id=master_procedure_id)
+        assert master_procedure.procedure == merged_data.pop("procedure")
+        assert master_procedure.employee == merged_data.pop("employee")
+
+        for key, value in merged_data.items():
+            assert getattr(master_procedure, key) == value, f"{key} is not {value} but {getattr(master_procedure, key)}"
+
+
+@pytest.fixture
+def assert_master_procedure() -> GenericModelAssertion:
+    return MasterProcedureAssert()
+
+
+class MaterialTypeAssert(GenericModelAssertion[MaterialTypeData]):
+    def __call__(self, data: MaterialTypeData, **extra: Any) -> None:
+        merged_data = data | extra
+        material_type_id = merged_data["id"]
+        assert isinstance(material_type_id, int)
+        material_type = MaterialType.objects.get(id=material_type_id)
+
+        for key, value in merged_data.items():
+            assert getattr(material_type, key) == value, f"{key} is not {value} but {getattr(material_type, key)}"
+
+
+@pytest.fixture
+def assert_material_type() -> GenericModelAssertion:
+    return MaterialTypeAssert()
+
+
+class StockMaterialAssert(GenericModelAssertion[StockMaterialData]):
+    def __call__(self, data: StockMaterialData, **extra: Any) -> None:
+        merged_data = data | extra
+        stock_material_id = merged_data["id"]
+        assert isinstance(stock_material_id, int)
+        stock_material = StockMaterial.objects.get(id=stock_material_id)
+        assert stock_material.material.id == merged_data.pop("material")
+
+        for key, value in merged_data.items():
+            assert getattr(stock_material, key) == value, f"{key} is not {value} but {getattr(stock_material, key)}"
+
+
+@pytest.fixture
+def assert_stock_material() -> GenericModelAssertion:
+    return StockMaterialAssert()
 
 
 @pytest.fixture(
