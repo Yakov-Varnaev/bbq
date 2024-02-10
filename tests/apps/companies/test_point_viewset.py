@@ -116,7 +116,7 @@ def test_retrieve_point(client: ApiClient, company: Company, company_point: Poin
 def test_list_points(
     reader_client: ApiClient, company: Company, factory: FixtureFactory, assert_rest_page: RestPageAssertion
 ):
-    points = factory.cycle(5).company_point(company=company)
+    points = sorted(factory.cycle(5).company_point(company=company), key=lambda p: p.address)
     points_data = reader_client.get(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id})
     )

@@ -6,6 +6,7 @@ from app.models import DefaultModel
 
 class MaterialType(DefaultModel):
     class Meta:
+        ordering = ("name",)
         verbose_name = _("material type")
         verbose_name_plural = _("material types")
 
@@ -17,6 +18,7 @@ class MaterialType(DefaultModel):
 
 class Material(DefaultModel):
     class Meta:
+        ordering = ("name",)
         verbose_name = _("material")
         verbose_name_plural = _("materials")
 
@@ -41,6 +43,7 @@ class Material(DefaultModel):
 
 class StockMaterial(DefaultModel):
     class Meta:
+        ordering = ("stock", "material")
         verbose_name = _("stock material")
         verbose_name_plural = _("stock materials")
 
