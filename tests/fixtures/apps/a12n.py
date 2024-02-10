@@ -1,7 +1,7 @@
 import pytest
 
 from app.testing.factory import FixtureFactory
-from tests.factories.apps.a12n import RegistrationData, UserData
+from users.types import RegistrationData, UserData
 
 
 @pytest.fixture

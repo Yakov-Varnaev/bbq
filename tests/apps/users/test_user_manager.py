@@ -1,9 +1,9 @@
 import pytest
-from collections.abc import Callable
 
 from django.contrib.auth import get_user_model
 
-from tests.factories.apps.a12n import RegistrationData, UserData
+from app.types import GenericModelAssertion
+from users.types import RegistrationData, UserData
 
 User = get_user_model()
 
@@ -13,12 +13,12 @@ pytestmark = [pytest.mark.django_db]
 def test_user_manager_doesnt_require_username(
     registration_data: RegistrationData,
     expected_user_data: UserData,
-    assert_user: Callable,
+    assert_user: GenericModelAssertion[UserData],
 ):
     user = User.objects.create_user(**registration_data)  # type: ignore[arg-type]
 
     assert user is not None
-    assert_user(registration_data["email"], expected_user_data)
+    assert_user(expected_user_data, id=user.id)
 
 
 def test_user_manager_requires_email(
@@ -33,11 +33,11 @@ def test_user_manager_requires_email(
 def test_user_manager_create_superuser(
     registration_data: RegistrationData,
     expected_user_data: UserData,
-    assert_superuser: Callable,
+    assert_superuser: GenericModelAssertion[UserData],
 ):
     user = User.objects.create_superuser(**registration_data)  # type: ignore[arg-type]
 
     assert user is not None
-    assert_superuser(registration_data["email"], expected_user_data)
+    assert_superuser(expected_user_data, id=user.id)
     assert user.is_staff is True
     assert user.is_superuser is True

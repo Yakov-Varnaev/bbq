@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from app.testing.api import ApiClient, StatusApiClient
-from app.types import ExistCheckAssertion, ModelAssertion, RestPageAssertion
+from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.models.stock import StockMaterial
 from purchases.api.serializers import ProductMaterialSerializer
 from purchases.models.product_material import ProductMaterial
@@ -18,7 +18,7 @@ def test_point_managing_staff_can_create(
     as_point_managing_staff: ApiClient,
     product_material_data: ProductMaterialData,
     stock_material: StockMaterial,
-    assert_product_material: ModelAssertion,
+    assert_product_material: GenericModelAssertion[ProductMaterialData],
 ):
     point = stock_material.stock.point
     url = reverse("api_v1:purchases:product-list", kwargs={"company_pk": point.company.pk, "point_pk": point.pk})
@@ -27,7 +27,7 @@ def test_point_managing_staff_can_create(
     now = timezone.now()
 
     assert_product_material(
-        product_material_data,  # type: ignore[arg-type]
+        product_material_data,
         material=stock_material,
         id=product_material.pk,
         created=now,
@@ -75,7 +75,7 @@ def test_point_managing_staff_can_update(
     as_point_managing_staff: ApiClient,
     product_material: ProductMaterial,
     product_material_data: ProductMaterialData,
-    assert_product_material: ModelAssertion,
+    assert_product_material: GenericModelAssertion[ProductMaterialData],
 ):
     client = as_point_managing_staff
     url = product_material.get_absolute_url()
@@ -83,7 +83,7 @@ def test_point_managing_staff_can_update(
     client.put(url, data=product_material_data)  # type: ignore[no-untyped-call]
 
     assert_product_material(
-        product_material_data,  # type: ignore[arg-type]
+        product_material_data,
         material=product_material.material,
         id=product_material.pk,
         created=product_material.created,
@@ -101,7 +101,7 @@ def test_non_point_managing_staff_cannot_update(
     as_point_non_managing_staff: StatusApiClient,
     product_material: ProductMaterial,
     product_material_data: ProductMaterialData,
-    assert_product_material: ModelAssertion,
+    assert_product_material: GenericModelAssertion[ProductMaterialData],
 ):
     client = as_point_non_managing_staff
     url = product_material.get_absolute_url()
