@@ -9,7 +9,7 @@ from django.urls import reverse
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import DepartmentSerializer
 from companies.models import Department, Point
 from companies.types import DepartmentData
@@ -51,7 +51,7 @@ def test_non_point_managing_staff_cannot_create_departments(
     message: str,
     department_data: DepartmentData,
     company_point: Point,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Department]],
 ):
     response = client.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -79,7 +79,7 @@ def test_create_department_with_non_existing_company_or_point(
     company_id: int,
     point_id: int,
     department_data: DepartmentData,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Department]],
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -104,7 +104,7 @@ def test_create_department_invalid_data(
     company_point: Point,
     invalid_data: dict,
     factory: FixtureFactory,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Department]],
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse(
@@ -254,7 +254,7 @@ def test_non_point_managing_staff_cannot_update_department(
 def test_point_managing_staff_can_delete_department(
     as_point_managing_staff: ApiClient,
     department: Department,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Department]],
 ):
     as_point_managing_staff.delete(  # type: ignore[no-untyped-call]
         reverse(

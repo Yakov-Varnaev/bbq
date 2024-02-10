@@ -6,7 +6,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import ProcedureSerializer
 from companies.models import Category, Department, Procedure
 from companies.types import ProcedureData
@@ -31,7 +31,7 @@ def test_non_point_managing_staff_cannot_create_procedure(
     as_point_non_managing_staff: StatusApiClient,
     procedure_data: ProcedureData,
     procedure_reverse_kwargs: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Procedure]],
 ):
     as_point_non_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:procedure-list", kwargs=procedure_reverse_kwargs),
@@ -48,7 +48,7 @@ def test_create_procedure_with_non_existing_company_or_point_or_department(
     as_point_managing_staff: ApiClient,
     procedure_data: ProcedureData,
     procedure_reverse_kwargs: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Procedure]],
 ):
     procedure_reverse_kwargs[pk] = 999
     as_point_managing_staff.post(  # type: ignore[no-untyped-call]
@@ -65,7 +65,7 @@ def test_create_procedure_invalid_data(
     as_point_managing_staff: ApiClient,
     factory: FixtureFactory,
     procedure_reverse_kwargs: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Procedure]],
     invalid_data: dict[str, str],
 ):
     procedure_data = factory.procedure_data(**invalid_data)
@@ -154,7 +154,7 @@ def test_update_procedure_invalid_data(
 def test_point_managing_staff_can_delete_procedure(
     as_point_managing_staff: ApiClient,
     procedure: Procedure,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Procedure]],
 ):
     as_point_managing_staff.delete(procedure.get_absolute_url())  # type: ignore[no-untyped-call]
 
@@ -164,7 +164,7 @@ def test_point_managing_staff_can_delete_procedure(
 def test_point_non_managing_staff_cannot_delete_procedure(
     as_point_non_managing_staff: StatusApiClient,
     procedure: Procedure,
-    assert_exists: ExistCheckAssertion,
+    assert_exists: GenericExistCheckAssertion[type[Procedure]],
 ):
     as_point_non_managing_staff.delete(  # type: ignore[no-untyped-call]
         procedure.get_absolute_url(),
