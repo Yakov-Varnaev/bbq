@@ -6,7 +6,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory, StatusApiClient
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import MasterProcedureReadSerializer
 from companies.models import Employee, MasterProcedure, Procedure
 from companies.types import MasterProcedureData
@@ -48,7 +48,7 @@ def test_non_point_managing_staff_cannot_create_master_procedure(
     as_point_non_managing_staff: StatusApiClient,
     master_procedure_data: MasterProcedureData,
     master_procedure_reverse_kwargs: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[MasterProcedure]],
 ):
     as_point_non_managing_staff.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs),
@@ -65,7 +65,7 @@ def test_create_master_procedure_with_non_existing_company_or_point_or_employee(
     as_point_managing_staff: ApiClient,
     master_procedure_data: MasterProcedureData,
     master_procedure_reverse_kwargs: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[MasterProcedure]],
 ):
     master_procedure_reverse_kwargs[pk] = 999
     as_point_managing_staff.post(  # type: ignore[no-untyped-call]
@@ -84,7 +84,7 @@ def test_create_master_procedure_invalid_data(
     employee: Employee,
     procedure: Procedure,
     master_procedure_reverse_kwargs: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[MasterProcedure]],
     invalid_data: dict[str, str],
 ):
     as_point_managing_staff.post(  # type: ignore[no-untyped-call]
@@ -108,7 +108,7 @@ def test_master_procedure_list(
     response = reader_client.get(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:master-procedure-list", kwargs=master_procedure_reverse_kwargs)
     )
-    assert_rest_page(response, master_procedures, MasterProcedureReadSerializer, None, None)
+    assert_rest_page(response, master_procedures, MasterProcedureReadSerializer)
 
 
 def test_master_procedure_detail(reader_client: ApiClient, master_procedure: MasterProcedure):
@@ -163,7 +163,7 @@ def test_update_master_procedure_invalid_data(
 def test_point_managing_staff_can_delete_master_procedure(
     as_point_managing_staff: ApiClient,
     master_procedure: MasterProcedure,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[MasterProcedure]],
 ):
     as_point_managing_staff.delete(master_procedure.get_absolute_url())  # type: ignore[no-untyped-call]
 
@@ -173,7 +173,7 @@ def test_point_managing_staff_can_delete_master_procedure(
 def test_point_non_managing_staff_cannot_delete_procedure(
     as_point_non_managing_staff: StatusApiClient,
     master_procedure: MasterProcedure,
-    assert_exists: ExistCheckAssertion,
+    assert_exists: GenericExistCheckAssertion[type[MasterProcedure]],
 ):
     as_point_non_managing_staff.delete(  # type: ignore[no-untyped-call]
         master_procedure.get_absolute_url(),

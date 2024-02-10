@@ -7,7 +7,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from app.testing import ApiClient, FixtureFactory
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.fields import LowercaseCharField
 from companies.api.serializers import MaterialTypeSerializer
 from companies.models import MaterialType
@@ -41,7 +41,7 @@ def test_material_type_create_invalid_data(
     as_user: ApiClient,
     factory: FixtureFactory,
     invalid_fields: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[MaterialType]],
 ):
     url = reverse("api_v1:companies:material-types-list")
     as_user.post(url, data=factory.material_type_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore

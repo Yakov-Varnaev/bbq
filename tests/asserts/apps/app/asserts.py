@@ -5,7 +5,7 @@ from rest_framework.serializers import BaseSerializer
 
 from django.db.models import Model, QuerySet
 
-from app.types import ExistCheckAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, RestPageAssertion
 
 
 @pytest.fixture
@@ -25,17 +25,21 @@ def assert_rest_page() -> RestPageAssertion:
     return _assert_rest_page
 
 
-@pytest.fixture
-def assert_doesnt_exist() -> ExistCheckAssertion:
-    def _assert(model: type[Model], **filter: Any) -> None:
+class NonExistCheckAssertion(GenericExistCheckAssertion[Model]):
+    def __call__(self, model: Model, **filter: Any) -> None:
         assert not model.objects.filter(**filter).exists()  # type: ignore[attr-defined]
 
-    return _assert
+
+class ExistCheckAssertion(GenericExistCheckAssertion[Model]):
+    def __call__(self, model: Model, **filter: Any) -> None:
+        assert model.objects.filter(**filter).exists()  # type: ignore[attr-defined]
 
 
 @pytest.fixture
-def assert_exists() -> ExistCheckAssertion:
-    def _assert(model: type[Model], **filter: Any) -> None:
-        assert model.objects.filter(**filter).exists()  # type: ignore[attr-defined]
+def assert_doesnt_exist() -> GenericExistCheckAssertion:
+    return NonExistCheckAssertion()
 
-    return _assert
+
+@pytest.fixture
+def assert_exists() -> GenericExistCheckAssertion:
+    return ExistCheckAssertion()

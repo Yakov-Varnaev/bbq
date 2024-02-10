@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from app.testing.api import ApiClient, StatusApiClient
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.models.stock import StockMaterial
 from purchases.api.serializers import ProductMaterialSerializer
 from purchases.models.product_material import ProductMaterial
@@ -40,7 +40,7 @@ def test_non_point_managing_staff_cannot_create(
     as_point_non_managing_staff: StatusApiClient,
     product_material_data: ProductMaterialData,
     stock_material: StockMaterial,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[ProductMaterial]],
 ):
     client = as_point_non_managing_staff
     point = stock_material.stock.point
@@ -126,7 +126,7 @@ def test_non_point_managing_staff_cannot_update(
 def test_point_managing_staff_can_delete(
     as_point_managing_staff: ApiClient,
     product_material: ProductMaterial,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[ProductMaterial]],
 ):
     client = as_point_managing_staff
     url = product_material.get_absolute_url()

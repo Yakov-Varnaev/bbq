@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 
 from django.contrib.auth import get_user_model
 
-from app.types import ExistCheckAssertion, GenericModelAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion
 from companies.api.serializers import EmployeeSerializer
 from companies.models import Employee
 from companies.services import EmployeeCreator
@@ -24,7 +24,7 @@ def test_employee_is_created_with_valid_data(
 
 
 def test_employee_is_not_created_with_invalid_data(
-    employee_invalid_data: dict, assert_doesnt_exist: ExistCheckAssertion
+    employee_invalid_data: dict, assert_doesnt_exist: GenericExistCheckAssertion[type[Employee]]
 ):
     serializer = EmployeeSerializer(data=employee_invalid_data)
 

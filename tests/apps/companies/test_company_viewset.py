@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import CompanySerializer
 from companies.models import Company
 from companies.types import CompanyData
@@ -44,7 +44,7 @@ def test_company_create_invalid_data(
     as_user: ApiClient,
     factory: FixtureFactory,
     invalid_fields: dict[str, Any],
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Company]],
 ):
     url = reverse("api_v1:companies:company-list")
     as_user.post(url, data=factory.company_data(**invalid_fields), expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore
@@ -135,7 +135,7 @@ def test_non_owner_cannot_update_company(
 
 
 def test_owner_can_delete_company(
-    as_company_owner: ApiClient, company: Company, assert_doesnt_exist: ExistCheckAssertion
+    as_company_owner: ApiClient, company: Company, assert_doesnt_exist: GenericExistCheckAssertion
 ):
     url = reverse("api_v1:companies:company-detail", kwargs={"pk": company.pk})
     as_company_owner.delete(url)  # type: ignore

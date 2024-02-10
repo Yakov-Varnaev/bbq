@@ -11,7 +11,7 @@ from django.utils import timezone
 from app.api.permissions import IsCompanyOwnerOrReadOnly
 from app.testing.api import ApiClient
 from app.testing.factory import FixtureFactory
-from app.types import ExistCheckAssertion, GenericModelAssertion, RestPageAssertion
+from app.types import GenericExistCheckAssertion, GenericModelAssertion, RestPageAssertion
 from companies.api.serializers import PointSerializer
 from companies.models import Company, Point
 from companies.types import PointData
@@ -44,7 +44,9 @@ def test_company_owner_can_create_point(
 
 
 def test_point_cannot_be_created_with_non_existing_company(
-    as_company_owner: ApiClient, company_point_data: PointData, assert_doesnt_exist: ExistCheckAssertion
+    as_company_owner: ApiClient,
+    company_point_data: PointData,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Point]],
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": 999}),
@@ -62,7 +64,7 @@ def test_non_owner_cannot_create_point(
     message: str,
     company: Company,
     company_point_data: PointData,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Point]],
 ):
     response = client.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id}),
@@ -85,7 +87,7 @@ def test_create_point_invalid_data(
     company: Company,
     invalid_data: dict,
     factory: FixtureFactory,
-    assert_doesnt_exist: ExistCheckAssertion,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Point]],
 ):
     as_company_owner.post(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id}),
@@ -121,7 +123,7 @@ def test_list_points(
         reverse("api_v1:companies:point-list", kwargs={"company_pk": company.id})
     )
 
-    assert_rest_page(points_data, points, PointSerializer, None, None)
+    assert_rest_page(points_data, points, PointSerializer)
 
 
 @freeze_time()
@@ -170,7 +172,10 @@ def test_non_owner_cannot_update_point(
 
 
 def test_owner_can_delete_point(
-    as_company_owner: ApiClient, company: Company, company_point: Point, assert_doesnt_exist: ExistCheckAssertion
+    as_company_owner: ApiClient,
+    company: Company,
+    company_point: Point,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[Point]],
 ):
     as_company_owner.delete(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-detail", kwargs={"company_pk": company.id, "pk": company_point.id})
@@ -186,7 +191,7 @@ def test_non_owner_cannot_delete_point(
     message: str,
     company: Company,
     company_point: Point,
-    assert_exists: ExistCheckAssertion,
+    assert_exists: GenericExistCheckAssertion[type[Point]],
 ):
     response = client.delete(  # type: ignore[no-untyped-call]
         reverse("api_v1:companies:point-detail", kwargs={"company_pk": company.id, "pk": company_point.id}),
