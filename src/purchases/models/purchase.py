@@ -3,20 +3,20 @@ from typing import Self
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from app.models import ArchiveDeletedManager, ArchiveDeletedQuerySet, TimestampedCreatedModel
+from app.models import TimestampedCreatedModel
 
 
-class PurchaseQuerySet(ArchiveDeletedQuerySet):
+class PurchaseQuerySet(models.QuerySet):
     def point(self, company_id: int, point_id: int) -> Self:
         return self.filter(
-            procedure__department__point__company_id=company_id,
-            procedure__department__point_id=point_id,
+            id__procedure__department__point__company_id=company_id,
+            id__procedure__department__point_id=point_id,
         )
 
 
-class PurchaseManager(ArchiveDeletedManager):
+class PurchaseManager(models.Manager):
     def get_queryset(self) -> PurchaseQuerySet:
-        return PurchaseQuerySet(self.model, using=self._db).not_archived()
+        return PurchaseQuerySet(self.model, using=self._db)
 
     def point(self, company_id: int, point_id: int) -> PurchaseQuerySet:
         return self.get_queryset().point(company_id, point_id)
