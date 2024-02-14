@@ -9,6 +9,8 @@ app_name = "purchases"
 router = SimpleRouter()
 
 router.register(r"products", viewsets.ProductMaterialViewSet, basename="product")
+router.register(r"purchases", viewsets.PurchaseViewSet, basename="purchase")
+
 
 urlpatterns = [
     path("companies/<int:company_pk>/points/<int:point_pk>/", include(router.urls)),
