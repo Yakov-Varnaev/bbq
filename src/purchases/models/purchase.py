@@ -3,26 +3,26 @@ from typing import Self
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from app.models import TimestampedCreatedModel
+from app.models import ArchiveDeleted, ArchiveDeletedManager, ArchiveDeletedQuerySet, TimestampedCreatedModel
 
 
-class PurchaseQuerySet(models.QuerySet):
+class PurchaseQuerySet(ArchiveDeletedQuerySet):
     def point(self, company_id: int, point_id: int) -> Self:
         return self.filter(
-            id__procedure__department__point__company_id=company_id,
-            id__procedure__department__point_id=point_id,
+            purchase_procedures__procedure__department__point__company_id=company_id,
+            purchase_procedures__procedure__department__point_id=point_id,
         )
 
 
-class PurchaseManager(models.Manager):
+class PurchaseManager(ArchiveDeletedManager):
     def get_queryset(self) -> PurchaseQuerySet:
-        return PurchaseQuerySet(self.model, using=self._db)
+        return PurchaseQuerySet(self.model, using=self._db).not_archived()
 
     def point(self, company_id: int, point_id: int) -> PurchaseQuerySet:
         return self.get_queryset().point(company_id, point_id)
 
 
-class Purchase(TimestampedCreatedModel):
+class Purchase(ArchiveDeleted, TimestampedCreatedModel):
     is_paid_by_card = models.BooleanField(_("paid by card"))
 
     objects = PurchaseManager()

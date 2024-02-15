@@ -8,10 +8,16 @@ from purchases.types import PurchaseProcedureData
 
 @register
 def purchase_procedure_data(self: FixtureFactory, **kwargs: Unpack[PurchaseProcedureData]) -> PurchaseProcedureData:
+    procedure = kwargs.pop("procedure", None)
+    if procedure is None:
+        procedure = self.procedure()
+    purchase = kwargs.pop("purchase", None)
+    if purchase is None:
+        purchase = self.purchase()
     schema = self.schema(
         schema=lambda: {
-            "procedure": self.procedure().id,
-            "purchase": self.purchase().id,
+            "procedure": procedure.id,
+            "purchase": purchase.id,
         },
         iterations=1,
     )

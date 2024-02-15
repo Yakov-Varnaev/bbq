@@ -14,6 +14,7 @@ class ProductMaterialData(TypedDict, total=False):
 class PurchaseData(TypedDict, total=False):
     created: datetime
     is_paid_by_card: bool
+    archived: datetime
 
 
 class PurchaseProcedureData(TypedDict, total=False):
