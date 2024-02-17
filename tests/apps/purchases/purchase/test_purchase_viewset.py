@@ -77,7 +77,7 @@ def test_point_managing_staff_has_access_to_retrieve(
     assert response == PurchaseSerializer(purchase_procedure.purchase).data
 
 
-def test_point_managing_staff_has_no_access_to_retrieve(
+def test_point_non_managing_staff_has_no_access_to_retrieve(
     as_point_non_managing_staff: StatusApiClient,
     purchase_procedure: PurchaseProcedure,
 ):
@@ -117,6 +117,22 @@ def test_point_managing_staff_has_access_to_list(
     ).all()
 
     assert_rest_page(response, purchases, PurchaseSerializer)
+
+
+def test_point_non_managing_staff_has_no_access_to_list(
+    as_point_non_managing_staff: StatusApiClient,
+    purchase_procedure: PurchaseProcedure,
+):
+    as_point_non_managing_staff.get(  # type: ignore[no-untyped-call]
+        reverse(
+            "api_v1:purchases:purchase-list",
+            kwargs={
+                "company_pk": purchase_procedure.procedure.department.point.company.pk,
+                "point_pk": purchase_procedure.procedure.department.point.pk,
+            },
+        ),
+        expected_status=as_point_non_managing_staff.expected_status,
+    )
 
 
 @pytest.mark.freeze_time("2022-01-01")

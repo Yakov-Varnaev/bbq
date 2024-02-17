@@ -9,10 +9,7 @@ from purchases.types import PurchaseData
 @register
 def purchase_data(self: FixtureFactory, **kwargs: Unpack[PurchaseData]) -> PurchaseData:
     schema = self.schema(
-        schema=lambda: {
-            "created": self.field("date"),
-            "is_paid_by_card": self.field("boolean"),
-        },
+        schema=lambda: {"is_paid_by_card": self.field("boolean")},
         iterations=1,
     )
     return {**schema.create()[0], **kwargs}  # type: ignore[typeddict-item]
