@@ -1,6 +1,7 @@
 from typing import Self
 
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from app.models import ArchiveDeleted, ArchiveDeletedManager, ArchiveDeletedQuerySet
@@ -41,3 +42,16 @@ class PurchaseProcedure(ArchiveDeleted):
         verbose_name = _("purchase of procedure")
         verbose_name_plural = _("purchase of procedures")
         ordering = ("purchase", "procedure")
+
+    def __str__(self) -> str:
+        return f"Purchase {self.procedure.name}"
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "api_v1:purchases:procedures-purchase-detail",
+            kwargs={
+                "company_pk": self.procedure.department.point.company.pk,
+                "point_pk": self.procedure.department.point.pk,
+                "pk": self.pk,
+            },
+        )
