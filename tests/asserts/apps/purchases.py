@@ -2,8 +2,8 @@ import pytest
 from typing import Any
 
 from app.types import GenericModelAssertion
-from purchases.models import ProductMaterial, Purchase
-from purchases.types import ProductMaterialData, PurchaseData
+from purchases.models import ProductMaterial, Purchase, PurchaseProcedure
+from purchases.types import ProductMaterialData, PurchaseData, PurchaseProcedureData
 
 
 class ProductMaterialAssert(GenericModelAssertion[ProductMaterialData]):
@@ -36,3 +36,22 @@ class PurchaseAssert(GenericModelAssertion[PurchaseData]):
 @pytest.fixture
 def assert_purchase() -> GenericModelAssertion:
     return PurchaseAssert()
+
+
+class PurchaseProcedureAssert(GenericModelAssertion[PurchaseProcedureData]):
+    def __call__(self, data: PurchaseProcedureData, **extra: Any) -> None:
+        merged_data = data | extra
+        purchase_procedure_id = merged_data["id"]
+        assert isinstance(purchase_procedure_id, int)
+        purchase_procedure = PurchaseProcedure.objects.get(id=purchase_procedure_id)
+        assert purchase_procedure.procedure == merged_data.pop("procedure")
+        assert purchase_procedure.purchase == merged_data.pop("purchase")
+
+        for key, value in merged_data.items():
+            check_result = getattr(purchase_procedure, key) == value
+            assert check_result, f"{key} is not {value} but {getattr(purchase_procedure, key)}"
+
+
+@pytest.fixture
+def assert_purchase_procedure() -> GenericModelAssertion:
+    return PurchaseProcedureAssert()
