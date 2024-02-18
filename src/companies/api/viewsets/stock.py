@@ -57,7 +57,7 @@ class StockViewSet(ModelViewSet):
         return serializers.get(self.action, StockSerializer)
 
 
-@extend_schema(tags=["stocks"])
+@extend_schema(tags=["stock-materials"])
 class StockMaterialViewSet(ModelViewSet):
     permission_classes = [IsCompanyOwner]
     queryset = StockMaterial.objects.select_related("material", "material__kind")

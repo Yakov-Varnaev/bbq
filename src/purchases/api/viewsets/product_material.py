@@ -12,6 +12,7 @@ from purchases.models.product_material import ProductMaterial
 @extend_schema(tags=["products"])
 class ProductMaterialViewSet(ModelViewSet):
     permission_classes = [IsCompanyOwnerOrReadOnly]
+    queryset = ProductMaterial.objects.none()  # for swagger schema
 
     def get_queryset(self) -> QuerySet[ProductMaterial]:
         return ProductMaterial.objects.point(self.kwargs["company_pk"], self.kwargs["point_pk"]).with_material_info()

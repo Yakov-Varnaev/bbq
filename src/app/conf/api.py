@@ -38,6 +38,7 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.hooks.postprocess_schema_enums",
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
+        "app.api.schema.postprocessing_hook",
     ],
     "SWAGGER_UI_SETTINGS": {
         # collapse tags by default
