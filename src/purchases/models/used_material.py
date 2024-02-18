@@ -5,7 +5,7 @@ from app.models import ArchiveDeleted, TimestampedModel
 from purchases.models.managers import _MaterialManager, _MaterialQuerySet
 
 
-class UsedMaterial(ArchiveDeleted, TimestampedModel):  # type: ignore[misc]
+class UsedMaterial(ArchiveDeleted, TimestampedModel):
     procedure = models.ForeignKey(
         "purchases.PurchaseProcedure",
         on_delete=models.PROTECT,

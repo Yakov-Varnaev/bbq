@@ -20,3 +20,9 @@ class PurchaseData(TypedDict, total=False):
 class PurchaseProcedureData(TypedDict, total=False):
     procedure: Procedure
     purchase: Purchase
+
+
+class UsedMaterialData(TypedDict, total=False):
+    material: StockMaterial
+    procedure: Procedure
+    amount: int
