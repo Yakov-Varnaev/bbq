@@ -11,6 +11,8 @@ __all__ = [
     "models",
     "DefaultModel",
     "TimestampedModel",
+    "TimestampedCreatedModel",
+    "TimestampedModifiedModel",
     "ArchiveDeleted",
     "ArchiveDeletedQuerySet",
     "ArchiveDeletedManager",
@@ -49,10 +51,21 @@ class DefaultModel(models.Model):
         return cls._meta.label_lower.split(".")[-1]
 
 
-class TimestampedModel(DefaultModel):
+class TimestampedCreatedModel(DefaultModel):
     created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        abstract = True
+
+
+class TimestampedModifiedModel(DefaultModel):
     modified = models.DateTimeField(auto_now=True, db_index=True)
 
+    class Meta:
+        abstract = True
+
+
+class TimestampedModel(TimestampedCreatedModel, TimestampedModifiedModel):
     class Meta:
         abstract = True
 
