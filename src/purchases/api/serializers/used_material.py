@@ -20,6 +20,6 @@ class UsedMaterialReadSerializer(serializers.ModelSerializer):
 class UserMaterialWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsedMaterial
-        _fields = ("procedure", "material", "amount")
+        _fields = ("material", "amount")
         fields = _fields
         only_write_fields = _fields
