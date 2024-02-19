@@ -14,7 +14,7 @@ class PurchaseProcedureViewSet(ModelViewSet):
     permission_classes = [IsCompanyOwnerOrReadOnly]
 
     def get_queryset(self) -> QuerySet[PurchaseProcedure]:
-        return (  # noqa
+        return (  # noqa: BLK100
             PurchaseProcedure.objects
             .point(self.kwargs["company_pk"], self.kwargs["point_pk"])
             .select_related("purchase", "procedure")
