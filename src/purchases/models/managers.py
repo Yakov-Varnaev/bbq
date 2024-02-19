@@ -7,7 +7,7 @@ from app.models import ArchiveDeletedManager, ArchiveDeletedQuerySet
 
 class _MaterialQuerySet(ArchiveDeletedQuerySet):
     def with_material_info(self) -> Self:
-        return self.annotate(
+        return self.select_related("material").annotate(
             name=models.F("material__material__name"),
             brand=models.F("material__material__brand"),
             kind=models.F("material__material__kind"),
