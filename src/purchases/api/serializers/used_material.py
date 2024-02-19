@@ -17,7 +17,7 @@ class UsedMaterialReadSerializer(serializers.ModelSerializer):
         only_read_fields = _fields
 
 
-class UserMaterialWriteSerializer(serializers.ModelSerializer):
+class UsedMaterialWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsedMaterial
         _fields = ("material", "amount")

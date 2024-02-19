@@ -14,10 +14,10 @@ class PurchaseProcedureViewSet(ModelViewSet):
     permission_classes = [IsCompanyOwnerOrReadOnly]
 
     def get_queryset(self) -> QuerySet[PurchaseProcedure]:
-        return (
-            PurchaseProcedure.objects.select_related("purchase")
+        return (  # noqa
+            PurchaseProcedure.objects
             .point(self.kwargs["company_pk"], self.kwargs["point_pk"])
-            .with_material_info()
+            .select_related("purchase", "procedure")
         )
 
     def get_serializer_class(self) -> type[PurchaseProcedureReadSerializer | PurchaseProcedureWriteSerializer]:

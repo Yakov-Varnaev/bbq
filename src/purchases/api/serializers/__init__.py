@@ -4,7 +4,7 @@ from purchases.api.serializers.purchase_procedure import (
     PurchaseProcedureReadSerializer,
     PurchaseProcedureWriteSerializer,
 )
-from purchases.api.serializers.used_material import UsedMaterialReadSerializer, UserMaterialWriteSerializer
+from purchases.api.serializers.used_material import UsedMaterialReadSerializer, UsedMaterialWriteSerializer
 
 __all__ = [
     "ProductMaterialSerializer",
@@ -13,5 +13,5 @@ __all__ = [
     "PurchaseProcedureReadSerializer",
     "PurchaseProcedureWriteSerializer",
     "UsedMaterialReadSerializer",
-    "UserMaterialWriteSerializer",
+    "UsedMaterialWriteSerializer",
 ]

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from companies.api.serializers import ProcedureSerializer
-from purchases.api.serializers import PurchaseSerializer, UserMaterialWriteSerializer
+from purchases.api.serializers.purchase import PurchaseSerializer
+from purchases.api.serializers.used_material import UsedMaterialWriteSerializer
 from purchases.models import PurchaseProcedure
 
 
@@ -17,7 +18,7 @@ class PurchaseProcedureReadSerializer(serializers.ModelSerializer):
 
 
 class PurchaseProcedureWriteSerializer(serializers.ModelSerializer):
-    materials = UserMaterialWriteSerializer(many=True)
+    materials = UsedMaterialWriteSerializer(many=True)
 
     class Meta:
         model = PurchaseProcedure
