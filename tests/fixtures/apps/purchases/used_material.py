@@ -21,8 +21,8 @@ def used_material(
 
 
 @pytest.fixture
-def used_materials_data_without_procedure(factory: FixtureFactory) -> list[dict]:
+def used_materials_data_without_procedure(factory: FixtureFactory) -> list[UsedMaterialData]:
     used_materials = factory.cycle(3).used_material_data(procedure=None)
     for used_material in used_materials:
         del used_material["procedure"]
-    return sorted(used_materials, key=lambda x: x["material"])
+    return used_materials

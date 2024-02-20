@@ -8,6 +8,9 @@ from app.models import ArchiveDeleted, ArchiveDeletedManager, ArchiveDeletedQuer
 
 
 class PurchaseProcedureQuerySet(ArchiveDeletedQuerySet):
+    def with_related(self) -> Self:
+        return self.select_related("purchase", "procedure").prefetch_related("used_materials")
+
     def point(self, company_id: int, point_id: int) -> Self:
         return self.filter(
             procedure__department__point__company_id=company_id,
@@ -17,7 +20,7 @@ class PurchaseProcedureQuerySet(ArchiveDeletedQuerySet):
 
 class PurchaseProcedureManager(ArchiveDeletedManager):
     def get_queryset(self) -> PurchaseProcedureQuerySet:
-        return PurchaseProcedureQuerySet(self.model, using=self._db).not_archived()
+        return PurchaseProcedureQuerySet(self.model, using=self._db).not_archived().with_related()
 
     def point(self, company_id: int, point_id: int) -> PurchaseProcedureQuerySet:
         return self.get_queryset().point(company_id, point_id)

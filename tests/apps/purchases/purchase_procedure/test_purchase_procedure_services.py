@@ -4,6 +4,7 @@ from copy import deepcopy
 from pytest_mock import MockerFixture
 
 from app.types import GenericExistCheckAssertion, GenericModelAssertion
+from companies.models import StockMaterial
 from purchases.api.serializers import PurchaseProcedureWriteSerializer
 from purchases.models import PurchaseProcedure, UsedMaterial
 from purchases.services.purchase_procedure import (
@@ -16,8 +17,15 @@ from purchases.types import PurchaseProcedureData, UsedMaterialData
 pytestmark = [pytest.mark.django_db]
 
 
+class TestRequest:
+    __test__ = False
+
+    def __init__(self, method) -> None:
+        self.method = method
+
+
 def test_purchase_procedure_created_with_valid_data(
-    used_materials_data_without_procedure: list[dict],
+    used_materials_data_without_procedure: list[UsedMaterialData],
     purchase_procedure_data: PurchaseProcedureData,
     assert_purchase_procedure: GenericModelAssertion[PurchaseProcedureData],
     assert_used_material: GenericModelAssertion[UsedMaterialData],
@@ -32,15 +40,16 @@ def test_purchase_procedure_created_with_valid_data(
 
 
 def test_put_purchase_procedure_updated_with_valid_data(
-    used_materials_data_without_procedure: list[dict],
+    used_materials_data_without_procedure: list[UsedMaterialData],
     purchase_procedure: PurchaseProcedure,
     purchase_procedure_data: PurchaseProcedureData,
     assert_purchase_procedure: GenericModelAssertion[PurchaseProcedureData],
     assert_used_material: GenericModelAssertion[UsedMaterialData],
 ):
     purchase_procedure_data["materials"] = used_materials_data_without_procedure
+    request = TestRequest("PUT")
     new_purchase_procedure = PurchaseProcedureUpdater(
-        PurchaseProcedureWriteSerializer(data=purchase_procedure_data, context={"method": "PUT"}),
+        PurchaseProcedureWriteSerializer(data=purchase_procedure_data, context={"request": request}),
         purchase_procedure.id,
     )()
 
@@ -52,14 +61,17 @@ def test_put_purchase_procedure_updated_with_valid_data(
 
 def test_patch_purchase_procedure_updated_with_valid_data(
     mocker: MockerFixture,
-    used_materials_data_without_procedure: list[dict],
+    used_materials_data_without_procedure: list[UsedMaterialData],
     purchase_procedure_with_one_material: PurchaseProcedure,
     assert_purchase_procedure: GenericModelAssertion[PurchaseProcedureData],
     assert_used_material: GenericModelAssertion[UsedMaterialData],
 ):
     data = {"materials": used_materials_data_without_procedure}
     copy_data = deepcopy(data)
-    serializer = PurchaseProcedureWriteSerializer(data=data, context={"method": "PATCH"})
+    for material in data["materials"]:
+        material["material"] = StockMaterial.objects.get(id=material["material"])
+    request = TestRequest("PATCH")
+    serializer = PurchaseProcedureWriteSerializer(data=data, context={"request": request})
     mocker.patch.object(serializer, "is_valid", return_value=True)
     mocker.patch.object(
         PurchaseProcedureWriteSerializer, "validated_data", new_callable=mocker.PropertyMock, return_value=data

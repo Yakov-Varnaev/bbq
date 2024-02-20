@@ -28,6 +28,6 @@ class PurchaseProcedureCreator(BaseService):
     @transaction.atomic
     def act(self) -> PurchaseProcedure:
         used_materials_data: list[dict[str, int]] = self.serializer.validated_data.pop("materials")
-        purchase_procedure = PurchaseProcedure.objects.create(**self.serializer.validated_data)
+        purchase_procedure: PurchaseProcedure = self.serializer.save()  # type: ignore[assignment]
         self.create_used_materials(purchase_procedure, used_materials_data)
         return purchase_procedure
