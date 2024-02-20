@@ -41,11 +41,13 @@ def assert_purchase() -> GenericModelAssertion:
 class PurchaseProcedureAssert(GenericModelAssertion[PurchaseProcedureData]):
     def __call__(self, data: PurchaseProcedureData, **extra: Any) -> None:
         merged_data = data | extra
+        if "materials" in merged_data:
+            del merged_data["materials"]
         purchase_procedure_id = merged_data["id"]
         assert isinstance(purchase_procedure_id, int)
         purchase_procedure = PurchaseProcedure.objects.get(id=purchase_procedure_id)
-        assert purchase_procedure.procedure == merged_data.pop("procedure")
-        assert purchase_procedure.purchase == merged_data.pop("purchase")
+        assert purchase_procedure.procedure.id == merged_data.pop("procedure")
+        assert purchase_procedure.purchase.id == merged_data.pop("purchase")
 
         for key, value in merged_data.items():
             check_result = getattr(purchase_procedure, key) == value
@@ -64,7 +66,7 @@ class UsedMaterialAssert(GenericModelAssertion[UsedMaterialData]):
         assert isinstance(used_material_id, int)
         used_material = UsedMaterial.objects.get(id=used_material_id)
         assert used_material.procedure == merged_data.pop("procedure")
-        assert used_material.material == merged_data.pop("material")
+        assert used_material.material.id == merged_data.pop("material")
 
         for key, value in merged_data.items():
             assert getattr(used_material, key) == value, f"{key} is not {value} but {getattr(used_material, key)}"

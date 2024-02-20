@@ -22,7 +22,7 @@ class PurchaseProcedureWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchaseProcedure
-        _field = ("procedure", "purchase")
+        _field = ("procedure", "purchase", "materials")
         fields = _field
         only_write_fields = _field
 

@@ -18,6 +18,7 @@ def used_material_data(self: FixtureFactory, **kwargs: Unpack[UsedMaterialData])
         schema=lambda: {
             "procedure": procedure.id,
             "material": material.id,
+            "amount": self.field("random.randint", a=1, b=999),
         },
         iterations=1,
     )
