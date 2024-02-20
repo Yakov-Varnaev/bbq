@@ -111,7 +111,7 @@ def test_point_non_managing_staff_has_no_access_to_list(
 
 def test_put_point_managing_staff_can_update_purchase_procedure(
     as_point_managing_staff: ApiClient,
-    purchase_procedure_with_one_material: PurchaseProcedureData,
+    purchase_procedure_with_one_material: PurchaseProcedure,
     purchase_procedure_data: PurchaseProcedureData,
     used_materials_data_without_procedure: list[UsedMaterialData],
     assert_purchase_procedure: GenericModelAssertion[PurchaseProcedureData],
@@ -132,11 +132,11 @@ def test_put_point_managing_staff_can_update_purchase_procedure(
 
 def test_patch_point_managing_staff_can_update_purchase_procedure(
     as_point_managing_staff: ApiClient,
-    purchase_procedure_with_one_material: PurchaseProcedureData,
+    purchase_procedure_with_one_material: PurchaseProcedure,
     used_materials_data_without_procedure: list[UsedMaterialData],
     assert_purchase_procedure: GenericModelAssertion[PurchaseProcedureData],
 ):
-    data = {"materials": used_materials_data_without_procedure}
+    data: PurchaseProcedureData = {"materials": used_materials_data_without_procedure}
     as_point_managing_staff.patch(  # type: ignore[no-untyped-call]
         purchase_procedure_with_one_material.get_absolute_url(),
         data=data,

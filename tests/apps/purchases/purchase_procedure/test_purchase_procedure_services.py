@@ -69,7 +69,8 @@ def test_patch_purchase_procedure_updated_with_valid_data(
     data = {"materials": used_materials_data_without_procedure}
     copy_data = deepcopy(data)
     for material in data["materials"]:
-        material["material"] = StockMaterial.objects.get(id=material["material"])
+        if isinstance(material["material"], int):
+            material["material"] = StockMaterial.objects.get(id=material["material"])
     request = TestRequest("PATCH")
     serializer = PurchaseProcedureWriteSerializer(data=data, context={"request": request})
     mocker.patch.object(serializer, "is_valid", return_value=True)
