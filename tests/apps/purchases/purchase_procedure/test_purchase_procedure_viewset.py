@@ -1,5 +1,7 @@
 import pytest
 
+from rest_framework import status
+
 from django.urls import reverse
 
 from app.testing.api import ApiClient, StatusApiClient
@@ -13,7 +15,6 @@ from purchases.types import PurchaseProcedureData, UsedMaterialData
 pytestmark = pytest.mark.django_db
 
 
-@pytest.mark.freeze_time("2022-01-01")
 def test_point_managing_staff_can_create_purchase_procedure(
     as_point_managing_staff: ApiClient,
     purchase_procedure_data: PurchaseProcedureData,
@@ -39,12 +40,32 @@ def test_point_managing_staff_can_create_purchase_procedure(
         assert_used_material(material_data, procedure=purchase_procedure, id=used_material.id)
 
 
+def test_point_managing_staff_cannot_create_purchase_not_unique_materials(
+    as_point_managing_staff: ApiClient,
+    purchase_procedure_data: PurchaseProcedureData,
+    used_materials_data_without_procedure_and_not_unique: list[UsedMaterialData],
+    procedure: Procedure,
+    assert_doesnt_exist: GenericExistCheckAssertion[type[PurchaseProcedure | UsedMaterial]],
+):
+    purchase_procedure_data["materials"] = used_materials_data_without_procedure_and_not_unique
+    url = reverse(
+        "api_v1:purchases:procedures-purchase-list",
+        kwargs={
+            "company_pk": procedure.department.point.company.pk,
+            "point_pk": procedure.department.point.pk,
+        },
+    )
+    as_point_managing_staff.post(url, data=purchase_procedure_data, expected_status=status.HTTP_400_BAD_REQUEST)  # type: ignore[no-untyped-call]
+
+    assert_doesnt_exist(PurchaseProcedure)
+    assert_doesnt_exist(UsedMaterial)
+
+
 def test_non_point_managing_staff_cannot_create_purchase_procedure(
     as_point_non_managing_staff: StatusApiClient,
     purchase_procedure_data: PurchaseProcedureData,
     used_materials_data_without_procedure: list[UsedMaterialData],
     procedure: Procedure,
-    assert_doesnt_exist: GenericExistCheckAssertion[type[PurchaseProcedure | UsedMaterial]],
 ):
     purchase_procedure_data["materials"] = used_materials_data_without_procedure
     url = reverse(
@@ -59,9 +80,6 @@ def test_non_point_managing_staff_cannot_create_purchase_procedure(
         data=purchase_procedure_data,
         expected_status=as_point_non_managing_staff.expected_status,
     )
-
-    assert_doesnt_exist(PurchaseProcedure)
-    assert_doesnt_exist(UsedMaterial)
 
 
 def test_point_non_managing_staff_has_no_access_to_retrieve(
@@ -130,6 +148,20 @@ def test_put_point_managing_staff_can_update_purchase_procedure(
     )
 
 
+def test_put_point_managing_staff_can_update_purchase_procedure_not_unique_materials(
+    as_point_managing_staff: ApiClient,
+    purchase_procedure_with_one_material: PurchaseProcedure,
+    purchase_procedure_data: PurchaseProcedureData,
+    used_materials_data_without_procedure_and_not_unique: list[UsedMaterialData],
+):
+    purchase_procedure_data["materials"] = used_materials_data_without_procedure_and_not_unique
+    as_point_managing_staff.put(  # type: ignore[no-untyped-call]
+        purchase_procedure_with_one_material.get_absolute_url(),
+        data=purchase_procedure_data,
+        expected_status=status.HTTP_400_BAD_REQUEST,
+    )
+
+
 def test_patch_point_managing_staff_can_update_purchase_procedure(
     as_point_managing_staff: ApiClient,
     purchase_procedure_with_one_material: PurchaseProcedure,
@@ -148,6 +180,20 @@ def test_patch_point_managing_staff_can_update_purchase_procedure(
         purchase=purchase_procedure_with_one_material.purchase.id,
         procedure=purchase_procedure_with_one_material.procedure.id,
         id=purchase_procedure_with_one_material.id,
+    )
+
+
+def test_patch_point_managing_staff_can_update_purchase_procedure_not_unique_materials(
+    as_point_managing_staff: ApiClient,
+    purchase_procedure_with_one_material: PurchaseProcedure,
+    purchase_procedure_data: PurchaseProcedureData,
+    used_materials_data_without_procedure_and_not_unique: list[UsedMaterialData],
+):
+    purchase_procedure_data["materials"] = used_materials_data_without_procedure_and_not_unique
+    as_point_managing_staff.patch(  # type: ignore[no-untyped-call]
+        purchase_procedure_with_one_material.get_absolute_url(),
+        data=purchase_procedure_data,
+        expected_status=status.HTTP_400_BAD_REQUEST,
     )
 
 

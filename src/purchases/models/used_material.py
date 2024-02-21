@@ -25,6 +25,7 @@ class UsedMaterial(ArchiveDeleted, TimestampedModel):
         verbose_name = _("used material")
         verbose_name_plural = _("used materials")
         ordering = ("material", "procedure")
+        unique_together = ("material", "procedure")
 
     def __str__(self) -> str:
-        return f"Name: {self.material.material.name}, brand: {self.material.material.brand}"
+        return f"Material: {self.material.material.name}, brand: {self.material.material.brand}"

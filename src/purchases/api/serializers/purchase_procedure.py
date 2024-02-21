@@ -29,3 +29,9 @@ class PurchaseProcedureWriteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance: PurchaseProcedure) -> dict:
         return PurchaseProcedureReadSerializer(instance).data
+
+    def validate_materials(self, materials: list[dict[str, int]]) -> list[dict[str, int]]:
+        material_ids = [material["material"] for material in materials]
+        if len(material_ids) != len(set(material_ids)):
+            raise serializers.ValidationError("Materials must be unique.")
+        return materials

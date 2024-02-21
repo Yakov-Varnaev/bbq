@@ -9,6 +9,7 @@ from tests.fixtures.apps.purchases.used_material import (
     used_material,
     used_material_data,
     used_materials_data_without_procedure,
+    used_materials_data_without_procedure_and_not_unique,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "used_material",
     "used_material_data",
     "used_materials_data_without_procedure",
+    "used_materials_data_without_procedure_and_not_unique",
 ]

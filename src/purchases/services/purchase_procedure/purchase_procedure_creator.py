@@ -5,12 +5,11 @@ from rest_framework.serializers import BaseSerializer
 from django.db import transaction
 
 from app.services import BaseService
-from purchases.api.serializers import PurchaseProcedureWriteSerializer
 from purchases.models import PurchaseProcedure, UsedMaterial
 
 
 class PurchaseProcedureCreator(BaseService):
-    def __init__(self, serializer: BaseSerializer[PurchaseProcedureWriteSerializer]) -> None:
+    def __init__(self, serializer: BaseSerializer) -> None:
         self.serializer = serializer
 
     def get_validators(self) -> list[Callable]:
@@ -29,6 +28,6 @@ class PurchaseProcedureCreator(BaseService):
     @transaction.atomic
     def act(self) -> PurchaseProcedure:
         used_materials_data: list[dict[str, int]] = self.serializer.validated_data.pop("materials")
-        purchase_procedure: PurchaseProcedure = self.serializer.save()  # type: ignore[assignment]
+        purchase_procedure: PurchaseProcedure = self.serializer.save()
         self.create_used_materials(purchase_procedure, used_materials_data)
         return purchase_procedure
