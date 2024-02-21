@@ -7,4 +7,4 @@ class PurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = ("id", "created", "is_paid_by_card")
-        only_read_fields = ("id", "created")
+        read_only_fields = ("id", "created")

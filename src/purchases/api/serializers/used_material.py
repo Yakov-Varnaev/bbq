@@ -8,13 +8,12 @@ class UsedMaterialReadSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="material.material.name")
     kind = serializers.CharField(source="material.material.kind")
     unit = serializers.CharField(source="material.material.unit")
-    amount = serializers.IntegerField()
 
     class Meta:
         model = UsedMaterial
         _fields = ("id", "procedure", "brand", "name", "kind", "unit", "amount")
         fields = _fields
-        only_read_fields = _fields
+        read_only_fields = _fields
 
 
 class UsedMaterialWriteSerializer(serializers.ModelSerializer):
@@ -22,4 +21,4 @@ class UsedMaterialWriteSerializer(serializers.ModelSerializer):
         model = UsedMaterial
         _fields = ("material", "amount")
         fields = _fields
-        only_write_fields = _fields
+        write_only_fields = _fields

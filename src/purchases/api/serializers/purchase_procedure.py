@@ -13,9 +13,9 @@ class PurchaseProcedureReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchaseProcedure
-        _field = ("id", "procedure", "purchase", "materials")
-        fields = _field
-        only_read_fields = _field
+        _fields = ("id", "procedure", "purchase", "materials")
+        fields = _fields
+        read_only_fields = _fields
 
 
 class PurchaseProcedureWriteSerializer(serializers.ModelSerializer):
@@ -23,9 +23,9 @@ class PurchaseProcedureWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchaseProcedure
-        _field = ("procedure", "purchase", "materials")
-        fields = _field
-        only_write_fields = _field
+        _fields = ("procedure", "purchase", "materials")
+        fields = _fields
+        write_only_fields = _fields
 
     def to_representation(self, instance: PurchaseProcedure) -> dict:
         return PurchaseProcedureReadSerializer(instance).data
