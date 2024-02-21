@@ -94,7 +94,7 @@ def test_point_managing_staff_has_access_to_list(
     purchases = PurchaseProcedure.objects.point(
         purchase_procedures[0].procedure.department.point.company.pk,
         purchase_procedures[0].procedure.department.point.pk,
-    ).all()
+    )
 
     assert_rest_page(response, purchases, PurchaseProcedureReadSerializer)
 

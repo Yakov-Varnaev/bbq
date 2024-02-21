@@ -66,10 +66,10 @@ class PurchaseProcedureUpdater(BaseService):
         used_materials: QuerySet[UsedMaterial],
     ) -> None:
         if used_materials_data is not None:
-            if self.serializer.context["request"].method == "PUT":
-                self.put_used_materials(purchase_procedure, used_materials_data, used_materials)
-            if self.serializer.context["request"].method == "PATCH":
+            if self.serializer.partial:
                 self.patch_used_materials(purchase_procedure, used_materials_data, used_materials)
+            else:
+                self.put_used_materials(purchase_procedure, used_materials_data, used_materials)
 
     @transaction.atomic
     def act(self) -> PurchaseProcedure:

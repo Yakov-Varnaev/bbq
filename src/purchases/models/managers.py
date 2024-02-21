@@ -5,7 +5,7 @@ from django.db import models
 from app.models import ArchiveDeletedManager, ArchiveDeletedQuerySet
 
 
-class _MaterialQuerySet(ArchiveDeletedQuerySet):
+class MaterialQuerySet(ArchiveDeletedQuerySet):
     def with_material_info(self) -> Self:
         return self.select_related("material").annotate(
             name=models.F("material__material__name"),
@@ -21,12 +21,12 @@ class _MaterialQuerySet(ArchiveDeletedQuerySet):
         )
 
 
-class _MaterialManager(ArchiveDeletedManager):
-    def get_queryset(self) -> _MaterialQuerySet:
-        return _MaterialQuerySet(self.model, using=self._db).not_archived()
+class MaterialManager(ArchiveDeletedManager):
+    def get_queryset(self) -> MaterialQuerySet:
+        return MaterialQuerySet(self.model, using=self._db).not_archived()
 
-    def with_material_info(self) -> _MaterialQuerySet:
+    def with_material_info(self) -> MaterialQuerySet:
         return self.get_queryset().with_material_info()
 
-    def point(self, company_id: int, point_id: int) -> _MaterialQuerySet:
+    def point(self, company_id: int, point_id: int) -> MaterialQuerySet:
         return self.get_queryset().point(company_id, point_id)

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from app.models import ArchiveDeleted, TimestampedModel
-from purchases.models.managers import _MaterialManager, _MaterialQuerySet
+from purchases.models.managers import MaterialManager, MaterialQuerySet
 
 
 class UsedMaterial(ArchiveDeleted, TimestampedModel):
@@ -18,8 +18,8 @@ class UsedMaterial(ArchiveDeleted, TimestampedModel):
     )
     amount = models.PositiveIntegerField(_("amount"))
 
-    objects = _MaterialManager()
-    include_archived = _MaterialQuerySet.as_manager()
+    objects = MaterialManager()
+    include_archived = MaterialQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("used material")
@@ -27,4 +27,4 @@ class UsedMaterial(ArchiveDeleted, TimestampedModel):
         ordering = ("material", "procedure")
 
     def __str__(self) -> str:
-        return f"The material {self.material.material.name} used in the amount of: {self.amount}."
+        return f"Name: {self.material.material.name}, brand: {self.material.material.brand}"

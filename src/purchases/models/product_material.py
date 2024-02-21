@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from app.models import ArchiveDeleted, TimestampedModel
-from purchases.models.managers import _MaterialManager, _MaterialQuerySet
+from purchases.models.managers import MaterialManager, MaterialQuerySet
 
 
 class ProductMaterial(ArchiveDeleted, TimestampedModel):
@@ -23,8 +23,8 @@ class ProductMaterial(ArchiveDeleted, TimestampedModel):
         decimal_places=2,
     )
 
-    objects = _MaterialManager()
-    include_archived = _MaterialQuerySet.as_manager()
+    objects = MaterialManager()
+    include_archived = MaterialQuerySet.as_manager()
 
     def __str__(self) -> str:
         return f"Product: {self.material.material.name}"

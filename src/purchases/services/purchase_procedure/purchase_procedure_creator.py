@@ -22,8 +22,9 @@ class PurchaseProcedureCreator(BaseService):
     def create_used_materials(
         self, purchase_procedure: PurchaseProcedure, used_materials_data: list[dict[str, int]]
     ) -> None:
-        used_material_objects = [UsedMaterial(procedure=purchase_procedure, **data) for data in used_materials_data]
-        UsedMaterial.objects.bulk_create(used_material_objects)
+        UsedMaterial.objects.bulk_create(
+            [UsedMaterial(procedure=purchase_procedure, **data) for data in used_materials_data]
+        )
 
     @transaction.atomic
     def act(self) -> PurchaseProcedure:
