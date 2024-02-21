@@ -41,14 +41,15 @@ class PurchaseProcedureUpdater(BaseService):
         used_materials_data: list[UsedMaterialData],
         used_materials: QuerySet[UsedMaterial],
     ) -> None:
-        materials = used_materials.values_list("material", flat=True)
+        used_materials_dict = {um.material.id: um for um in used_materials}
         new_used_materials: list[UsedMaterial] = []
+        update_used_materials: list[UsedMaterial] = []
         for data in used_materials_data:
             material = data.pop("material")
-            if material.id in materials:
-                used_material = used_materials.get(material=material)
+            if material.id in used_materials_dict:
+                used_material = used_materials_dict[material.id]
                 used_material.amount = data["amount"]
-                used_material.save()
+                update_used_materials.append(used_material)
             else:
                 new_used_materials.append(
                     UsedMaterial(
@@ -57,6 +58,7 @@ class PurchaseProcedureUpdater(BaseService):
                         amount=data["amount"],
                     )
                 )
+        UsedMaterial.objects.bulk_update(update_used_materials, ["amount"])
         UsedMaterial.objects.bulk_create(new_used_materials)
 
     def update_used_materials(

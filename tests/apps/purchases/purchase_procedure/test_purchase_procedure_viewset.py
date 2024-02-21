@@ -148,7 +148,7 @@ def test_put_point_managing_staff_can_update_purchase_procedure(
     )
 
 
-def test_put_point_managing_staff_can_update_purchase_procedure_not_unique_materials(
+def test_put_point_managing_staff_cannot_update_purchase_procedure_not_unique_materials(
     as_point_managing_staff: ApiClient,
     purchase_procedure_with_one_material: PurchaseProcedure,
     purchase_procedure_data: PurchaseProcedureData,
@@ -183,7 +183,7 @@ def test_patch_point_managing_staff_can_update_purchase_procedure(
     )
 
 
-def test_patch_point_managing_staff_can_update_purchase_procedure_not_unique_materials(
+def test_patch_point_managing_staff_cannot_update_purchase_procedure_not_unique_materials(
     as_point_managing_staff: ApiClient,
     purchase_procedure_with_one_material: PurchaseProcedure,
     purchase_procedure_data: PurchaseProcedureData,
