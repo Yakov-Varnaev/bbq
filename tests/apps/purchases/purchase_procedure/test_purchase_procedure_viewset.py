@@ -127,7 +127,7 @@ def test_point_non_managing_staff_has_no_access_to_list(
     )
 
 
-def test_put_point_managing_staff_can_update_purchase_procedure(
+def test_point_managing_staff_can_update_purchase_procedure(
     as_point_managing_staff: ApiClient,
     purchase_procedure_with_one_material: PurchaseProcedure,
     purchase_procedure_data: PurchaseProcedureData,
@@ -148,7 +148,7 @@ def test_put_point_managing_staff_can_update_purchase_procedure(
     )
 
 
-def test_put_point_managing_staff_cannot_update_purchase_procedure_not_unique_materials(
+def test_point_managing_staff_cannot_update_purchase_procedure_not_unique_materials(
     as_point_managing_staff: ApiClient,
     purchase_procedure_with_one_material: PurchaseProcedure,
     purchase_procedure_data: PurchaseProcedureData,
@@ -156,41 +156,6 @@ def test_put_point_managing_staff_cannot_update_purchase_procedure_not_unique_ma
 ):
     purchase_procedure_data["materials"] = used_materials_data_without_procedure_and_not_unique
     as_point_managing_staff.put(  # type: ignore[no-untyped-call]
-        purchase_procedure_with_one_material.get_absolute_url(),
-        data=purchase_procedure_data,
-        expected_status=status.HTTP_400_BAD_REQUEST,
-    )
-
-
-def test_patch_point_managing_staff_can_update_purchase_procedure(
-    as_point_managing_staff: ApiClient,
-    purchase_procedure_with_one_material: PurchaseProcedure,
-    used_materials_data_without_procedure: list[UsedMaterialData],
-    assert_purchase_procedure: GenericModelAssertion[PurchaseProcedureData],
-):
-    data: PurchaseProcedureData = {"materials": used_materials_data_without_procedure}
-    as_point_managing_staff.patch(  # type: ignore[no-untyped-call]
-        purchase_procedure_with_one_material.get_absolute_url(),
-        data=data,
-    )
-    purchase_procedure_with_one_material.refresh_from_db()
-
-    assert_purchase_procedure(
-        data,
-        purchase=purchase_procedure_with_one_material.purchase.id,
-        procedure=purchase_procedure_with_one_material.procedure.id,
-        id=purchase_procedure_with_one_material.id,
-    )
-
-
-def test_patch_point_managing_staff_cannot_update_purchase_procedure_not_unique_materials(
-    as_point_managing_staff: ApiClient,
-    purchase_procedure_with_one_material: PurchaseProcedure,
-    purchase_procedure_data: PurchaseProcedureData,
-    used_materials_data_without_procedure_and_not_unique: list[UsedMaterialData],
-):
-    purchase_procedure_data["materials"] = used_materials_data_without_procedure_and_not_unique
-    as_point_managing_staff.patch(  # type: ignore[no-untyped-call]
         purchase_procedure_with_one_material.get_absolute_url(),
         data=purchase_procedure_data,
         expected_status=status.HTTP_400_BAD_REQUEST,

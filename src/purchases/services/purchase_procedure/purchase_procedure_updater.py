@@ -3,13 +3,12 @@ from typing import Callable
 from rest_framework.serializers import BaseSerializer
 
 from django.db import transaction
-from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 
 from app.services import BaseService
 from purchases.api.serializers import PurchaseProcedureWriteSerializer
 from purchases.models import PurchaseProcedure, UsedMaterial
-from purchases.types import UsedMaterialData
+from purchases.types import PurchaseProcedureData, UsedMaterialData
 
 
 class PurchaseProcedureUpdater(BaseService):
@@ -25,63 +24,33 @@ class PurchaseProcedureUpdater(BaseService):
     def check_serializer_is_valid(self) -> None:
         self.serializer.is_valid(raise_exception=True)
 
-    def put_used_materials(
-        self,
-        purchase_procedure: PurchaseProcedure,
-        used_materials_data: list[UsedMaterialData],
-        used_materials: QuerySet[UsedMaterial],
+    def update_purchase_procedure(
+        self, purchase_procedure: PurchaseProcedure, validated_data: PurchaseProcedureData
     ) -> None:
-        used_materials.delete()
-        used_material_objects = [UsedMaterial(procedure=purchase_procedure, **data) for data in used_materials_data]
-        UsedMaterial.objects.bulk_create(used_material_objects)
-
-    def patch_used_materials(
-        self,
-        purchase_procedure: PurchaseProcedure,
-        used_materials_data: list[UsedMaterialData],
-        used_materials: QuerySet[UsedMaterial],
-    ) -> None:
-        used_materials_dict = {um.material.id: um for um in used_materials}
-        new_used_materials: list[UsedMaterial] = []
-        update_used_materials: list[UsedMaterial] = []
-        for data in used_materials_data:
-            material = data.pop("material")
-            if material.id in used_materials_dict:
-                used_material = used_materials_dict[material.id]
-                used_material.amount = data["amount"]
-                update_used_materials.append(used_material)
-            else:
-                new_used_materials.append(
-                    UsedMaterial(
-                        procedure=purchase_procedure,
-                        material=material,
-                        amount=data["amount"],
-                    )
-                )
-        UsedMaterial.objects.bulk_update(update_used_materials, ["amount"])
-        UsedMaterial.objects.bulk_create(new_used_materials)
+        for key, value in validated_data.items():
+            setattr(purchase_procedure, key, value)
+        purchase_procedure.save()
 
     def update_used_materials(
-        self,
-        purchase_procedure: PurchaseProcedure,
-        used_materials_data: list[UsedMaterialData],
-        used_materials: QuerySet[UsedMaterial],
+        self, purchase_procedure: PurchaseProcedure, used_materials_data: list[UsedMaterialData]
     ) -> None:
-        if used_materials_data is not None:
-            if self.serializer.partial:
-                self.patch_used_materials(purchase_procedure, used_materials_data, used_materials)
-            else:
-                self.put_used_materials(purchase_procedure, used_materials_data, used_materials)
+        purchase_procedure.used_materials.set(
+            [
+                UsedMaterial(
+                    material=used_material_data["material"],
+                    amount=used_material_data["amount"],
+                    procedure=purchase_procedure,
+                )
+                for used_material_data in used_materials_data
+            ]
+        )
 
     @transaction.atomic
     def act(self) -> PurchaseProcedure:
         used_materials_data: list[UsedMaterialData] = self.serializer.validated_data.pop("materials")
         purchase_procedure = get_object_or_404(PurchaseProcedure, id=self.purchase_procedure_id)
-        used_materials: QuerySet[UsedMaterial] = purchase_procedure.used_materials.all()
         if self.serializer.validated_data is not None:
-            for key, value in self.serializer.validated_data.items():
-                setattr(purchase_procedure, key, value)
-            purchase_procedure.save()
+            self.update_purchase_procedure(purchase_procedure, self.serializer.validated_data)
         if used_materials_data is not None:
-            self.update_used_materials(purchase_procedure, used_materials_data, used_materials)
+            self.update_purchase_procedure(purchase_procedure, self.serializer.validated_data)
         return purchase_procedure
