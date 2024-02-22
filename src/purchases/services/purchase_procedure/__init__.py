@@ -1,6 +1,6 @@
-from purchases.services.purchase_procedure.purchase_procedure_creator import PurchaseProcedureCreator
-from purchases.services.purchase_procedure.purchase_procedure_deleter import PurchaseProcedureDeleter
-from purchases.services.purchase_procedure.purchase_procedure_updater import PurchaseProcedureUpdater
+from purchases.services.purchase_procedure.creator import PurchaseProcedureCreator
+from purchases.services.purchase_procedure.deleter import PurchaseProcedureDeleter
+from purchases.services.purchase_procedure.updater import PurchaseProcedureUpdater
 
 __all__ = [
     "PurchaseProcedureCreator",

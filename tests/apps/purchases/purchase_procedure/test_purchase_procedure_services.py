@@ -23,7 +23,7 @@ def test_purchase_procedure_created_with_valid_data(
     purchase_procedure = PurchaseProcedureCreator(PurchaseProcedureWriteSerializer(data=purchase_procedure_data))()
 
     assert_purchase_procedure(purchase_procedure_data, id=purchase_procedure.id)
-    used_materials = sorted(purchase_procedure.used_materials.all(), key=lambda x: x.material.id)
+    used_materials = purchase_procedure.used_materials.order_by("material__id").all()
     for used_material, material_data in zip(used_materials, used_materials_data_without_procedure):
         assert_used_material(material_data, procedure=purchase_procedure, id=used_material.id)
 
@@ -42,7 +42,7 @@ def test_purchase_procedure_updated_with_valid_data(
     )()
 
     assert_purchase_procedure(purchase_procedure_data, id=purchase_procedure.id)
-    used_materials = sorted(new_purchase_procedure.used_materials.all(), key=lambda x: x.material.id)
+    used_materials = purchase_procedure.used_materials.order_by("material__id").all()
     for used_material, material_data in zip(used_materials, used_materials_data_without_procedure):
         assert_used_material(material_data, procedure=new_purchase_procedure, id=used_material.id)
 

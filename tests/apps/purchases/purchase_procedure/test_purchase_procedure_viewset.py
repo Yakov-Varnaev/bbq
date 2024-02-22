@@ -35,7 +35,7 @@ def test_point_managing_staff_can_create_purchase_procedure(
 
     assert_purchase_procedure(purchase_procedure_data, id=response["id"])
     purchase_procedure = PurchaseProcedure.objects.get(id=response["id"])
-    used_materials = sorted(purchase_procedure.used_materials.all(), key=lambda x: x.material.id)
+    used_materials = purchase_procedure.used_materials.order_by("material__id").all()
     for used_material, material_data in zip(used_materials, used_materials_data_without_procedure):
         assert_used_material(material_data, procedure=purchase_procedure, id=used_material.id)
 
@@ -204,7 +204,7 @@ def test_point_non_managing_staff_cannot_delete_purchase(
         procedure=purchase_procedure_with_one_material.procedure.id,
         purchase=purchase_procedure_with_one_material.purchase.id,
     )
-    used_materials = sorted(purchase_procedure_with_one_material.used_materials.all(), key=lambda x: x.material.id)
+    used_materials = purchase_procedure_with_one_material.used_materials.order_by("material__id").all()
     for used_material in used_materials:
         assert_used_material(
             {},
