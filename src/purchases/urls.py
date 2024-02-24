@@ -10,6 +10,7 @@ router = SimpleRouter()
 
 router.register(r"products", viewsets.ProductMaterialViewSet, basename="product")
 router.register(r"purchases", viewsets.PurchaseViewSet, basename="purchase")
+router.register(r"procedures-purchases", viewsets.PurchaseProcedureViewSet, basename="procedures-purchase")
 
 
 urlpatterns = [

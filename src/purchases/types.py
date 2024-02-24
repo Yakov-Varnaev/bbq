@@ -17,6 +17,13 @@ class PurchaseData(TypedDict, total=False):
     archived: datetime
 
 
+class UsedMaterialData(TypedDict, total=False):
+    material: StockMaterial
+    procedure: Procedure
+    amount: int
+
+
 class PurchaseProcedureData(TypedDict, total=False):
     procedure: Procedure
     purchase: Purchase
+    materials: list[UsedMaterialData]
