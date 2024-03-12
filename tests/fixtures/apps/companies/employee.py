@@ -46,6 +46,7 @@ def employee_with_non_existing_department(factory: FixtureFactory) -> EmployeeDa
     params=[
         lf("employee_with_duplicating_department"),
         lf("employee_with_non_existing_user"),
+        lf("employee_with_non_existing_department"),
     ]
 )
 def employee_invalid_data(request: pytest.FixtureRequest) -> dict:
