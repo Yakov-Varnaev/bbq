@@ -282,7 +282,7 @@ pyjwt[crypto]==2.8.0
     #   social-auth-core
 pytest==7.4.3
     # via
-    #   pytest-deadfixtures
+    #   pytest-unused-fixtures
     #   pytest-django
     #   pytest-env
     #   pytest-freezegun
@@ -290,7 +290,7 @@ pytest==7.4.3
     #   pytest-mock
     #   pytest-randomly
     #   pytest-xdist
-pytest-deadfixtures==2.2.1
+pytest-unused-fixtures==0.1.4
     # via bbq (pyproject.toml)
 pytest-django==4.7.0
     # via bbq (pyproject.toml)

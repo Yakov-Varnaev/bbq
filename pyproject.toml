@@ -34,7 +34,7 @@ dev = [
     "ipython",
 
     "pytest-django>=3.9",
-    "pytest-deadfixtures",
+    "pytest-unused-fixtures",
     "pytest-env",
     "pytest-freezegun",
     "pytest-mock",
