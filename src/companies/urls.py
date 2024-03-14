@@ -20,6 +20,7 @@ point_router = NestedSimpleRouter(company_router, "points", lookup="point")
 point_router.register("departments", viewsets.DepartmentViewSet, basename="department")
 point_router.register("stocks", viewsets.StockViewSet, basename="stock")
 point_router.register("employees", viewsets.EmployeeViewSet, basename="employee")
+point_router.register("materials", viewsets.ConsumableMaterialViewSet, basename="consumable-material")
 
 department_router = NestedSimpleRouter(point_router, "departments", lookup="department")
 department_router.register("procedures", viewsets.ProcedureViewSet, basename="procedure")
