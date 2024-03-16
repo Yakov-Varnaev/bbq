@@ -20,19 +20,14 @@ class PointCreateSerializer(PointSerializer):
         pass
 
 
-class StockUsageSerializer(serializers.Serializer):
-    date = serializers.DateField()
-    amount = serializers.IntegerField()
-
-
 class ConsumableMateriaSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="material.id")  # noqa: VNE003
     brand = serializers.CharField(source="material.brand")
     name = serializers.CharField(source="material.name")
     unit = serializers.CharField(source="material.unit")
     kind = serializers.CharField(source="material.kind.name")
-    # stocks = StockUsageSerializer(many=True)
-    # usage = StockUsageSerializer(many=True)
+    stocks = serializers.ListField(child=serializers.JSONField())
+    usage = serializers.ListField(child=serializers.JSONField())
 
     class Meta:
         model = StockMaterial

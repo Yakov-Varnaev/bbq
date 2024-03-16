@@ -6,9 +6,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from django.db.models import F, QuerySet, Sum, OuterRef, Subquery
+from django.contrib.postgres.expressions import ArraySubquery
+from django.db.models import F, OuterRef, QuerySet, Sum
 from django.db.models.functions import JSONObject, TruncDate
-from django.contrib.postgres.aggregates import JSONBAgg, ArrayAgg
 
 from app.api.permissions import IsCompanyOwner, IsCompanyOwnerOrReadOnly
 from companies.api.serializers import (
@@ -48,26 +48,28 @@ class PointViewSet(ModelViewSet):
 class ConsumableMaterialViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = ConsumableMateriaSerializer
-    # permission_classes = [IsCompanyOwner]
+    permission_classes = [IsCompanyOwner]
 
     def get_queryset(self) -> QuerySet:
-        queryset = (
-            StockMaterial.objects.prefetch_related("material")
-            .filter(
-                stock__point__company__id=self.kwargs["company_pk"],
-                stock__point__id=self.kwargs["point_pk"],
-            )
+        queryset = StockMaterial.objects.prefetch_related("material", "stock").filter(
+            stock__point__company__id=self.kwargs["company_pk"],
+            stock__point__id=self.kwargs["point_pk"],
         )
-        print('queryset -', queryset)
         stocks = (
-            queryset
+            queryset.filter(material=OuterRef("material_id"))
             .order_by("stock__date")
-            .values("material", date=F("stock__date"))
+            .values("material_id", date=F("stock__date"))
             .annotate(amount=Sum("quantity"))
+            .annotate(  # noqa: BLK100
+                stocks=JSONObject(
+                    data=F("date"),
+                    amount=F("amount")
+                )
+            )
+            .values_list("stocks", flat=True)
         )
-        print('stocks -', stocks)
         usage = (
-            UsedMaterial.objects
+            UsedMaterial.objects.filter(material=OuterRef("material_id"))
             .with_material_info()
             .point(
                 self.kwargs["company_pk"], self.kwargs["point_pk"]
@@ -76,7 +78,12 @@ class ConsumableMaterialViewSet(ModelViewSet):
             .order_by("date")
             .values("material", "date")
             .annotate(amount=Sum("amount"))
+            .annotate(
+                stocks=JSONObject(
+                    data=F("date"),
+                    amount=F("amount")
+                )
+            )
+            .values_list("stocks", flat=True)
         )
-        print('usage -', usage)
-        return queryset
-
+        return queryset.annotate(stocks=ArraySubquery(stocks), usage=ArraySubquery(usage))
