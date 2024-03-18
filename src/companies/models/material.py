@@ -22,9 +22,11 @@ class MaterialType(DefaultModel):
 
 
 class MaterialQuerySet(QuerySet):
-    def point(self, company_id: int, point_id: int, date_filters: dict[str, str | None]) -> "MaterialQuerySet":
-        q_date_from = Q(date__gte=date_filters["date_from"]) if date_filters["date_from"] else Q()
-        q_date_to = Q(date__lte=date_filters["date_to"]) if date_filters["date_to"] else Q()
+    def point(self, company_id: int, point_id: int, query_params: dict) -> "MaterialQuerySet":
+        date_from = query_params.get("date_from")
+        date_to = query_params.get("date_to")
+        q_date_from = Q(date__gte=date_from) if date_from else Q()
+        q_date_to = Q(date__lte=date_to) if date_to else Q()
         stock_queryset = (
             StockMaterial.objects.prefetch_related("material", "stock")
             .filter(

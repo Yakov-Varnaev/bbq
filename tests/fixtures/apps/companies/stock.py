@@ -30,5 +30,10 @@ def material(factory: FixtureFactory) -> dict:
 
 
 @pytest.fixture
+def material_date_query_params():
+    return {"date_from": "2010-03-12", "date_to": "2024-03-12"}
+
+
+@pytest.fixture
 def stock_material(factory: FixtureFactory, stock: Stock) -> StockMaterial:
     return factory.stock_material(stock=stock)

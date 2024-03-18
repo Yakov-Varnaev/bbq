@@ -35,6 +35,7 @@ from tests.fixtures.apps.companies.fields import lowercase_char_field
 from tests.fixtures.apps.companies.point import company_point, company_point_data, company_point_pk
 from tests.fixtures.apps.companies.stock import (
     material,
+    material_date_query_params,
     material_type,
     material_type_data,
     stock,
@@ -72,6 +73,7 @@ __all__ = [
     "master_procedure_data",
     "master_procedure_reverse_kwargs",
     "material",
+    "material_date_query_params",
     "material_type",
     "material_type_data",
     "procedure",
