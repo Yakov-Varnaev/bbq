@@ -9,6 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from django.db.models import QuerySet
 
 from app.api.permissions import IsCompanyOwner, IsCompanyOwnerOrReadOnly
+from companies.api.filters import MaterialDataFilterSet
 from companies.api.serializers import (
     ConsumableMateriaSerializer,
     EmployeeSerializer,
@@ -46,6 +47,14 @@ class ConsumableMaterialViewSet(ModelViewSet):
     http_method_names = ["get"]
     serializer_class = ConsumableMateriaSerializer
     permission_classes = [IsCompanyOwner]
+    filterset_class = MaterialDataFilterSet
 
-    def get_queryset(self) -> QuerySet:
-        return Material.objects.point(self.kwargs["company_pk"], self.kwargs["point_pk"])
+    def get_queryset(self) -> QuerySet[Material]:
+        return Material.objects.point(
+            self.kwargs["company_pk"],
+            self.kwargs["point_pk"],
+            {
+                "date_from": self.request.query_params.get("date_from"),
+                "date_to": self.request.query_params.get("date_to"),
+            },
+        )

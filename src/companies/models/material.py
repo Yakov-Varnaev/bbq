@@ -1,6 +1,6 @@
 from django.contrib.postgres.expressions import ArraySubquery  # type:ignore[import-untyped]
 from django.db import models
-from django.db.models import F, OuterRef, QuerySet, Sum
+from django.db.models import F, OuterRef, Q, QuerySet, Sum
 from django.db.models.functions import JSONObject, TruncDate
 from django.utils.translation import gettext_lazy as _
 
@@ -22,34 +22,46 @@ class MaterialType(DefaultModel):
 
 
 class MaterialQuerySet(QuerySet):
-    def point(self, company_id: int, point_id: int) -> "MaterialQuerySet":
-        stock_queryset = StockMaterial.objects.prefetch_related("material", "stock").filter(
-            stock__point__company__id=company_id,
-            stock__point__id=point_id,
+    def point(self, company_id: int, point_id: int, date_filters: dict[str, str | None]) -> "MaterialQuerySet":
+        q_date_from = Q(date__gte=date_filters["date_from"]) if date_filters["date_from"] else Q()
+        q_date_to = Q(date__lte=date_filters["date_to"]) if date_filters["date_to"] else Q()
+        stock_queryset = (
+            StockMaterial.objects.prefetch_related("material", "stock")
+            .filter(
+                stock__point__company__id=company_id,
+                stock__point__id=point_id,
+            )
+            .annotate(date=F("stock__date"))
+            .filter(q_date_from & q_date_to)
         )
         stocks = (
             stock_queryset.filter(material=OuterRef("id"))
-            .order_by("stock__date")
-            .values("material_id", date=F("stock__date"))
+            .order_by("date")
+            .values("material_id", "date")
             .annotate(amount=Sum("quantity"))
             .annotate(  # noqa: BLK100
                 stocks=JSONObject(
-                    data=F("date"),
+                    date=F("date"),
                     amount=F("amount")
                 )
             )
             .values_list("stocks", flat=True)
         )
-        usage_queryset = UsedMaterial.objects.with_material_info().point(company_id, point_id)
+        usage_queryset = (
+            UsedMaterial.objects
+            .point(company_id, point_id)
+            .with_material_info()
+            .annotate(date=TruncDate("modified"))
+            .filter(q_date_from & q_date_to)
+        )
         usage = (
             usage_queryset.filter(material=OuterRef("id"))
-            .annotate(date=TruncDate("modified"))
             .order_by("date")
             .values("material", "date")
             .annotate(amount=Sum("amount"))
             .annotate(
                 stocks=JSONObject(
-                    data=F("date"),
+                    date=F("date"),
                     amount=F("amount")
                 )
             )
