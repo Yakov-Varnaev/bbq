@@ -144,7 +144,6 @@ line_length = 120
    "AXES_ENABLED=False",
    "DEBUG=Off",
    "SECRET_KEY=secret",
-   "DATABASE_URL=sqlite:///db.sqlite",
  ]
  [tool.mypy]
  env = [

@@ -28,7 +28,7 @@ class MaterialQuerySet(QuerySet):
         q_date_from = Q(date__gte=date_from) if date_from else Q()
         q_date_to = Q(date__lte=date_to) if date_to else Q()
         stock_queryset = (
-            StockMaterial.objects.prefetch_related("material", "stock")
+            StockMaterial.objects.select_related("stock__date")
             .filter(
                 stock__point__company__id=company_id,
                 stock__point__id=point_id,
@@ -52,12 +52,12 @@ class MaterialQuerySet(QuerySet):
         usage_queryset = (
             UsedMaterial.objects
             .point(company_id, point_id)
-            .with_material_info()
+            .select_related("material__material_id")
             .annotate(date=TruncDate("modified"))
             .filter(q_date_from & q_date_to)
         )
         usage = (
-            usage_queryset.filter(material=OuterRef("id"))
+            usage_queryset.filter(material__material_id=OuterRef("id"))
             .order_by("date")
             .values("material", "date")
             .annotate(amount=Sum("amount"))

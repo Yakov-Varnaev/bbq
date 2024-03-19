@@ -21,5 +21,5 @@ class MaterialDataFilterForm(forms.Form):
     def is_valid(self, query_params: dict | None = None) -> bool:
         valide = super().is_valid()
         if query_params and not valide:
-            raise ValidationError(self.errors)
+            raise ValidationError(self.errors)  # type: ignore[arg-type]
         return valide
