@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from companies.api.serializers import CurrentCompanyDefault
+from companies.api.serializers.stock import MaterialSerializer
 from companies.models import Point
 
 
@@ -18,3 +19,11 @@ class PointCreateSerializer(PointSerializer):
 
     class Meta(PointSerializer.Meta):
         pass
+
+
+class ConsumableMateriaSerializer(MaterialSerializer):
+    stocks = serializers.ListField(child=serializers.JSONField())
+    usage = serializers.ListField(child=serializers.JSONField())
+
+    class Meta(MaterialSerializer.Meta):
+        fields: tuple = MaterialSerializer.Meta.fields + ("stocks", "usage")

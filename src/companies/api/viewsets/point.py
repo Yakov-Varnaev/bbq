@@ -6,9 +6,17 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from app.api.permissions import IsCompanyOwnerOrReadOnly
-from companies.api.serializers import EmployeeSerializer, PointCreateSerializer, PointSerializer
-from companies.models import Point
+from django.db.models import QuerySet
+
+from app.api.permissions import IsCompanyOwner, IsCompanyOwnerOrReadOnly
+from companies.api.filters import MaterialDataFilterForm
+from companies.api.serializers import (
+    ConsumableMateriaSerializer,
+    EmployeeSerializer,
+    PointCreateSerializer,
+    PointSerializer,
+)
+from companies.models import Material, Point
 from companies.services import EmployeeCreator
 
 
@@ -33,3 +41,18 @@ class PointViewSet(ModelViewSet):
         serializer = EmployeeSerializer(data=self.request.data, context=self.get_serializer_context(*args, **kwargs))
         employee = EmployeeCreator(serializer)()
         return Response(EmployeeSerializer(employee).data)
+
+
+class ConsumableMaterialViewSet(ModelViewSet):
+    http_method_names = ["get"]
+    serializer_class = ConsumableMateriaSerializer
+    permission_classes = [IsCompanyOwner]
+    filter_form = MaterialDataFilterForm
+
+    def get_queryset(self) -> QuerySet[Material]:
+        self.filter_form(self.request.GET).is_valid(self.request.query_params)
+        return Material.objects.point(
+            self.kwargs["company_pk"],
+            self.kwargs["point_pk"],
+            self.request.query_params,
+        )

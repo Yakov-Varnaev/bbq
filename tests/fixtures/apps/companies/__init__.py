@@ -8,6 +8,10 @@ from tests.fixtures.apps.companies.company import (
     company_owner,
     company_pk,
 )
+from tests.fixtures.apps.companies.consumable_material import (
+    material_date_query_params,
+    point_with_consumable_materials,
+)
 from tests.fixtures.apps.companies.department import (
     category,
     category_data,
@@ -72,8 +76,10 @@ __all__ = [
     "master_procedure_data",
     "master_procedure_reverse_kwargs",
     "material",
+    "material_date_query_params",
     "material_type",
     "material_type_data",
+    "point_with_consumable_materials",
     "procedure",
     "procedure_data",
     "procedure_reverse_kwargs",

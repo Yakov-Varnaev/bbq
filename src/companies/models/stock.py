@@ -4,43 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from app.models import DefaultModel
 
 
-class MaterialType(DefaultModel):
-    class Meta:
-        ordering = ("name",)
-        verbose_name = _("material type")
-        verbose_name_plural = _("material types")
-
-    name = models.CharField(
-        _("material type name"),
-        max_length=255,
-    )
-
-
-class Material(DefaultModel):
-    class Meta:
-        ordering = ("name",)
-        verbose_name = _("material")
-        verbose_name_plural = _("materials")
-
-    brand = models.CharField(
-        _("material brand"),
-        max_length=255,
-    )
-    name = models.CharField(
-        _("material name"),
-        max_length=255,
-    )
-    unit = models.CharField(
-        _("material unit"),
-        max_length=255,
-    )
-    kind = models.ForeignKey(
-        "MaterialType",
-        on_delete=models.PROTECT,
-        related_name="materials",
-    )
-
-
 class StockMaterial(DefaultModel):
     class Meta:
         ordering = ("stock", "material")
