@@ -37,7 +37,7 @@ class MaterialQuerySet(QuerySet):
             .filter(q_date_from & q_date_to)
         )
         stocks = (
-            stock_queryset.filter(material=OuterRef("id"))
+            stock_queryset.filter(material_id=OuterRef("id"))
             .order_by("date")
             .values("material_id", "date")
             .annotate(amount=Sum("quantity"))
@@ -59,7 +59,7 @@ class MaterialQuerySet(QuerySet):
         usage = (
             usage_queryset.filter(material__material_id=OuterRef("id"))
             .order_by("date")
-            .values("material", "date")
+            .values("material__material_id", "date")
             .annotate(amount=Sum("amount"))
             .annotate(
                 stocks=JSONObject(
