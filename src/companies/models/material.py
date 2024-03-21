@@ -1,4 +1,4 @@
-from django.contrib.postgres.expressions import ArraySubquery  # type:ignore[import-untyped]
+from django.contrib.postgres.expressions import ArraySubquery
 from django.db import models
 from django.db.models import F, OuterRef, Q, QuerySet, Sum
 from django.db.models.functions import JSONObject, TruncDate
